@@ -4,6 +4,7 @@ import {
 	ValidationPipe,
 	VersioningType,
 } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
 		type: VersioningType.URI,
 		defaultVersion: '1',
 	});
+	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
 	await app.listen(process.env.PORT || 3000);
