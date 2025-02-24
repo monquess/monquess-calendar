@@ -15,6 +15,13 @@ async function bootstrap() {
 		type: VersioningType.URI,
 		defaultVersion: '1',
 	});
+	app.enableCors({
+		origin: process.env.CORS_ORIGIN,
+		methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+		credentials: true,
+	});
+
 	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
