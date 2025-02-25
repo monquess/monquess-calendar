@@ -9,6 +9,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { swaggerConfig } from './config/swagger.config';
 import { corsOptions } from './config/cors/cors.options';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
 	const app = await NestFactory.create<INestApplication>(AppModule);
@@ -24,6 +25,7 @@ async function bootstrap() {
 
 	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+	app.useGlobalFilters(new HttpExceptionFilter());
 
 	const document = () => SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup(`${prefix}/docs`, app, document);
