@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import {
 	INestApplication,
-	UnprocessableEntityException,
 	ValidationPipe,
 	VersioningType,
 } from '@nestjs/common';
@@ -11,7 +10,7 @@ import { AppModule } from './app.module';
 import { swaggerConfig } from './config/swagger.config';
 import { corsOptions } from './config/cors/cors.options';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ValidationError } from 'class-validator';
+import { validationExceptionFactory } from './common/pipes/validation/validation-exception.factory';
 
 async function bootstrap() {
 	const app = await NestFactory.create<INestApplication>(AppModule);
@@ -30,26 +29,7 @@ async function bootstrap() {
 		new ValidationPipe({
 			transform: true,
 			whitelist: true,
-			exceptionFactory: (errors: ValidationError[]) => {
-				const [error] = errors;
-				const extractError = (
-					error: ValidationError
-				): { property: string; message: string } => {
-					if (error.constraints) {
-						const [message] = Object.values(error.constraints);
-						return {
-							property: error.property,
-							message,
-						};
-					}
-					return {
-						property: error.property,
-						message: 'Validation error',
-					};
-				};
-				return new UnprocessableEntityException(extractError(error));
-			},
-			stopAtFirstError: true,
+			exceptionFactory: validationExceptionFactory,
 		})
 	);
 	app.useGlobalFilters(new HttpExceptionFilter());
