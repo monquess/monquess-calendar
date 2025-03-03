@@ -16,6 +16,7 @@ class UserFactory extends Factory<User> {
 				email: faker.internet.email(),
 				password: bcrypt.hashSync('password', 10),
 				verified: faker.datatype.boolean(0.75),
+				avatar: process.env.DEFAULT_AVATAR_PATH,
 			} as User);
 		}
 	}

@@ -30,6 +30,12 @@ export class UserEntity {
 	verified: boolean;
 
 	@ApiProperty({
+		example: '/avatars/default.png',
+		type: String,
+	})
+	avatar: string;
+
+	@ApiProperty({
 		example: '2024-11-21 16:49:11.733',
 		type: String,
 	})

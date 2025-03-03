@@ -6,10 +6,16 @@ import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { S3Service } from '@s3/s3.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly s3Service: S3Service,
+		private readonly configService: ConfigService
+	) {}
 
 	async findAll({
 		username,
@@ -41,6 +47,7 @@ export class UserService {
 		return this.prisma.user.create({
 			data: {
 				...createUserDto,
+				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH')!,
 				password: await bcrypt.hash(createUserDto.password, 12),
 			},
 		});
@@ -73,6 +80,25 @@ export class UserService {
 			data: {
 				password: await bcrypt.hash(updatePasswordDto.newPassword, 12),
 			},
+		});
+	}
+
+	async updateAvatar(
+		id: number,
+		avatar: Express.Multer.File
+	): Promise<UserEntity> {
+		const defaultAvatar = this.configService.get<string>('DEFAULT_AVATAR_PATH');
+		const user = await this.findById(id);
+
+		if (user.avatar !== defaultAvatar) {
+			await this.s3Service.deleteFile(user.avatar);
+		}
+
+		const avatarData = await this.s3Service.uploadFile('avatars', avatar);
+
+		return this.prisma.user.update({
+			where: { id },
+			data: { avatar: avatarData.url },
 		});
 	}
 

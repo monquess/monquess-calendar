@@ -8,6 +8,7 @@ import {
 	ApiOperation,
 	ApiParam,
 } from '@nestjs/swagger';
+import { FileUploadDto } from '@user/dto/file-upload.dto';
 import { UpdatePasswordDto } from '@user/dto/update-password.dto';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
 import { UserEntity } from '@user/entities/user.entity';
@@ -59,6 +60,20 @@ export const ApiUserUpdatePassword = () =>
 		ApiOkResponse({ type: UserEntity }),
 		ApiNotFoundResponse({ description: 'User not found' }),
 		ApiBadRequestResponse({ description: 'Current password is incorrect' })
+	);
+
+export const ApiUserUpdateAvatar = () =>
+	applyDecorators(
+		ApiOperation({ summary: 'Update avatar' }),
+		ApiParam({
+			name: 'id',
+			description: 'user id',
+		}),
+		ApiBody({
+			type: FileUploadDto,
+		}),
+		ApiOkResponse({ type: UserEntity }),
+		ApiNotFoundResponse({ description: 'User not found' })
 	);
 
 export const ApiUserRemove = () =>
