@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '@prisma/prisma.service';
+import { PrismaService } from '@modules/prisma/prisma.service';
 import { FilteringOptionsDto } from './dto/filtering-options.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { S3Service } from '@s3/s3.service';
+import { S3Service } from '@modules/s3/s3.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

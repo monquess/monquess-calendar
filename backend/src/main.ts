@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '@app.module';
+import { AppModule } from '@modules/app.module';
 import { swaggerConfig } from '@config/swagger.config';
 import { corsOptions } from '@config/cors/cors.options';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';

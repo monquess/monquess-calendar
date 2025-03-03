@@ -8,10 +8,10 @@ import {
 	ApiOperation,
 	ApiParam,
 } from '@nestjs/swagger';
-import { FileUploadDto } from '@user/dto/file-upload.dto';
-import { UpdatePasswordDto } from '@user/dto/update-password.dto';
-import { UpdateUserDto } from '@user/dto/update-user.dto';
-import { UserEntity } from '@user/entities/user.entity';
+import { FileUploadDto } from '@modules/user/dto/file-upload.dto';
+import { UpdatePasswordDto } from '@modules/user/dto/update-password.dto';
+import { UpdateUserDto } from '@modules/user/dto/update-user.dto';
+import { UserEntity } from '@modules/user/entities/user.entity';
 
 export const ApiUserFindAll = () =>
 	applyDecorators(
