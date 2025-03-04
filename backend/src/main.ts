@@ -10,8 +10,8 @@ import { AppModule } from '@modules/app.module';
 import { swaggerConfig } from '@config/swagger.config';
 import { corsOptions } from '@config/cors/cors.options';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
-import { validationExceptionFactory } from '@common/pipes/validation/validation-exception.factory';
 import { PrismaExceptionFilter } from '@common/filters/prisma-exception.filter';
+import { validationExceptionFactory } from '@common/pipes/validation/validation-exception.factory';
 
 async function bootstrap() {
 	const app = await NestFactory.create<INestApplication>(AppModule);
