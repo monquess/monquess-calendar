@@ -19,4 +19,11 @@ export const envSchema = joi.object({
 	S3_BUCKET_NAME: joi.string(),
 	S3_ENDPOINT: joi.string(),
 	DEFAULT_AVATAR_PATH: joi.string(),
+	MAIL_HOST: joi.string(),
+	MAIL_PORT: joi.number().port(),
+	MAIL_USERNAME: joi.string(),
+	MAIL_PASSWORD: joi.string(),
+	MAIL_ENCRYPTION: joi.boolean(),
+	MAIL_FROM_ADDRESS: joi.string(),
+	MAIL_FROM_NAME: joi.string(),
 });
