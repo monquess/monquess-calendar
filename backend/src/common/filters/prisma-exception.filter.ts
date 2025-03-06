@@ -9,17 +9,22 @@ import { Prisma } from '@prisma/client';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
-	catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
+	catch(exception: Prisma.PrismaClientKnownRequestError, _host: ArgumentsHost) {
 		let status = HttpStatus.INTERNAL_SERVER_ERROR;
 		let message = 'Internal server error';
+		const modelName = (exception.meta?.modelName as string) || 'Record';
 
 		if (exception.code === 'P2002') {
-			const modelName = exception.meta?.modelName || 'Record';
+			const [target] = (exception.meta?.target as string[]) || [];
 			status = HttpStatus.CONFLICT;
-			message = `${modelName} already exists`;
+
+			if (target) {
+				message = `${modelName} with ${target} already exists`;
+			} else {
+				message = `${modelName} already exists`;
+			}
 		}
 		if (exception.code === 'P2025') {
-			const modelName = exception.meta?.modelName || 'Record';
 			status = HttpStatus.NOT_FOUND;
 			message = `${modelName} not found`;
 		}

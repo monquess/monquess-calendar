@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisPrefix, RedisTTL } from './redis.constants';
+import { RedisPrefix } from './constants/redis.constants';
 import { RedisRepository } from './redis.repository';
 
 @Injectable()
@@ -20,8 +20,9 @@ export class RedisService {
 	async saveToken(
 		userId: number,
 		token: string,
-		type: RedisPrefix
+		type: RedisPrefix,
+		ttl: number
 	): Promise<void> {
-		await this.redis.set<number>(type, token, userId, RedisTTL[type]);
+		await this.redis.set<number>(type, token, userId, ttl);
 	}
 }
