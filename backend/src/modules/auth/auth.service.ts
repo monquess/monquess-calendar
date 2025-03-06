@@ -1,8 +1,4 @@
-import {
-	ConflictException,
-	Injectable,
-	UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
@@ -13,8 +9,12 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RedisService } from '@modules/redis/redis.service';
-import { RedisPrefix } from '@modules/redis/constants/redis.constants';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
+import { UserService } from '@modules/user/user.service';
+import { UserEntity } from '@modules/user/entities/user.entity';
+import { TokenType } from './enum/token-type.enum';
+import { MailService } from '@modules/mail/mail.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -22,27 +22,14 @@ export class AuthService {
 		private readonly prisma: PrismaService,
 		private readonly redis: RedisService,
 		private readonly configService: ConfigService<EnvironmentVariables, true>,
-		private readonly jwtService: JwtService
+		private readonly userService: UserService,
+		private readonly jwtService: JwtService,
+		private readonly mailService: MailService
 	) {}
 
 	async register(dto: RegisterDto): Promise<void> {
-		const candidate = await this.prisma.user.findFirst({
-			where: {
-				OR: [{ email: dto.email }, { username: dto.username }],
-			},
-		});
-
-		if (candidate) {
-			throw new ConflictException('User already exists');
-		}
-
-		await this.prisma.user.create({
-			data: {
-				...dto,
-				password: await bcrypt.hash(dto.password, 10),
-				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH'),
-			},
-		});
+		const user = await this.userService.create(dto);
+		await this.sendVerificationEmail(user);
 	}
 
 	async login(user: User, res: Response): Promise<AuthResponseDto> {
@@ -50,28 +37,42 @@ export class AuthService {
 			sub: user.id,
 			email: user.email,
 		});
-		const tokenExpiration = this.configService.get<number>(
-			'JWT_REFRESH_EXPIRATION'
-		);
 
-		await this.redis.saveToken(
-			user.id,
-			await bcrypt.hash(refreshToken, 10),
-			RedisPrefix.REFRESH_TOKEN,
-			tokenExpiration
-		);
-
-		res.cookie('refresh-token', refreshToken, {
-			httpOnly: true,
-			sameSite: 'strict',
-			secure: this.configService.get('NODE_ENV') === 'production',
-			maxAge: tokenExpiration * 1000,
-		});
+		await this.updateRefreshToken(user, refreshToken, res);
 
 		return {
-			user,
+			user: new UserEntity(user),
 			accessToken,
 		};
+	}
+
+	async logout(userId: number, res: Response): Promise<void> {
+		await this.redis.del(TokenType.REFRESH, userId);
+		res.clearCookie('refresh_token');
+	}
+
+	async refreshTokens(user: User, res: Response): Promise<AuthResponseDto> {
+		const [accessToken, refreshToken] = await this.generateTokens({
+			sub: user.id,
+			email: user.email,
+		});
+
+		await this.updateRefreshToken(user, refreshToken, res);
+
+		return {
+			user: new UserEntity(user),
+			accessToken,
+		};
+	}
+
+	async verifyEmail(token: string): Promise<void> {
+		const userId = await this.redis.get<number>(TokenType.VERIFICATION, token);
+
+		if (!userId) {
+			throw new UnauthorizedException('Invalid token');
+		}
+
+		await this.userService.update(userId, { verified: true });
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
@@ -94,6 +95,62 @@ export class AuthService {
 		}
 
 		return user;
+	}
+
+	async sendVerificationEmail(user: User): Promise<void> {
+		const token = crypto.randomBytes(3).toString('hex');
+		const context = {
+			username: user.username,
+			token,
+		};
+
+		await this.redis.set(TokenType.VERIFICATION, token, user.id, 15 * 60);
+
+		await this.mailService.sendMail(
+			user.email,
+			'Account verification',
+			'verification',
+			context
+		);
+	}
+
+	async sendPasswordResetEmail(user: User): Promise<void> {
+		const token = crypto.randomBytes(3).toString('hex');
+		const context = {
+			username: user.username,
+			token,
+		};
+
+		await this.redis.set(TokenType.RESET_PASSWORD, token, user.id, 15 * 60);
+
+		await this.mailService.sendMail(
+			user.email,
+			'Account verification',
+			'verification',
+			context
+		);
+	}
+
+	private async updateRefreshToken(
+		user: User,
+		token: string,
+		res: Response
+	): Promise<void> {
+		const exp = this.configService.get<number>('JWT_REFRESH_EXPIRATION');
+
+		await this.redis.set(
+			TokenType.REFRESH,
+			user.id,
+			await bcrypt.hash(token, 10),
+			exp
+		);
+
+		res.cookie('refresh_token', token, {
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: this.configService.get('NODE_ENV') === 'production',
+			maxAge: exp * 1000,
+		});
 	}
 
 	private async generateTokens(payload: JwtPayload): Promise<[string, string]> {

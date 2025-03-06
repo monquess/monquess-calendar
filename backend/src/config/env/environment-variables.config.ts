@@ -5,6 +5,7 @@ import {
 	Max,
 	Min,
 	validateSync,
+	IsBoolean,
 } from 'class-validator';
 import { plainToInstance, Transform } from 'class-transformer';
 
@@ -72,6 +73,28 @@ export class EnvironmentVariables {
 	@IsNumber()
 	@Transform(({ value }) => Number(value))
 	readonly JWT_REFRESH_EXPIRATION: number;
+
+	@IsString()
+	MAIL_HOST: string;
+
+	@IsNumber()
+	@Transform(({ value }) => Number(value))
+	MAIL_PORT: number;
+
+	@IsString()
+	MAIL_USERNAME: string;
+
+	@IsString()
+	MAIL_PASSWORD: string;
+
+	@IsBoolean()
+	MAIL_ENCRYPTION: boolean;
+
+	@IsString()
+	MAIL_FROM_ADDRESS: string;
+
+	@IsString()
+	MAIL_FROM_NAME: string;
 
 	@IsString()
 	readonly S3_ACCESS_KEY_ID: string;

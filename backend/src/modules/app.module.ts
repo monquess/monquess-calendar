@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { validate } from '@config/env/environment-variables.config';
 import { MailModule } from './mail/mail.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
 	imports: [
@@ -26,6 +28,12 @@ import { MailModule } from './mail/mail.module';
 		AuthModule,
 		S3Module,
 		MailModule,
+	],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAuthGuard,
+		},
 	],
 })
 export class AppModule {}

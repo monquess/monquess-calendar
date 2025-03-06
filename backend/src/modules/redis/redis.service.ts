@@ -1,28 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { RedisPrefix } from './constants/redis.constants';
-import { RedisRepository } from './redis.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { Redis, RedisOptions } from 'ioredis';
+import { REDIS_OPTIONS } from './constants/redis.constants';
 
 @Injectable()
 export class RedisService {
-	constructor(private readonly redis: RedisRepository) {}
+	private client: Redis;
 
-	async getUserIdByToken(
-		token: string,
-		type: RedisPrefix
-	): Promise<number | null> {
-		const userId = await this.redis.get<number>(type, token);
-		if (userId !== null) {
-			await this.redis.del(type, token);
-		}
-		return userId;
+	constructor(@Inject(REDIS_OPTIONS) private readonly options: RedisOptions) {
+		this.client = new Redis(options);
 	}
 
-	async saveToken(
-		userId: number,
-		token: string,
-		type: RedisPrefix,
-		ttl: number
+	onModuleDestroy() {
+		if (this.client) {
+			this.client.disconnect();
+		}
+	}
+
+	async get<T = string>(
+		prefix: string,
+		key: string | number
+	): Promise<T | null> {
+		const value = await this.client.get(`${prefix}:${key}`);
+
+		if (!value) {
+			return null;
+		}
+
+		try {
+			return JSON.parse(value) as T;
+		} catch {
+			return null;
+		}
+	}
+
+	async set<T = string>(
+		prefix: string,
+		key: string | number,
+		value: T,
+		ttl?: number
 	): Promise<void> {
-		await this.redis.set<number>(type, token, userId, ttl);
+		const setValue = JSON.stringify(value);
+
+		if (ttl) {
+			await this.client.set(`${prefix}:${key}`, setValue, 'EX', ttl);
+		} else {
+			await this.client.set(`${prefix}:${key}`, setValue);
+		}
+	}
+
+	async del(prefix: string, key: string | number): Promise<void> {
+		await this.client.del(`${prefix}:${key}`);
 	}
 }

@@ -15,14 +15,8 @@ export class PrismaExceptionFilter implements ExceptionFilter {
 		const modelName = (exception.meta?.modelName as string) || 'Record';
 
 		if (exception.code === 'P2002') {
-			const [target] = (exception.meta?.target as string[]) || [];
 			status = HttpStatus.CONFLICT;
-
-			if (target) {
-				message = `${modelName} with ${target} already exists`;
-			} else {
-				message = `${modelName} already exists`;
-			}
+			message = `${modelName} already exists`;
 		}
 		if (exception.code === 'P2025') {
 			status = HttpStatus.NOT_FOUND;

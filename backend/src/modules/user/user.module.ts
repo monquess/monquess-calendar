@@ -8,5 +8,6 @@ import { S3Module } from '@modules/s3/s3.module';
 	imports: [PrismaModule, S3Module],
 	controllers: [UserController],
 	providers: [UserService],
+	exports: [UserService],
 })
 export class UserModule {}

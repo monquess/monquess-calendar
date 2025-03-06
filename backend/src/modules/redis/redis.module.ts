@@ -1,15 +1,11 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { RedisRepository } from './redis.repository';
 import { RedisOptions } from 'ioredis';
 import { REDIS_OPTIONS } from './constants/redis.constants';
 import { RedisAsyncOptions } from './interfaces/redis-async-options.interface';
 import { RedisOptionsFactory } from './interfaces/redis-options-factory.interface';
 
-@Module({
-	providers: [RedisService, RedisRepository],
-	exports: [RedisService],
-})
+@Module({})
 export class RedisModule {
 	public static register(options: RedisOptions): DynamicModule {
 		return {
