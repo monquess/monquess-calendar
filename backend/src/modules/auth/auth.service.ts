@@ -13,7 +13,7 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RedisService } from '@modules/redis/redis.service';
-import { RedisPrefix } from '@modules/redis/redis.constants';
+import { RedisPrefix } from '@modules/redis/constants/redis.constants';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 
 @Injectable()
