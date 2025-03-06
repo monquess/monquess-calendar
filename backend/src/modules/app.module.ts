@@ -6,6 +6,7 @@ import { S3Module } from './s3/s3.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { validate } from '@config/env/environment-variables.config';
+import { MailModule } from './mail/mail.module';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { validate } from '@config/env/environment-variables.config';
 		UserModule,
 		AuthModule,
 		S3Module,
+		MailModule,
 	],
 })
 export class AppModule {}
