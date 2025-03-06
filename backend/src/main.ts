@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory } from '@nestjs/core';
 import {
 	INestApplication,
@@ -35,7 +36,7 @@ async function bootstrap() {
 	);
 	app.useGlobalFilters(new HttpExceptionFilter(), new PrismaExceptionFilter());
 
-	const document = () => SwaggerModule.createDocument(app, swaggerConfig);
+	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup(`${prefix}/docs`, app, document);
 
 	await app.listen(process.env.PORT || 3000);

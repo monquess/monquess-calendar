@@ -7,11 +7,3 @@ export const RedisPrefix = {
 } as const;
 
 export type RedisPrefix = (typeof RedisPrefix)[keyof typeof RedisPrefix];
-
-export const RedisTTL = {
-	VERIFICATION: 15 * 60,
-	RESET: 15 * 60,
-	REFRESH: 7 * 24 * 60 * 60,
-} as const;
-
-export type RedisTTL = (typeof RedisTTL)[keyof typeof RedisTTL];

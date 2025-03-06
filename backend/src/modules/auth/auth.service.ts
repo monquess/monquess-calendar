@@ -50,21 +50,22 @@ export class AuthService {
 			sub: user.id,
 			email: user.email,
 		});
-		const cookieExpiration = this.configService.get<number>(
+		const tokenExpiration = this.configService.get<number>(
 			'JWT_REFRESH_EXPIRATION'
 		);
 
 		await this.redis.saveToken(
 			user.id,
 			await bcrypt.hash(refreshToken, 10),
-			RedisPrefix.REFRESH_TOKEN
+			RedisPrefix.REFRESH_TOKEN,
+			tokenExpiration
 		);
 
 		res.cookie('refresh-token', refreshToken, {
 			httpOnly: true,
 			sameSite: 'strict',
 			secure: this.configService.get('NODE_ENV') === 'production',
-			maxAge: cookieExpiration * 1000,
+			maxAge: tokenExpiration * 1000,
 		});
 
 		return {
