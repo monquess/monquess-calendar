@@ -1,13 +1,15 @@
 export const RedisPrefix = {
-	VERIFICATION: 'verification',
-	RESET: 'reset',
+	VERIFICATION_TOKEN: 'verification',
+	RESET_TOKEN: 'reset',
+	REFRESH_TOKEN: 'refresh',
 } as const;
 
 export type RedisPrefix = (typeof RedisPrefix)[keyof typeof RedisPrefix];
 
 export const RedisTTL = {
-	VERIFICATION: 60 * 15,
-	RESET: 60 * 15,
+	VERIFICATION: 15 * 60,
+	RESET: 15 * 60,
+	REFRESH: 7 * 24 * 60 * 60,
 } as const;
 
 export type RedisTTL = (typeof RedisTTL)[keyof typeof RedisTTL];
