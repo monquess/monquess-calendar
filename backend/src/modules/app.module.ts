@@ -53,5 +53,11 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 			inject: [ConfigService],
 		}),
 	],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAuthGuard,
+		},
+	],
 })
 export class AppModule {}
