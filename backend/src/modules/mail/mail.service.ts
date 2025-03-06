@@ -1,30 +1,25 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createTransport, Transporter, TransportOptions } from 'nodemailer';
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common';
+import { createTransport, Transporter } from 'nodemailer';
 import * as handlebars from 'handlebars';
 import * as path from 'path';
 import * as fs from 'node:fs';
+import { MailOptions } from './interfaces/mail-options.interface';
+import { MODULE_OPTIONS_TOKEN } from './mail.module-definition';
 
 @Injectable()
 export class MailService {
 	private transporter: Transporter;
 
-	constructor(private readonly configService: ConfigService) {
+	constructor(
+		@Inject(MODULE_OPTIONS_TOKEN) private readonly mailOptions: MailOptions
+	) {
 		this.transporter = createTransport(
-			{
-				host: this.configService.get<string>('MAIL_HOST'),
-				port: this.configService.get<number>('MAIL_PORT'),
-				auth: {
-					user: this.configService.get<string>('MAIL_USERNAME'),
-					pass: this.configService.get<string>('MAIL_PASSWORD'),
-				},
-			} as TransportOptions,
-			{
-				from: {
-					name: this.configService.get<string>('MAIL_FROM_NAME'),
-					address: this.configService.get<string>('MAIL_FROM_ADDRESS'),
-				},
-			} as TransportOptions
+			mailOptions.transport,
+			mailOptions.defaults
 		);
 	}
 
@@ -33,10 +28,7 @@ export class MailService {
 		context?: Record<string, unknown>
 	): string {
 		const templatePath = path.join(
-			__dirname,
-			'..',
-			'..',
-			'templates',
+			this.mailOptions.template.dir,
 			`${templateName}.hbs`
 		);
 
