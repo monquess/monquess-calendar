@@ -30,7 +30,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 		AuthModule,
 		S3Module,
 		MailModule.forRootAsync({
-			isGlobal: false,
+			isGlobal: true,
 			useFactory: (configService: ConfigService): MailOptions => ({
 				transport: {
 					host: configService.get<string>('MAIL_HOST'),
@@ -47,7 +47,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 					},
 				},
 				template: {
-					dir: path.join(__dirname, '..', 'templates'),
+					dir: path.join(__dirname, 'mail', 'templates'),
 				},
 			}),
 			inject: [ConfigService],

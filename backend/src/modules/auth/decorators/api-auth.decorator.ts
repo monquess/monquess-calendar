@@ -46,11 +46,22 @@ export const ApiAuthRefresh = () =>
 		ApiNotFoundResponse({ description: "User doesn't exist" })
 	);
 
+export const ApiAuthSendVerification = () =>
+	applyDecorators(
+		ApiOperation({ summary: 'Send email with verification code' }),
+		ApiNoContentResponse({
+			description: 'Email has been successfully sent',
+		}),
+		ApiBadRequestResponse({ description: 'Invalid email' }),
+		ApiNotFoundResponse({ description: 'User not found' }),
+		ApiConflictResponse({ description: 'User email is already verified' })
+	);
+
 export const ApiAuthVerifyEmail = () =>
 	applyDecorators(
 		ApiOperation({ summary: 'Verify user email' }),
 		ApiNoContentResponse({
 			description: 'User email has been successfully verified',
 		}),
-		ApiBadRequestResponse({ description: 'Invalid token' })
+		ApiBadRequestResponse({ description: 'Invalid email or token' })
 	);

@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
@@ -28,8 +32,8 @@ export class AuthService {
 	) {}
 
 	async register(dto: RegisterDto): Promise<void> {
-		const user = await this.userService.create(dto);
-		await this.sendVerificationEmail(user);
+		const { email } = await this.userService.create(dto);
+		await this.sendVerificationEmail(email);
 	}
 
 	async login(user: User, res: Response): Promise<AuthResponseDto> {
@@ -68,8 +72,12 @@ export class AuthService {
 	async verifyEmail(email: string, verifyToken: string): Promise<void> {
 		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
 
-		if (!token || token !== verifyToken) {
-			throw new UnauthorizedException('Invalid token');
+		if (!token) {
+			throw new BadRequestException('Invalid email');
+		}
+
+		if (token !== verifyToken) {
+			throw new BadRequestException('Invalid token');
 		}
 
 		await this.prisma.user.update({
@@ -83,29 +91,33 @@ export class AuthService {
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
-		const user = await this.prisma.user.findUnique({
+		const user = await this.prisma.user.findUniqueOrThrow({
 			where: {
 				email,
 			},
 		});
 
-		if (!user) {
-			throw new UnauthorizedException(
-				`User with email '${email}' does not exists`
-			);
-		}
-
 		const passwordMatch = await bcrypt.compare(password, user.password);
 
 		if (!passwordMatch) {
-			throw new UnauthorizedException('Invalid password');
+			throw new BadRequestException('Invalid password');
 		}
 
 		return user;
 	}
 
-	async sendVerificationEmail(user: User): Promise<void> {
-		const token = crypto.randomBytes(3).toString('hex');
+	async sendVerificationEmail(email: string): Promise<void> {
+		const user = await this.prisma.user.findUniqueOrThrow({
+			where: {
+				email,
+			},
+		});
+
+		if (user.verified) {
+			throw new ConflictException('User email is already verified');
+		}
+
+		const token = crypto.randomBytes(3).toString('hex').toUpperCase();
 		const context = {
 			username: user.username,
 			token,
@@ -121,19 +133,24 @@ export class AuthService {
 		);
 	}
 
-	async sendPasswordResetEmail(user: User): Promise<void> {
-		const token = crypto.randomBytes(3).toString('hex');
+	async sendPasswordResetEmail(email: string): Promise<void> {
+		const { username } = await this.prisma.user.findUniqueOrThrow({
+			where: {
+				email,
+			},
+		});
+		const token = crypto.randomBytes(3).toString('hex').toUpperCase();
 		const context = {
-			username: user.username,
+			username,
 			token,
 		};
 
-		await this.redis.set(TokenType.RESET_PASSWORD, user.email, token, 15 * 60);
+		await this.redis.set(TokenType.RESET_PASSWORD, email, token, 15 * 60);
 
 		await this.mailService.sendMail(
-			user.email,
-			'Account verification',
-			'verification',
+			email,
+			'Password reset',
+			'password-reset',
 			context
 		);
 	}

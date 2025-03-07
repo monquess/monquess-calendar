@@ -16,6 +16,7 @@ import {
 	ApiAuthLogout,
 	ApiAuthRefresh,
 	ApiAuthRegister,
+	ApiAuthSendVerification,
 	ApiAuthVerifyEmail,
 } from './decorators/api-auth.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -28,6 +29,7 @@ import { RegisterDto } from './dto/register.dto';
 import { Public } from '@common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { EmailVerifyDto } from './dto/email-verify.dto';
+import { SendEmailDto } from './dto/send-email.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -81,5 +83,13 @@ export class AuthController {
 	@Post('verify-email')
 	async verifyEmail(@Body() { email, token }: EmailVerifyDto): Promise<void> {
 		return this.authService.verifyEmail(email, token);
+	}
+
+	@ApiAuthSendVerification()
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Public()
+	@Post('send-verification')
+	async sendVerification(@Body() { email }: SendEmailDto): Promise<void> {
+		return this.authService.sendVerificationEmail(email);
 	}
 }
