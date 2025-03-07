@@ -12,9 +12,10 @@ import { RedisService } from '@modules/redis/redis.service';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { UserService } from '@modules/user/user.service';
 import { UserEntity } from '@modules/user/entities/user.entity';
-import { TokenType } from './enum/token-type.enum';
 import { MailService } from '@modules/mail/mail.service';
 import * as crypto from 'crypto';
+import { TOKEN_PREFIXES } from './constants/token-prefixes.constant';
+import { COOKIE_NAMES } from './constants/cookie-names.constant';
 
 @Injectable()
 export class AuthService {
@@ -47,8 +48,8 @@ export class AuthService {
 	}
 
 	async logout(userId: number, res: Response): Promise<void> {
-		await this.redis.del(TokenType.REFRESH, userId);
-		res.clearCookie('refresh_token');
+		await this.redis.del(TOKEN_PREFIXES.REFRESH, userId);
+		res.clearCookie(COOKIE_NAMES.REFRESH_TOKEN);
 	}
 
 	async refreshTokens(user: User, res: Response): Promise<AuthResponseDto> {
@@ -66,7 +67,10 @@ export class AuthService {
 	}
 
 	async verifyEmail(email: string, verifyToken: string): Promise<void> {
-		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
+		const token = await this.redis.get<string>(
+			TOKEN_PREFIXES.VERIFICATION,
+			email
+		);
 
 		if (token !== verifyToken) {
 			throw new BadRequestException('Invalid email or token');
@@ -80,7 +84,7 @@ export class AuthService {
 				verified: true,
 			},
 		});
-		await this.redis.del(TokenType.VERIFICATION, email);
+		await this.redis.del(TOKEN_PREFIXES.VERIFICATION, email);
 	}
 
 	async resetPassword(
@@ -88,7 +92,10 @@ export class AuthService {
 		resetToken: string,
 		password: string
 	): Promise<void> {
-		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
+		const token = await this.redis.get<string>(
+			TOKEN_PREFIXES.RESET_PASSWORD,
+			email
+		);
 
 		if (token !== resetToken) {
 			throw new BadRequestException('Invalid email or token');
@@ -102,7 +109,7 @@ export class AuthService {
 				password: await bcrypt.hash(password, 10),
 			},
 		});
-		await this.redis.del(TokenType.RESET_PASSWORD, email);
+		await this.redis.del(TOKEN_PREFIXES.RESET_PASSWORD, email);
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
@@ -138,7 +145,12 @@ export class AuthService {
 			token,
 		};
 
-		await this.redis.set(TokenType.VERIFICATION, user.email, token, 15 * 60);
+		await this.redis.set(
+			TOKEN_PREFIXES.VERIFICATION,
+			user.email,
+			token,
+			15 * 60
+		);
 
 		await this.mailService.sendMail(
 			user.email,
@@ -160,7 +172,7 @@ export class AuthService {
 			token,
 		};
 
-		await this.redis.set(TokenType.RESET_PASSWORD, email, token, 15 * 60);
+		await this.redis.set(TOKEN_PREFIXES.RESET_PASSWORD, email, token, 15 * 60);
 
 		await this.mailService.sendMail(
 			email,
@@ -178,13 +190,13 @@ export class AuthService {
 		const exp = this.configService.get<number>('JWT_REFRESH_EXPIRATION');
 
 		await this.redis.set(
-			TokenType.REFRESH,
+			TOKEN_PREFIXES.REFRESH,
 			user.id,
 			await bcrypt.hash(token, 10),
 			exp
 		);
 
-		res.cookie('refresh_token', token, {
+		res.cookie(COOKIE_NAMES.REFRESH_TOKEN, token, {
 			httpOnly: true,
 			sameSite: 'strict',
 			secure: this.configService.get('NODE_ENV') === 'production',

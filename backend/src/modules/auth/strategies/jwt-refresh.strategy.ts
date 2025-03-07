@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { RedisService } from '@modules/redis/redis.service';
-import { TokenType } from '../enum/token-type.enum';
+import { TOKEN_PREFIXES } from '../constants/token-prefixes.constant';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '@modules/prisma/prisma.service';
 
@@ -33,7 +33,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
 	}
 
 	async validate(req: Request, payload: JwtPayload) {
-		const token = await this.redis.get<string>(TokenType.REFRESH, payload.sub);
+		const token = await this.redis.get<string>(
+			TOKEN_PREFIXES.REFRESH,
+			payload.sub
+		);
 		const user = await this.prisma.user.findUnique({
 			where: {
 				id: payload.sub,
