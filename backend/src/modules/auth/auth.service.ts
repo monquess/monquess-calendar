@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	ConflictException,
-	Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
@@ -72,12 +68,8 @@ export class AuthService {
 	async verifyEmail(email: string, verifyToken: string): Promise<void> {
 		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
 
-		if (!token) {
-			throw new BadRequestException('Invalid email');
-		}
-
 		if (token !== verifyToken) {
-			throw new BadRequestException('Invalid token');
+			throw new BadRequestException('Invalid email or token');
 		}
 
 		await this.prisma.user.update({
@@ -88,6 +80,29 @@ export class AuthService {
 				verified: true,
 			},
 		});
+		await this.redis.del(TokenType.VERIFICATION, email);
+	}
+
+	async resetPassword(
+		email: string,
+		resetToken: string,
+		password: string
+	): Promise<void> {
+		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
+
+		if (token !== resetToken) {
+			throw new BadRequestException('Invalid email or token');
+		}
+
+		await this.prisma.user.update({
+			where: {
+				email,
+			},
+			data: {
+				password: await bcrypt.hash(password, 10),
+			},
+		});
+		await this.redis.del(TokenType.RESET_PASSWORD, email);
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
@@ -114,7 +129,7 @@ export class AuthService {
 		});
 
 		if (user.verified) {
-			throw new ConflictException('User email is already verified');
+			return;
 		}
 
 		const token = crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -184,8 +199,8 @@ export class AuthService {
 				expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRATION'),
 			}),
 			this.jwtService.signAsync(payload, {
-				secret: this.configService.get('JWT_ACCESS_SECRET'),
-				expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRATION'),
+				secret: this.configService.get('JWT_REFRESH_SECRET'),
+				expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRATION'),
 			}),
 		]);
 	}

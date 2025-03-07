@@ -12,10 +12,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
+	ApiAuthForgotPassword,
 	ApiAuthLogin,
 	ApiAuthLogout,
 	ApiAuthRefresh,
 	ApiAuthRegister,
+	ApiAuthResetPassword,
 	ApiAuthSendVerification,
 	ApiAuthVerifyEmail,
 } from './decorators/api-auth.decorator';
@@ -30,6 +32,7 @@ import { Public } from '@common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { EmailVerifyDto } from './dto/email-verify.dto';
 import { SendEmailDto } from './dto/send-email.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -60,10 +63,10 @@ export class AuthController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('logout')
 	async logout(
-		@CurrentUser() user: User,
+		@CurrentUser() { id }: User,
 		@Res({ passthrough: true }) res: Response
 	): Promise<void> {
-		return this.authService.logout(user.id, res);
+		return this.authService.logout(id, res);
 	}
 
 	@ApiAuthRefresh()
@@ -77,6 +80,14 @@ export class AuthController {
 		return this.authService.refreshTokens(user, res);
 	}
 
+	@ApiAuthSendVerification()
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Public()
+	@Post('send-verification')
+	async sendVerificationEmail(@Body() { email }: SendEmailDto): Promise<void> {
+		return this.authService.sendVerificationEmail(email);
+	}
+
 	@ApiAuthVerifyEmail()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
@@ -85,11 +96,21 @@ export class AuthController {
 		return this.authService.verifyEmail(email, token);
 	}
 
-	@ApiAuthSendVerification()
+	@ApiAuthForgotPassword()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
-	@Post('send-verification')
-	async sendVerification(@Body() { email }: SendEmailDto): Promise<void> {
-		return this.authService.sendVerificationEmail(email);
+	@Post('forgot-password')
+	async sendPasswordResetEmail(@Body() { email }: SendEmailDto): Promise<void> {
+		return this.authService.sendPasswordResetEmail(email);
+	}
+
+	@ApiAuthResetPassword()
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Public()
+	@Post('reset-password')
+	async resetPassword(
+		@Body() { email, token, password }: ResetPasswordDto
+	): Promise<void> {
+		return this.authService.resetPassword(email, token, password);
 	}
 }

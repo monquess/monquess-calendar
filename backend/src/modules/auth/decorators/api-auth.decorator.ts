@@ -52,9 +52,7 @@ export const ApiAuthSendVerification = () =>
 		ApiNoContentResponse({
 			description: 'Email has been successfully sent',
 		}),
-		ApiBadRequestResponse({ description: 'Invalid email' }),
-		ApiNotFoundResponse({ description: 'User not found' }),
-		ApiConflictResponse({ description: 'User email is already verified' })
+		ApiNotFoundResponse({ description: 'User not found' })
 	);
 
 export const ApiAuthVerifyEmail = () =>
@@ -62,6 +60,24 @@ export const ApiAuthVerifyEmail = () =>
 		ApiOperation({ summary: 'Verify user email' }),
 		ApiNoContentResponse({
 			description: 'User email has been successfully verified',
+		}),
+		ApiBadRequestResponse({ description: 'Invalid email or token' })
+	);
+
+export const ApiAuthForgotPassword = () =>
+	applyDecorators(
+		ApiOperation({ summary: 'Send email with password reset code' }),
+		ApiNoContentResponse({
+			description: 'Email has been successfully sent',
+		}),
+		ApiNotFoundResponse({ description: 'User not found' })
+	);
+
+export const ApiAuthResetPassword = () =>
+	applyDecorators(
+		ApiOperation({ summary: 'Reset user password' }),
+		ApiNoContentResponse({
+			description: 'Password has been successfully reset',
 		}),
 		ApiBadRequestResponse({ description: 'Invalid email or token' })
 	);
