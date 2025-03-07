@@ -65,14 +65,21 @@ export class AuthService {
 		};
 	}
 
-	async verifyEmail(token: string): Promise<void> {
-		const userId = await this.redis.get<number>(TokenType.VERIFICATION, token);
+	async verifyEmail(email: string, verifyToken: string): Promise<void> {
+		const token = await this.redis.get<string>(TokenType.VERIFICATION, email);
 
-		if (!userId) {
+		if (!token || token !== verifyToken) {
 			throw new UnauthorizedException('Invalid token');
 		}
 
-		await this.userService.update(userId, { verified: true });
+		await this.prisma.user.update({
+			where: {
+				email,
+			},
+			data: {
+				verified: true,
+			},
+		});
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
@@ -104,7 +111,7 @@ export class AuthService {
 			token,
 		};
 
-		await this.redis.set(TokenType.VERIFICATION, token, user.id, 15 * 60);
+		await this.redis.set(TokenType.VERIFICATION, user.email, token, 15 * 60);
 
 		await this.mailService.sendMail(
 			user.email,
@@ -121,7 +128,7 @@ export class AuthService {
 			token,
 		};
 
-		await this.redis.set(TokenType.RESET_PASSWORD, token, user.id, 15 * 60);
+		await this.redis.set(TokenType.RESET_PASSWORD, user.email, token, 15 * 60);
 
 		await this.mailService.sendMail(
 			user.email,

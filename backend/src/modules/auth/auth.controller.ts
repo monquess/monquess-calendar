@@ -27,6 +27,7 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Public } from '@common/decorators/public.decorator';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
+import { EmailVerifyDto } from './dto/email-verify.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -78,7 +79,7 @@ export class AuthController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
 	@Post('verify-email')
-	async verifyEmail(@Body('token') token: string): Promise<void> {
-		return this.authService.verifyEmail(token);
+	async verifyEmail(@Body() { email, token }: EmailVerifyDto): Promise<void> {
+		return this.authService.verifyEmail(email, token);
 	}
 }
