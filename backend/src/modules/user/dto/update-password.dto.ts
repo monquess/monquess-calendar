@@ -3,16 +3,17 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdatePasswordDto {
 	@ApiProperty({
-		example: 'hardpassword',
 		type: String,
+		format: 'password',
+		example: 'hardpassword',
 	})
 	@IsString()
 	@IsNotEmpty()
 	currentPassword: string;
 
 	@ApiProperty({
-		example: 'newhardpassword',
 		type: String,
+		example: 'newhardpassword',
 	})
 	@IsString()
 	@IsNotEmpty()

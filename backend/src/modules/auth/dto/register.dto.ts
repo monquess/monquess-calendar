@@ -12,6 +12,7 @@ export class RegisterDto {
 
 	@ApiProperty({
 		type: String,
+		format: 'email',
 		example: 'johndoe@example.com',
 	})
 	@IsEmail()
@@ -19,6 +20,7 @@ export class RegisterDto {
 
 	@ApiProperty({
 		type: String,
+		format: 'password',
 		example: 'securepassword',
 	})
 	@IsString()

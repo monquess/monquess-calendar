@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, Length } from 'class-validator';
 
 export class EmailVerifyDto {
 	@ApiProperty({
 		type: String,
+		format: 'email',
 		example: 'johndoe@example.com',
 	})
 	@IsEmail()
@@ -11,10 +12,9 @@ export class EmailVerifyDto {
 
 	@ApiProperty({
 		type: String,
+		minLength: 6,
+		maxLength: 6,
 		example: 'c1aa5as',
-	})
-	@IsString({
-		message: 'Invalid token',
 	})
 	@Length(6, 6, {
 		message: 'Invalid token',
