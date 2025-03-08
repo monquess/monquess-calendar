@@ -1,5 +1,6 @@
 services:
   api:
+    image: mqcalendar-api
     build:
       target: production
     env_file:
