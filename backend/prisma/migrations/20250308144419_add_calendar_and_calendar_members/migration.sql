@@ -7,7 +7,7 @@ CREATE TYPE "InvitationStatus" AS ENUM ('INVITED', 'ACCEPTED', 'DECLINED');
 -- CreateTable
 CREATE TABLE "calendars" (
     "id" SERIAL NOT NULL,
-    "is_personal" BOOLEAN NOT NULL,
+    "is_personal" BOOLEAN NOT NULL DEFAULT false,
     "name" VARCHAR(255) NOT NULL,
     "description" TEXT,
     "color" VARCHAR(7) NOT NULL,

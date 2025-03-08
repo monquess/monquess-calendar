@@ -24,7 +24,7 @@ model User {
 
 model Calendar {
   id          Int              @id @default(autoincrement())
-  isPersonal  Boolean          @map("is_personal")
+  isPersonal  Boolean          @default(false) @map("is_personal")
   name        String           @db.VarChar(255)
   description String?
   color       String           @db.VarChar(7)
