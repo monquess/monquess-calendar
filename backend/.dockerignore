@@ -5,3 +5,4 @@ dist
 .prettierrc
 eslint.config.mjs
 .env
+.DS_Store
