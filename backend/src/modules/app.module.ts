@@ -16,7 +16,6 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: `.env.${process.env.NODE_ENV}`,
 			validate,
 			validationOptions: {
 				abortEarly: true,
