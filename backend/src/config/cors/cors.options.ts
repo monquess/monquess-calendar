@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { origins } from './allowed-origins';
+import { origins } from '@config/cors/cors.origins';
 
 export const corsOptions = {
 	origin: origins,
