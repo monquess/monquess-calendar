@@ -9,8 +9,6 @@ import VerifyPage from './pages/auth/verify-account-page'
 import HomePage from './pages/home-page'
 import { theme } from './theme'
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string
-
 function App() {
 	return (
 		<MantineProvider defaultColorScheme="auto" theme={theme}>

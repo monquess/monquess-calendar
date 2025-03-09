@@ -9,11 +9,11 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import { FaGoogle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../../App'
+import { API_BASE_URL } from '../../helpers/backend-port'
 import useStore from '../../helpers/store'
 import { useResponsive } from '../../hooks/use-responsive'
 
@@ -49,14 +49,16 @@ const LoginForm: React.FC = React.memo(() => {
 				color: 'green',
 				position: 'top-center',
 			})
-		} catch (error: any) {
-			notifications.show({
-				title: 'Login',
-				message: error.response.data.message,
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'red',
-			})
+		} catch (error) {
+			if (error instanceof AxiosError && error.response) {
+				notifications.show({
+					title: 'Login',
+					message: error.response.data.message,
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'red',
+				})
+			}
 		} finally {
 			setLoading(false)
 		}

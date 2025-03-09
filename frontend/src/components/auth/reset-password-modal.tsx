@@ -10,9 +10,9 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import React from 'react'
-import { API_BASE_URL } from '../../App'
+import { API_BASE_URL } from '../../helpers/backend-port'
 import { resetPasswordSchema } from '../../helpers/validations/reset-password-schema'
 import { useResponsive } from '../../hooks/use-responsive'
 
@@ -49,7 +49,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 			setLoading(true)
 			await onSend(values.code, values.password)
 			form.reset()
-		} catch (error) {
+		} catch {
 			form.setFieldError('code', 'Invalid verification code')
 		} finally {
 			setLoading(false)
@@ -72,14 +72,16 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 				autoClose: 5000,
 				color: 'green',
 			})
-		} catch (error: any) {
-			notifications.show({
-				title: 'Resend email with verify code',
-				message: error.response.data.message,
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'red',
-			})
+		} catch (error) {
+			if (error instanceof AxiosError && error.response) {
+				notifications.show({
+					title: 'Resend email with verify code',
+					message: error.response.data.message,
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'red',
+				})
+			}
 		} finally {
 			setLoadingPasswordReset(false)
 		}
