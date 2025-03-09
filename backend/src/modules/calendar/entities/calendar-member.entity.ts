@@ -3,34 +3,34 @@ import { InvitationStatus, Role } from '@prisma/client';
 
 export class CalendarMemberEntity {
 	@ApiProperty({
-		example: 1,
 		type: Number,
+		example: 1,
 	})
 	userId: number;
 
 	@ApiProperty({
-		example: 1,
 		type: Number,
+		example: 1,
 	})
 	calendarId: number;
 
 	@ApiProperty({
-		example: 'VIEWER',
 		type: String,
 		enum: Role,
+		example: Role.VIEWER,
 	})
 	role: Role;
 
 	@ApiProperty({
-		example: 'ACCEPTED',
 		type: String,
 		enum: InvitationStatus,
+		example: InvitationStatus.ACCEPTED,
 	})
 	status: InvitationStatus;
 
 	@ApiProperty({
-		example: '2024-11-21 16:49:11.733',
 		type: String,
+		example: new Date().toISOString(),
 	})
 	createdAt: Date;
 
