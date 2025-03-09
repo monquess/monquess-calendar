@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface User {
 	id: number
@@ -19,17 +20,21 @@ interface UserState {
 	updateUser: (user: User) => void
 }
 
-const useStore = create<UserState>((set) => ({
-	user: null,
-	accessToken: null,
-	logout: () => {
-		set({ user: null, accessToken: null })
-	},
-	login: (user: User, accessToken: string) => {
-		set({ user, accessToken })
-	},
-	updateToken: (accessToken: string) => set({ accessToken }),
-	updateUser: (user: User) => set({ user }),
-}))
+const useStore = create<UserState>()(
+	persist(
+		(set) => ({
+			user: null,
+			accessToken: null,
+			logout: () => set({ user: null, accessToken: null }),
+			login: (user, accessToken) => set({ user, accessToken }),
+			updateToken: (accessToken) => set({ accessToken }),
+			updateUser: (user) => set({ user }),
+		}),
+		{
+			name: 'zustand-storage',
+			storage: createJSONStorage(() => localStorage),
+		}
+	)
+)
 
 export default useStore

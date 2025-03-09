@@ -18,7 +18,6 @@ import useStore from '../../helpers/store'
 import { useResponsive } from '../../hooks/use-responsive'
 
 const LoginForm: React.FC = React.memo(() => {
-	const { login } = useStore()
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState<boolean>(false)
@@ -38,7 +37,7 @@ const LoginForm: React.FC = React.memo(() => {
 				email: values.email,
 				password: values.password,
 			})
-			login(response.data.user, response.data.accessToken)
+			useStore.getState().login(response.data.user, response.data.accessToken)
 			form.reset()
 			navigate('/')
 			notifications.show({
