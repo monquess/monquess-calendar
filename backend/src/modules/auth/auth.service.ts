@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
@@ -34,6 +38,10 @@ export class AuthService {
 	}
 
 	async login(user: User, res: Response): Promise<AuthResponseDto> {
+		if (!user.verified) {
+			throw new UnauthorizedException('User email is not verified');
+		}
+
 		const [accessToken, refreshToken] = await this.generateTokens({
 			sub: user.id,
 			email: user.email,

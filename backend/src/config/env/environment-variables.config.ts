@@ -28,6 +28,9 @@ export class EnvironmentVariables {
 	readonly APP_URL: string;
 
 	@IsString()
+	readonly CLIENT_URL: string;
+
+	@IsString()
 	readonly DATABASE_USER: string;
 
 	@IsString()
