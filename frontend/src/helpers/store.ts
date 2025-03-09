@@ -26,9 +26,9 @@ const useStore = create<UserState>()(
 			user: null,
 			accessToken: null,
 			logout: () => set({ user: null, accessToken: null }),
-			login: (user, accessToken) => set({ user, accessToken }),
-			updateToken: (accessToken) => set({ accessToken }),
-			updateUser: (user) => set({ user }),
+			login: (user: User, accessToken: string) => set({ user, accessToken }),
+			updateToken: (accessToken: string) => set({ accessToken }),
+			updateUser: (user: User) => set({ user }),
 		}),
 		{
 			name: 'zustand-storage',
