@@ -48,9 +48,9 @@ export class AuthController {
 	}
 
 	@ApiAuthLogin()
+	@Public()
 	@UseGuards(LocalAuthGuard)
 	@HttpCode(HttpStatus.OK)
-	@Public()
 	@Post('login')
 	login(
 		@CurrentUser() user: User,
@@ -70,6 +70,7 @@ export class AuthController {
 	}
 
 	@ApiAuthRefresh()
+	@Public()
 	@UseGuards(JwtRefreshAuthGuard)
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh')
@@ -89,24 +90,24 @@ export class AuthController {
 	}
 
 	@ApiAuthVerifyEmail()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('verify-email')
 	async verifyEmail(@Body() { email, token }: EmailVerifyDto): Promise<void> {
 		return this.authService.verifyEmail(email, token);
 	}
 
 	@ApiAuthForgotPassword()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('forgot-password')
 	async sendPasswordResetEmail(@Body() { email }: SendEmailDto): Promise<void> {
 		return this.authService.sendPasswordResetEmail(email);
 	}
 
 	@ApiAuthResetPassword()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('reset-password')
 	async resetPassword(
 		@Body() { email, token, password }: ResetPasswordDto
