@@ -167,14 +167,9 @@ export class CalendarService {
 
 	async remove(id: number, user: User): Promise<void> {
 		const calendar = await this.findById(id, user);
-
-		if (calendar.isPersonal) {
-			throw new ForbiddenException('Access denied');
-		}
-
 		const membership = calendar.users?.find((u) => u.userId === user.id);
 
-		if (membership?.role !== Role.OWNER) {
+		if (calendar.isPersonal || membership?.role !== Role.OWNER) {
 			throw new ForbiddenException('Access denied');
 		}
 

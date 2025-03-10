@@ -4,9 +4,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCalendarMemberRoleDto {
 	@ApiProperty({
-		example: 'VIEWER',
 		type: String,
 		enum: AllowedRoles,
+		example: AllowedRoles.VIEWER,
 	})
 	@IsEnum(AllowedRoles)
 	role: AllowedRoles;

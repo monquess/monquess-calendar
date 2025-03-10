@@ -4,9 +4,9 @@ import { IsEnum } from 'class-validator';
 
 export class UpdateCalendarMemberStatusDto {
 	@ApiProperty({
-		example: 'VIEWER',
 		type: String,
 		enum: InvitationStatus,
+		example: InvitationStatus.INVITED,
 	})
 	@IsEnum(InvitationStatus)
 	status: InvitationStatus;

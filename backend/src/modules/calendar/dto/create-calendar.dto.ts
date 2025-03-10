@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsHexColor, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateCalendarDto {
 	@ApiProperty({
@@ -21,9 +21,9 @@ export class CreateCalendarDto {
 
 	@ApiProperty({
 		type: String,
+		format: 'hex',
 		example: '#f542ec',
 	})
-	@IsNotEmpty()
-	@IsString()
+	@IsHexColor()
 	color: string;
 }
