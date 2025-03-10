@@ -1,13 +1,15 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InvitationStatus, Role, User } from '@prisma/client';
+import {
+	CreateCalendarDto,
+	UpdateCalendarDto,
+	CreateCalendarMemberDto,
+	UpdateCalendarMemberRoleDto,
+	UpdateCalendarMemberStatusDto,
+} from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
-import { CreateCalendarDto } from './dto/create-calendar.dto';
-import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
-import { CreateCalendarMemberDto } from './dto/create-calendar-member.dto';
-import { UpdateCalendarMemberRoleDto } from './dto/update-calendar-member-role.dto';
-import { UpdateCalendarMemberStatusDto } from './dto/update-calendar-member-status.dto';
 
 @Injectable()
 export class CalendarService {
@@ -80,7 +82,10 @@ export class CalendarService {
 			(u) => u.userId === currentUser.id
 		);
 
-		if (currentUserMembership?.role === Role.VIEWER) {
+		if (
+			currentUserMembership?.role === Role.VIEWER ||
+			currentUserMembership?.status !== InvitationStatus.ACCEPTED
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 
@@ -103,7 +108,10 @@ export class CalendarService {
 
 		const membership = calendar.users?.find((u) => u.userId === user.id);
 
-		if (membership?.role === Role.VIEWER) {
+		if (
+			membership?.role === Role.VIEWER ||
+			membership?.status !== InvitationStatus.ACCEPTED
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 
