@@ -51,4 +51,16 @@ export class RedisService {
 	async del(prefix: string, key: string | number): Promise<void> {
 		await this.client.del(`${prefix}:${key}`);
 	}
+
+	async incr(prefix: string, key: string | number): Promise<number> {
+		return this.client.incr(`${prefix}:${key}`);
+	}
+
+	async expire(
+		prefix: string,
+		key: string | number,
+		seconds: string | number
+	): Promise<void> {
+		await this.client.expire(`${prefix}:${key}`, seconds);
+	}
 }

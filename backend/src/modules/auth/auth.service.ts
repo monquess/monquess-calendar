@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
@@ -34,6 +39,10 @@ export class AuthService {
 	}
 
 	async login(user: User, res: Response): Promise<AuthResponseDto> {
+		if (!user.verified) {
+			throw new UnauthorizedException('User email is not verified');
+		}
+
 		const [accessToken, refreshToken] = await this.generateTokens({
 			sub: user.id,
 			email: user.email,
@@ -98,6 +107,7 @@ export class AuthService {
 		);
 
 		if (token !== resetToken) {
+			await this.checkResetPasswordRetries(email);
 			throw new BadRequestException('Invalid email or token');
 		}
 
@@ -110,6 +120,7 @@ export class AuthService {
 			},
 		});
 		await this.redis.del(TOKEN_PREFIXES.RESET_PASSWORD, email);
+		await this.redis.del(`reset-retries`, email);
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
@@ -202,6 +213,22 @@ export class AuthService {
 			secure: this.configService.get('NODE_ENV') === 'production',
 			maxAge: exp * 1000,
 		});
+	}
+
+	private async checkResetPasswordRetries(email: string) {
+		const prefix = `reset-retries`;
+		const retries = await this.redis.incr(prefix, email);
+
+		if (retries === 1) {
+			await this.redis.expire(prefix, email, 15 * 60);
+		}
+
+		if (retries > 5) {
+			await this.redis.del(TOKEN_PREFIXES.RESET_PASSWORD, email);
+			throw new ForbiddenException(
+				'Too many failed attempts. Try again later.'
+			);
+		}
 	}
 
 	private async generateTokens(payload: JwtPayload): Promise<[string, string]> {

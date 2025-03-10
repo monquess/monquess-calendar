@@ -9,6 +9,7 @@ import { RedisService } from '@modules/redis/redis.service';
 import { TOKEN_PREFIXES } from '../constants/token-prefixes.constant';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '@modules/prisma/prisma.service';
+import { COOKIE_NAMES } from '../constants/cookie-names.constant';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -23,7 +24,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 		super({
 			jwtFromRequest: ExtractJwt.fromExtractors([
 				(req: Request) => {
-					return req.cookies?.['refresh_token'] as string | null;
+					return req.cookies?.[COOKIE_NAMES.REFRESH_TOKEN] as string | null;
 				},
 			]),
 			ignoreExpiration: false,
@@ -48,7 +49,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 		}
 
 		const tokensMatch = await bcrypt.compare(
-			req.cookies['refresh_token'] as string,
+			req.cookies[COOKIE_NAMES.REFRESH_TOKEN] as string,
 			token
 		);
 

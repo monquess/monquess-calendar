@@ -33,6 +33,7 @@ import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { EmailVerifyDto } from './dto/email-verify.dto';
 import { SendEmailDto } from './dto/send-email.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RecaptchaGuard } from './guards/recaptcha.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -41,6 +42,7 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@ApiAuthRegister()
+	@UseGuards(RecaptchaGuard)
 	@Public()
 	@Post('register')
 	register(@Body() dto: RegisterDto): Promise<void> {
@@ -48,9 +50,9 @@ export class AuthController {
 	}
 
 	@ApiAuthLogin()
-	@UseGuards(LocalAuthGuard)
-	@HttpCode(HttpStatus.OK)
 	@Public()
+	@UseGuards(LocalAuthGuard, RecaptchaGuard)
+	@HttpCode(HttpStatus.OK)
 	@Post('login')
 	login(
 		@CurrentUser() user: User,
@@ -70,6 +72,7 @@ export class AuthController {
 	}
 
 	@ApiAuthRefresh()
+	@Public()
 	@UseGuards(JwtRefreshAuthGuard)
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh')
@@ -89,24 +92,24 @@ export class AuthController {
 	}
 
 	@ApiAuthVerifyEmail()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('verify-email')
 	async verifyEmail(@Body() { email, token }: EmailVerifyDto): Promise<void> {
 		return this.authService.verifyEmail(email, token);
 	}
 
 	@ApiAuthForgotPassword()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('forgot-password')
 	async sendPasswordResetEmail(@Body() { email }: SendEmailDto): Promise<void> {
 		return this.authService.sendPasswordResetEmail(email);
 	}
 
 	@ApiAuthResetPassword()
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Public()
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('reset-password')
 	async resetPassword(
 		@Body() { email, token, password }: ResetPasswordDto
