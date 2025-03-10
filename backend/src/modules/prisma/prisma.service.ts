@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaMiddleware } from './middlewares/prisma.middleware';
 
 @Injectable()
@@ -13,7 +13,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 	onModuleInit() {
 		this.$use(
-			this.prismaMiddleware.createCalendarOnNewUser.bind(this.prismaMiddleware)
+			this.prismaMiddleware.createCalendarOnNewUser.bind(
+				this.prismaMiddleware
+			) as Prisma.Middleware
 		);
 	}
 }

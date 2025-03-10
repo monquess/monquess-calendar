@@ -12,30 +12,26 @@ export class PrismaMiddleware {
 
 	async createCalendarOnNewUser(
 		params: Prisma.MiddlewareParams,
-		next: (params: Prisma.MiddlewareParams) => Promise<any>
-	): Promise<PrismaMiddleware> {
+		next: (params: Prisma.MiddlewareParams) => Promise<User>
+	): Promise<User> {
 		const result = await next(params);
 
-		if (params.model === 'User' && params.action === 'create') {
-			const user = result as User;
+		if (params.model === Prisma.ModelName.User && params.action === 'create') {
+			const user = result;
 
-			await this.prisma.$transaction(async (tx) => {
-				const calendar = await tx.calendar.create({
-					data: {
-						isPersonal: true,
-						name: user.username,
-						color: DEFAULT_CALENDAR_COLOR,
+			await this.prisma.calendar.create({
+				data: {
+					name: user.username,
+					color: DEFAULT_CALENDAR_COLOR,
+					isPersonal: true,
+					users: {
+						create: {
+							userId: user.id,
+							role: Role.OWNER,
+							status: InvitationStatus.ACCEPTED,
+						},
 					},
-				});
-
-				await tx.calendarMember.create({
-					data: {
-						userId: user.id,
-						calendarId: calendar.id,
-						role: Role.OWNER,
-						status: InvitationStatus.ACCEPTED,
-					},
-				});
+				},
 			});
 		}
 

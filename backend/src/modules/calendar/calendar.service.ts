@@ -54,21 +54,17 @@ export class CalendarService {
 		user: User,
 		createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
-		return await this.prisma.$transaction(async (tx) => {
-			const calendar = await tx.calendar.create({
-				data: createCalendarDto,
-			});
-
-			await tx.calendarMember.create({
-				data: {
-					userId: user.id,
-					calendarId: calendar.id,
-					role: Role.OWNER,
-					status: InvitationStatus.ACCEPTED,
+		return this.prisma.calendar.create({
+			data: {
+				...createCalendarDto,
+				users: {
+					create: {
+						userId: user.id,
+						role: Role.OWNER,
+						status: InvitationStatus.ACCEPTED,
+					},
 				},
-			});
-
-			return calendar;
+			},
 		});
 	}
 

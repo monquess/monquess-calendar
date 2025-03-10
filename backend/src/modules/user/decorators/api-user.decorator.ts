@@ -3,10 +3,12 @@ import {
 	ApiBadRequestResponse,
 	ApiBody,
 	ApiConflictResponse,
+	ApiConsumes,
 	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
+	ApiQuery,
 } from '@nestjs/swagger';
 import { FileUploadDto } from '@modules/user/dto/file-upload.dto';
 import { UpdatePasswordDto } from '@modules/user/dto/update-password.dto';
@@ -16,6 +18,16 @@ import { UserEntity } from '@modules/user/entities/user.entity';
 export const ApiUserFindAll = () =>
 	applyDecorators(
 		ApiOperation({ summary: 'Get all users' }),
+		ApiQuery({
+			name: 'username',
+			required: false,
+			type: String,
+		}),
+		ApiQuery({
+			name: 'email',
+			required: false,
+			type: String,
+		}),
 		ApiOkResponse({
 			type: [UserEntity],
 		})
@@ -69,6 +81,7 @@ export const ApiUserUpdateAvatar = () =>
 			name: 'id',
 			description: 'user id',
 		}),
+		ApiConsumes('multipart/form-data'),
 		ApiBody({
 			type: FileUploadDto,
 		}),
