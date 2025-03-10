@@ -8,6 +8,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JwtAccessStrategy } from './strategies/jwt-access.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 			inject: [ConfigService],
 		}),
 		UserModule,
+		HttpModule,
 	],
 	controllers: [AuthController],
 	providers: [

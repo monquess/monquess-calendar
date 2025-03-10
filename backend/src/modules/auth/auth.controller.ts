@@ -33,6 +33,7 @@ import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { EmailVerifyDto } from './dto/email-verify.dto';
 import { SendEmailDto } from './dto/send-email.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RecaptchaGuard } from './guards/recaptcha.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -41,6 +42,7 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@ApiAuthRegister()
+	@UseGuards(RecaptchaGuard)
 	@Public()
 	@Post('register')
 	register(@Body() dto: RegisterDto): Promise<void> {
@@ -49,7 +51,7 @@ export class AuthController {
 
 	@ApiAuthLogin()
 	@Public()
-	@UseGuards(LocalAuthGuard)
+	@UseGuards(LocalAuthGuard, RecaptchaGuard)
 	@HttpCode(HttpStatus.OK)
 	@Post('login')
 	login(

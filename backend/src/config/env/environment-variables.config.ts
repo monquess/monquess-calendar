@@ -78,26 +78,28 @@ export class EnvironmentVariables {
 	readonly JWT_REFRESH_EXPIRATION: number;
 
 	@IsString()
-	MAIL_HOST: string;
+	readonly MAIL_HOST: string;
 
 	@IsNumber()
+	@Min(0)
+	@Max(65535)
 	@Transform(({ value }) => Number(value))
-	MAIL_PORT: number;
+	readonly MAIL_PORT: number;
 
 	@IsString()
-	MAIL_USERNAME: string;
+	readonly MAIL_USERNAME: string;
 
 	@IsString()
-	MAIL_PASSWORD: string;
+	readonly MAIL_PASSWORD: string;
 
 	@IsBoolean()
-	MAIL_ENCRYPTION: boolean;
+	readonly MAIL_ENCRYPTION: boolean;
 
 	@IsString()
-	MAIL_FROM_ADDRESS: string;
+	readonly MAIL_FROM_ADDRESS: string;
 
 	@IsString()
-	MAIL_FROM_NAME: string;
+	readonly MAIL_FROM_NAME: string;
 
 	@IsString()
 	readonly S3_ACCESS_KEY_ID: string;
@@ -116,6 +118,9 @@ export class EnvironmentVariables {
 
 	@IsString()
 	readonly DEFAULT_AVATAR_PATH: string;
+
+	@IsString()
+	readonly GOOGLE_RECAPTCHA_SITE_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
