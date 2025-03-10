@@ -11,6 +11,7 @@ import { MailOptions } from './mail/interfaces/mail-options.interface';
 import * as path from 'path';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 			}),
 			inject: [ConfigService],
 		}),
+		CalendarModule,
 	],
 	providers: [
 		{

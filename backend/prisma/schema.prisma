@@ -8,15 +8,53 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique @db.VarChar(255)
-  email    String  @unique @db.VarChar(255)
-  password String  @db.VarChar(60)
-  verified Boolean @default(false)
-  avatar   String
+  id                  Int              @id @default(autoincrement())
+  username            String           @unique @db.VarChar(255)
+  email               String           @unique @db.VarChar(255)
+  password            String           @db.VarChar(60)
+  verified            Boolean          @default(false)
+  avatar              String
+  calendarMemberships CalendarMember[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model Calendar {
+  id          Int              @id @default(autoincrement())
+  isPersonal  Boolean          @default(false) @map("is_personal")
+  name        String           @db.VarChar(255)
+  description String?
+  color       String           @db.VarChar(7)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  users       CalendarMember[]
+
+  @@map("calendars")
+}
+
+model CalendarMember {
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int              @map("user_id")
+  calendar   Calendar         @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  calendarId Int              @map("calendar_id")
+  role       Role             @default(VIEWER)
+  status     InvitationStatus
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  @@id([userId, calendarId])
+  @@map("calendar_members")
+}
+
+enum Role {
+  VIEWER
+  EDITOR
+  OWNER
+}
+
+enum InvitationStatus {
+  INVITED
+  ACCEPTED
+  DECLINED
 }
