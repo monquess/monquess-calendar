@@ -4,7 +4,7 @@ import { Button, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { API_BASE_URL } from '@/helpers/backend-port'
+import { config } from '@/config/config'
 import { emailSchema } from '@/helpers/validations/reset-password-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import ResetPasswordModal from './modals/reset-password-modal'
@@ -28,7 +28,7 @@ const PasswordResetForm: React.FC = React.memo(() => {
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
 			setLoading(true)
-			await axios.post(`${API_BASE_URL}/auth/forgot-password`, {
+			await axios.post(`${config.API_BASE_URL}/auth/forgot-password`, {
 				email: values.email,
 			})
 			setRegisteredEmail(values.email)
@@ -58,7 +58,7 @@ const PasswordResetForm: React.FC = React.memo(() => {
 
 	const handleSend = async (token: string, password: string) => {
 		try {
-			await axios.post(`${API_BASE_URL}/auth/reset-password`, {
+			await axios.post(`${config.API_BASE_URL}/auth/reset-password`, {
 				token,
 				email: registeredEmail,
 				password,

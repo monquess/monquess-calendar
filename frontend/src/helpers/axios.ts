@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { API_BASE_URL } from './backend-port'
+import { config } from '@/config/config'
 import useStore from './store'
 
 const apiClient = axios.create({
-	baseURL: API_BASE_URL,
+	baseURL: config.API_BASE_URL,
 	withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
 			originalRequest._retry = true
 
 			try {
-				const response = await axios.post(`${API_BASE_URL}/auth/refresh`)
+				const response = await axios.post(`${config.API_BASE_URL}/auth/refresh`)
 				const newAccessToken = response.data.accessToken
 				useStore.getState().updateToken(newAccessToken)
 				originalRequest.headers.Authorization = `Bearer ${newAccessToken}`

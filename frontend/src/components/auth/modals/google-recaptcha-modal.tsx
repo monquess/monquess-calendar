@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Stack, useMantineColorScheme } from '@mantine/core'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { config } from '@/config/config'
 
 interface GoogleRecaptchaModalProps {
 	opened: boolean
@@ -16,7 +17,6 @@ const GoogleRecaptchaModal: React.FC<GoogleRecaptchaModalProps> = ({
 	ref,
 }) => {
 	const { colorScheme } = useMantineColorScheme()
-	const sitekey = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY
 
 	return (
 		<Modal
@@ -30,7 +30,7 @@ const GoogleRecaptchaModal: React.FC<GoogleRecaptchaModalProps> = ({
 			<Stack align="center" justify="center" style={{ padding: 5 }}>
 				<ReCAPTCHA
 					theme={colorScheme === 'dark' ? 'dark' : 'light'}
-					sitekey={sitekey}
+					sitekey={config.GOOGLE_RECAPTCHA_SITE_KEY}
 					ref={ref}
 					onChange={onSubmit}
 				/>

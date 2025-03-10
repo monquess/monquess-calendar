@@ -12,7 +12,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { API_BASE_URL } from '@/helpers/backend-port'
+import { config } from '@/config/config'
 import { registerSchema } from '@/helpers/validations/register-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import VerificationCodeModal from './modals/verify-code-modal'
@@ -61,7 +61,7 @@ const RegisterForm: React.FC = React.memo(() => {
 			try {
 				setLoading(true)
 				await axios.post(
-					`${API_BASE_URL}/auth/register`,
+					`${config.API_BASE_URL}/auth/register`,
 					{
 						username: values.fullname,
 						email: values.email,
@@ -101,7 +101,7 @@ const RegisterForm: React.FC = React.memo(() => {
 
 	const handleVerify = async (token: string) => {
 		try {
-			await axios.post(`${API_BASE_URL}/auth/verify-email`, {
+			await axios.post(`${config.API_BASE_URL}/auth/verify-email`, {
 				token,
 				email: registeredEmail,
 			})

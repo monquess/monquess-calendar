@@ -13,7 +13,7 @@ import {
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { API_BASE_URL } from '@/helpers/backend-port'
+import { config } from '@/config/config'
 import useStore from '@/helpers/store'
 import { useResponsive } from '@/hooks/use-responsive'
 
@@ -33,7 +33,7 @@ const LoginForm: React.FC = React.memo(() => {
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
 			setLoading(true)
-			const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+			const response = await axios.post(`${config.API_BASE_URL}/auth/login`, {
 				email: values.email,
 				password: values.password,
 			})

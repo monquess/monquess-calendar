@@ -11,7 +11,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { API_BASE_URL } from '@/helpers/backend-port'
+import { config } from '@/config/config'
 import { verifyCodeSchema } from '@/helpers/validations/verify-code-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 
@@ -57,7 +57,7 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 	const resendCode = async () => {
 		try {
 			setLoadingResend(true)
-			await axios.post(`${API_BASE_URL}/auth/send-verification`, {
+			await axios.post(`${config.API_BASE_URL}/auth/send-verification`, {
 				email,
 			})
 			notifications.show({

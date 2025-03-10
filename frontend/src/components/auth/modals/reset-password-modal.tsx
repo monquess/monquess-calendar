@@ -12,7 +12,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { API_BASE_URL } from '@/helpers/backend-port'
+import { config } from '@/config/config'
 import { resetPasswordSchema } from '@/helpers/validations/reset-password-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 
@@ -60,7 +60,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 	const resendCode = async () => {
 		try {
 			setLoadingResend(true)
-			await axios.post(`${API_BASE_URL}/auth/forgot-password`, {
+			await axios.post(`${config.API_BASE_URL}/auth/forgot-password`, {
 				email,
 			})
 			form.reset()
