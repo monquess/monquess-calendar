@@ -15,15 +15,21 @@ import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from '../../helpers/backend-port'
 import { registerSchema } from '../../helpers/validations/register-schema'
 import { useResponsive } from '../../hooks/use-responsive'
-import VerificationCodeModal from './verify-code-modal'
+import VerificationCodeModal from './modals/verify-code-modal'
+import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
+
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const RegisterForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
 		React.useState(false)
+	const [recaptchaModalOpened, setRecaptchaModalOpened] = React.useState(false)
 	const [registeredEmail, setRegisteredEmail] = React.useState('')
 	const [loading, setLoading] = useState<boolean>(false)
+
+	const recaptcha = React.useRef<ReCAPTCHA>(null)
 
 	const form = useForm({
 		mode: 'uncontrolled',
@@ -36,36 +42,60 @@ const RegisterForm: React.FC = React.memo(() => {
 		},
 	})
 
+	const handleCaptchaSubmit = () => {
+		const values = form.getValues()
+		handleSubmit(values)
+		setRecaptchaModalOpened(false)
+	}
+
 	const handleSubmit = async (values: typeof form.values) => {
-		try {
-			setLoading(true)
-			await axios.post(`${API_BASE_URL}/auth/register`, {
-				username: values.fullname,
-				email: values.email,
-				password: values.password,
-			})
-			setRegisteredEmail(values.email)
-			setVerificationModalOpened(true)
-			form.reset()
+		if (!recaptcha.current?.getValue()) {
 			notifications.show({
 				title: 'Register',
-				message: 'Register successfully, now you need to verify your account',
+				message: 'Please submit Captcha',
 				withCloseButton: true,
 				autoClose: 5000,
-				color: 'green',
+				color: 'red',
 			})
-		} catch (error) {
-			if (error instanceof AxiosError && error.response) {
+		} else {
+			try {
+				setLoading(true)
+				await axios.post(
+					`${API_BASE_URL}/auth/register`,
+					{
+						username: values.fullname,
+						email: values.email,
+						password: values.password,
+					},
+					{
+						headers: {
+							'x-recaptcha-token': recaptcha.current.getValue(),
+						},
+					}
+				)
+				setRegisteredEmail(values.email)
+				setVerificationModalOpened(true)
+				form.reset()
 				notifications.show({
 					title: 'Register',
-					message: error.response.data.message,
+					message: 'Register successfully, now you need to verify your account',
 					withCloseButton: true,
 					autoClose: 5000,
-					color: 'red',
+					color: 'green',
 				})
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Register',
+						message: error.response.data.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
 			}
-		} finally {
-			setLoading(false)
 		}
 	}
 
@@ -98,7 +128,12 @@ const RegisterForm: React.FC = React.memo(() => {
 
 	return (
 		<>
-			<form onSubmit={form.onSubmit(handleSubmit)}>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault()
+					setRecaptchaModalOpened(true)
+				}}
+			>
 				<TextInput
 					label="Username"
 					required
@@ -178,6 +213,12 @@ const RegisterForm: React.FC = React.memo(() => {
 				onClose={() => setVerificationModalOpened(false)}
 				email={registeredEmail}
 				onVerify={handleVerify}
+			/>
+			<GoogleRecaptchaModal
+				opened={recaptchaModalOpened}
+				onClose={() => setRecaptchaModalOpened(false)}
+				ref={recaptcha}
+				onSubmit={handleCaptchaSubmit}
 			/>
 		</>
 	)

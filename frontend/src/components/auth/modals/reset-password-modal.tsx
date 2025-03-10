@@ -3,6 +3,7 @@ import {
 	Group,
 	LoadingOverlay,
 	Modal,
+	PasswordInput,
 	PinInput,
 	Stack,
 	Text,
@@ -11,55 +12,58 @@ import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
 import React from 'react'
-import { API_BASE_URL } from '../../helpers/backend-port'
-import { verifyCodeSchema } from '../../helpers/validations/verify-code-schema'
-import { useResponsive } from '../../hooks/use-responsive'
+import { API_BASE_URL } from '../../../helpers/backend-port'
+import { resetPasswordSchema } from '../../../helpers/validations/reset-password-schema'
+import { useResponsive } from '../../../hooks/use-responsive'
 
-interface VerificationCodeModalProps {
+interface ResetPasswordModalProps {
 	opened: boolean
 	onClose: () => void
 	email: string
-	onVerify: (code: string) => Promise<void>
+	onSend: (token: string, password: string) => Promise<void>
 }
 
-const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
+const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 	opened,
 	onClose,
 	email,
-	onVerify,
+	onSend,
 }) => {
 	const { isMobile } = useResponsive()
 	const [loading, setLoading] = React.useState(false)
 	const [loadingResend, setLoadingResend] = React.useState(false)
-	const [loadingVerify, setLoadingVerify] = React.useState(false)
+	const [loadingPasswordReset, setLoadingPasswordReset] = React.useState(false)
 
 	const form = useForm({
 		initialValues: {
 			code: '',
+			password: '',
+			confirmPassword: '',
 		},
-		validate: zodResolver(verifyCodeSchema),
+		validate: zodResolver(resetPasswordSchema),
 	})
 
-	const handleSubmit = async (values: { code: string }) => {
+	const handleSubmit = async (values: typeof form.values) => {
 		try {
-			setLoadingVerify(true)
+			setLoadingPasswordReset(true)
 			setLoading(true)
-			await onVerify(values.code)
+			await onSend(values.code, values.password)
 			form.reset()
 		} catch {
 			form.setFieldError('code', 'Invalid verification code')
 		} finally {
 			setLoading(false)
-			setLoadingVerify(false)
+			setLoadingPasswordReset(false)
 		}
 	}
 
 	const resendCode = async () => {
 		try {
 			setLoadingResend(true)
-			await axios.post(`${API_BASE_URL}/auth/send-verification`, {
+			await axios.post(`${API_BASE_URL}/auth/forgot-password`, {
 				email,
 			})
+			form.reset()
 			notifications.show({
 				title: 'Resend email with verify code',
 				message:
@@ -79,17 +83,16 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 				})
 			}
 		} finally {
-			setLoadingResend(false)
+			setLoadingPasswordReset(false)
 		}
 	}
 	return (
 		<Modal
 			opened={opened}
 			onClose={onClose}
-			title="Verify your email"
+			title="Reset your password"
 			size={isMobile ? 'sm' : 'md'}
 			centered
-			withCloseButton={false}
 			closeOnClickOutside={false}
 			closeOnEscape={false}
 		>
@@ -98,7 +101,7 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 					<LoadingOverlay visible={loading} />
 					<Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="unset">
 						We've sent a verification code to {email}. Please enter the code
-						below to verify your account.
+						below to reset your password.
 					</Text>
 
 					<PinInput
@@ -107,6 +110,22 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 						{...form.getInputProps('code')}
 						inputMode="text"
 						mx="auto"
+					/>
+					<PasswordInput
+						label="Password"
+						required
+						mt="xs"
+						size={isMobile ? 'sm' : 'md'}
+						key={form.key('password')}
+						{...form.getInputProps('password')}
+					/>
+					<PasswordInput
+						label="Confirm password"
+						required
+						mt="xs"
+						size={isMobile ? 'sm' : 'md'}
+						key={form.key('confirmPassword')}
+						{...form.getInputProps('confirmPassword')}
 					/>
 					<Group mt="md" justify="space-between">
 						<Button
@@ -120,9 +139,9 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 						<Button
 							type="submit"
 							size={isMobile ? 'sm' : 'md'}
-							loading={loadingVerify}
+							loading={loadingPasswordReset}
 						>
-							Verify
+							Change password
 						</Button>
 					</Group>
 				</Stack>
@@ -131,4 +150,4 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 	)
 }
 
-export default VerificationCodeModal
+export default ResetPasswordModal

@@ -4,12 +4,12 @@ import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../../helpers/backend-port'
-import { emailSchema } from '../../helpers/validations/reset-password-schema'
-import { useResponsive } from '../../hooks/use-responsive'
+import { API_BASE_URL } from '../../../helpers/backend-port'
+import { emailSchema } from '../../../helpers/validations/reset-password-schema'
+import { useResponsive } from '../../../hooks/use-responsive'
 import VerificationCodeModal from './verify-code-modal'
 
-const VerifyAccForm: React.FC = React.memo(() => {
+const VerifyAccountForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -115,4 +115,4 @@ const VerifyAccForm: React.FC = React.memo(() => {
 	)
 })
 
-export default VerifyAccForm
+export default VerifyAccountForm

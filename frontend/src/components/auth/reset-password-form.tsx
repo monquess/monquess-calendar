@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from '../../helpers/backend-port'
 import { emailSchema } from '../../helpers/validations/reset-password-schema'
 import { useResponsive } from '../../hooks/use-responsive'
-import ResetPasswordModal from './reset-password-modal'
+import ResetPasswordModal from './modals/reset-password-modal'
 
 const PasswordResetForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()
