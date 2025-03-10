@@ -1,9 +1,9 @@
-import { Box, Paper, Title } from '@mantine/core'
 import React from 'react'
-import LoginForm from '../../components/auth/login-form'
-import Footer from '../../components/general/footer'
-import Header from '../../components/general/header'
-import { useResponsive } from '../../hooks/use-responsive'
+import { Box, Paper, Title } from '@mantine/core'
+import LoginForm from '@/components/auth/login-form'
+import Footer from '@/components/general/footer'
+import Header from '@/components/general/header'
+import { useResponsive } from '@/hooks/use-responsive'
 
 const LoginPage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

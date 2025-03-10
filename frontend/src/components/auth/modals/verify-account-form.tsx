@@ -1,12 +1,12 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../../../helpers/backend-port'
-import { emailSchema } from '../../../helpers/validations/reset-password-schema'
-import { useResponsive } from '../../../hooks/use-responsive'
+import { API_BASE_URL } from '@/helpers/backend-port'
+import { emailSchema } from '@/helpers/validations/reset-password-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import VerificationCodeModal from './verify-code-modal'
 
 const VerifyAccountForm: React.FC = React.memo(() => {

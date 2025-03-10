@@ -1,3 +1,4 @@
+import React from 'react'
 import { Modal, Stack, useMantineColorScheme } from '@mantine/core'
 import ReCAPTCHA from 'react-google-recaptcha'
 

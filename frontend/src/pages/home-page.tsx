@@ -1,7 +1,7 @@
-import { Button } from '@mantine/core'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import useStore from '../helpers/store'
+import { Button } from '@mantine/core'
+import useStore from '@/helpers/store'
 
 const HomePage: React.FC = React.memo(() => {
 	const { user } = useStore()

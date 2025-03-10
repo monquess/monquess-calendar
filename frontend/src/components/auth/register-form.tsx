@@ -1,3 +1,6 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { FaGoogle } from 'react-icons/fa'
 import {
 	Button,
 	Divider,
@@ -9,12 +12,9 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import { FaGoogle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../../helpers/backend-port'
-import { registerSchema } from '../../helpers/validations/register-schema'
-import { useResponsive } from '../../hooks/use-responsive'
+import { API_BASE_URL } from '@/helpers/backend-port'
+import { registerSchema } from '@/helpers/validations/register-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import VerificationCodeModal from './modals/verify-code-modal'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 

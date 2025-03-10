@@ -1,11 +1,11 @@
-import { Box, Paper, Text, Title } from '@mantine/core'
 import React from 'react'
-import { FaArrowLeft } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import PasswordResetForm from '../../components/auth/reset-password-form'
-import Footer from '../../components/general/footer'
-import Header from '../../components/general/header'
-import { useResponsive } from '../../hooks/use-responsive'
+import { FaArrowLeft } from 'react-icons/fa'
+import { Box, Paper, Text, Title } from '@mantine/core'
+import PasswordResetForm from '@/components/auth/reset-password-form'
+import Footer from '@/components/general/footer'
+import Header from '@/components/general/header'
+import { useResponsive } from '@/hooks/use-responsive'
 
 const ResetPasswordPage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

@@ -1,3 +1,6 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { FaGoogle } from 'react-icons/fa'
 import {
 	Button,
 	Divider,
@@ -10,12 +13,9 @@ import {
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import { FaGoogle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL } from '../../helpers/backend-port'
-import useStore from '../../helpers/store'
-import { useResponsive } from '../../hooks/use-responsive'
+import { API_BASE_URL } from '@/helpers/backend-port'
+import useStore from '@/helpers/store'
+import { useResponsive } from '@/hooks/use-responsive'
 
 const LoginForm: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

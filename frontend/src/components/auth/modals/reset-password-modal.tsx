@@ -1,3 +1,4 @@
+import React from 'react'
 import {
 	Button,
 	Group,
@@ -11,10 +12,9 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import React from 'react'
-import { API_BASE_URL } from '../../../helpers/backend-port'
-import { resetPasswordSchema } from '../../../helpers/validations/reset-password-schema'
-import { useResponsive } from '../../../hooks/use-responsive'
+import { API_BASE_URL } from '@/helpers/backend-port'
+import { resetPasswordSchema } from '@/helpers/validations/reset-password-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface ResetPasswordModalProps {
 	opened: boolean

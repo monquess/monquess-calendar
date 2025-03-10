@@ -1,6 +1,6 @@
-import { Box, Switch, useMantineColorScheme } from '@mantine/core'
 import React from 'react'
 import { IoMoonOutline, IoSunnyOutline } from 'react-icons/io5'
+import { Box, Switch, useMantineColorScheme } from '@mantine/core'
 
 const ThemeSwitch: React.FC = () => {
 	const { colorScheme, toggleColorScheme } = useMantineColorScheme()
