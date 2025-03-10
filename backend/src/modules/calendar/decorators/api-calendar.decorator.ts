@@ -13,6 +13,10 @@ import {
 import { CalendarEntity } from '../entities/calendar.entity';
 import { CreateCalendarDto } from '../dto/create-calendar.dto';
 import { UpdateCalendarDto } from '../dto/update-calendar.dto';
+import { CreateCalendarMemberDto } from '../dto/create-calendar-member.dto';
+import { UpdateCalendarMemberRoleDto } from '../dto/update-calendar-member-role.dto';
+import { CalendarMemberEntity } from '../entities/calendar-member.entity';
+import { UpdateCalendarMemberStatusDto } from '../dto/update-calendar-member-status.dto';
 
 export const ApiCalendarFindAll = () =>
 	applyDecorators(
@@ -45,6 +49,30 @@ export const ApiCalendarCreate = () =>
 		ApiCreatedResponse({ type: CalendarEntity })
 	);
 
+export const ApiCalendarMemberCreate = () =>
+	applyDecorators(
+		ApiBearerAuth(),
+		ApiOperation({ summary: 'Create calendar member' }),
+		ApiParam({
+			name: 'calendarId',
+			description: 'calendar id',
+		}),
+		ApiParam({
+			name: 'userId',
+			description: 'user id',
+		}),
+		ApiBody({
+			type: CreateCalendarMemberDto,
+		}),
+		ApiCreatedResponse({ type: CalendarMemberEntity }),
+		ApiNotFoundResponse({
+			description: 'Calendar not found | User not found',
+		}),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		})
+	);
+
 export const ApiCalendarUpdate = () =>
 	applyDecorators(
 		ApiBearerAuth(),
@@ -65,6 +93,54 @@ export const ApiCalendarUpdate = () =>
 		})
 	);
 
+export const ApiCalendarMemberUpdateRole = () =>
+	applyDecorators(
+		ApiBearerAuth(),
+		ApiOperation({ summary: 'Update calendar member role' }),
+		ApiParam({
+			name: 'calendarId',
+			description: 'calendar id',
+		}),
+		ApiParam({
+			name: 'userId',
+			description: 'user id',
+		}),
+		ApiBody({
+			type: UpdateCalendarMemberRoleDto,
+		}),
+		ApiOkResponse({ type: CalendarMemberEntity }),
+		ApiNotFoundResponse({
+			description: 'Calendar not found | User not found',
+		}),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		})
+	);
+
+export const ApiCalendarMemberUpdateStatus = () =>
+	applyDecorators(
+		ApiBearerAuth(),
+		ApiOperation({ summary: 'Update calendar member status' }),
+		ApiParam({
+			name: 'calendarId',
+			description: 'calendar id',
+		}),
+		ApiParam({
+			name: 'userId',
+			description: 'user id',
+		}),
+		ApiBody({
+			type: UpdateCalendarMemberStatusDto,
+		}),
+		ApiOkResponse({ type: CalendarMemberEntity }),
+		ApiNotFoundResponse({
+			description: 'Calendar not found | User not found',
+		}),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		})
+	);
+
 export const ApiCalendarRemove = () =>
 	applyDecorators(
 		ApiBearerAuth(),
@@ -76,6 +152,27 @@ export const ApiCalendarRemove = () =>
 		ApiNoContentResponse(),
 		ApiNotFoundResponse({
 			description: 'Calendar not found',
+		}),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		})
+	);
+
+export const ApiCalendarMemberRemove = () =>
+	applyDecorators(
+		ApiBearerAuth(),
+		ApiOperation({ summary: 'Delete calendar member' }),
+		ApiParam({
+			name: 'calendarId',
+			description: 'calendar id',
+		}),
+		ApiParam({
+			name: 'userId',
+			description: 'user id',
+		}),
+		ApiNoContentResponse(),
+		ApiNotFoundResponse({
+			description: 'Calendar not found | User not found',
 		}),
 		ApiForbiddenResponse({
 			description: 'Access denied',

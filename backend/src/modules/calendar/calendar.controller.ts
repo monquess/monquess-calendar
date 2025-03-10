@@ -23,9 +23,17 @@ import {
 	ApiCalendarCreate,
 	ApiCalendarFindAll,
 	ApiCalendarFindById,
+	ApiCalendarMemberCreate,
+	ApiCalendarMemberRemove,
+	ApiCalendarMemberUpdateRole,
+	ApiCalendarMemberUpdateStatus,
 	ApiCalendarRemove,
 	ApiCalendarUpdate,
 } from './decorators/api-calendar.decorator';
+import { CalendarMemberEntity } from './entities/calendar-member.entity';
+import { UpdateCalendarMemberRoleDto } from './dto/update-calendar-member-role.dto';
+import { CreateCalendarMemberDto } from './dto/create-calendar-member.dto';
+import { UpdateCalendarMemberStatusDto } from './dto/update-calendar-member-status.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })
@@ -57,6 +65,22 @@ export class CalendarController {
 		return this.calendarService.create(user, createCalendarDto);
 	}
 
+	@ApiCalendarMemberCreate()
+	@Post(':calendarId/users/:userId')
+	createCalendarMember(
+		@Param('calendarId', ParseIntPipe) calendarId: number,
+		@Param('userId', ParseIntPipe) targetUserId: number,
+		@CurrentUser() currentUser: User,
+		@Body() createCalendarMemberDto: CreateCalendarMemberDto
+	): Promise<CalendarMemberEntity> {
+		return this.calendarService.createCalendarMember(
+			calendarId,
+			targetUserId,
+			currentUser,
+			createCalendarMemberDto
+		);
+	}
+
 	@ApiCalendarUpdate()
 	@Patch(':id')
 	update(
@@ -67,6 +91,38 @@ export class CalendarController {
 		return this.calendarService.update(id, user, updateCalendarDto);
 	}
 
+	@ApiCalendarMemberUpdateRole()
+	@Patch(':calendarId/users/:userId/role')
+	updateCalendarMemberRole(
+		@Param('calendarId', ParseIntPipe) calendarId: number,
+		@Param('userId', ParseIntPipe) targetUserId: number,
+		@CurrentUser() currentUser: User,
+		@Body() updateCalendarMemberRoleDto: UpdateCalendarMemberRoleDto
+	): Promise<CalendarMemberEntity> {
+		return this.calendarService.updateCalendarMemberRole(
+			calendarId,
+			targetUserId,
+			currentUser,
+			updateCalendarMemberRoleDto
+		);
+	}
+
+	@ApiCalendarMemberUpdateStatus()
+	@Patch(':calendarId/users/:userId/status')
+	updateCalendarMemberStatus(
+		@Param('calendarId', ParseIntPipe) calendarId: number,
+		@Param('userId', ParseIntPipe) targetUserId: number,
+		@CurrentUser() currentUser: User,
+		@Body() updateCalendarMemberStatusDto: UpdateCalendarMemberStatusDto
+	): Promise<CalendarMemberEntity> {
+		return this.calendarService.updateCalendarMemberStatus(
+			calendarId,
+			targetUserId,
+			currentUser,
+			updateCalendarMemberStatusDto
+		);
+	}
+
 	@ApiCalendarRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete(':id')
@@ -75,5 +131,20 @@ export class CalendarController {
 		@CurrentUser() user: User
 	): Promise<void> {
 		return this.calendarService.remove(id, user);
+	}
+
+	@ApiCalendarMemberRemove()
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Delete(':calendarId/users/:userId')
+	removeCalendarMember(
+		@Param('calendarId', ParseIntPipe) calendarId: number,
+		@Param('userId', ParseIntPipe) targetUserId: number,
+		@CurrentUser() currentUser: User
+	): Promise<void> {
+		return this.calendarService.removeCalendarMember(
+			calendarId,
+			targetUserId,
+			currentUser
+		);
 	}
 }
