@@ -1,20 +1,31 @@
+import Navbar from '@/components/general/navbar'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import FullCalendar from '@fullcalendar/react'
+import { Flex, Paper } from '@mantine/core'
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from '@mantine/core'
-import useStore from '@/helpers/store'
 
 const HomePage: React.FC = React.memo(() => {
-	const { user } = useStore()
 	return (
-		<div>
-			<h1>Home Page. Hello {user?.username}</h1>
-			<Button>
-				<Link to="/login">Login</Link>
-			</Button>
-			<Button>
-				<Link to="/register">Register</Link>
-			</Button>
-		</div>
+		<Flex h="100vh">
+			<Navbar />
+			<Paper flex={1}>
+				<FullCalendar
+					firstDay={1}
+					plugins={[dayGridPlugin]}
+					headerToolbar={{
+						left: 'today prev,next',
+						center: 'title',
+						right: 'dayGridMonth,timeGridWeek,timeGridDay',
+					}}
+					initialView="dayGridMonth"
+					editable={true}
+					selectable={true}
+					selectMirror={true}
+					dayMaxEvents={true}
+					height="100%"
+				/>
+			</Paper>
+		</Flex>
 	)
 })
 
