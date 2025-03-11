@@ -55,7 +55,7 @@ export class CalendarService {
 	}
 
 	async create(
-		user: User,
+		currentUser: User,
 		createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
 		return this.prisma.calendar.create({
@@ -63,7 +63,7 @@ export class CalendarService {
 				...createCalendarDto,
 				users: {
 					create: {
-						userId: user.id,
+						userId: currentUser.id,
 						role: Role.OWNER,
 						status: InvitationStatus.ACCEPTED,
 					},
@@ -71,25 +71,6 @@ export class CalendarService {
 			},
 		});
 	}
-
-	// async createEvent(
-	// 	id: number,
-	// 	createCalendarDto: CreateEventDto,
-	// 	user: User
-	// ): Promise<EventEntity> {
-	// 	return this.prisma.calendar.create({
-	// 		data: {
-	// 			...createCalendarDto,
-	// 			users: {
-	// 				create: {
-	// 					userId: user.id,
-	// 					role: Role.OWNER,
-	// 					status: InvitationStatus.ACCEPTED,
-	// 				},
-	// 			},
-	// 		},
-	// 	});
-	// }
 
 	async createCalendarMember(
 		calendarId: number,
@@ -100,7 +81,7 @@ export class CalendarService {
 		const calendar = await this.findById(calendarId, currentUser);
 
 		const currentUserMembership = calendar.users?.find(
-			(u) => u.userId === currentUser.id
+			(user) => user.userId === currentUser.id
 		);
 
 		if (
@@ -122,12 +103,14 @@ export class CalendarService {
 
 	async update(
 		id: number,
-		user: User,
+		currentUser: User,
 		updateCalendarDto: UpdateCalendarDto
 	): Promise<CalendarEntity> {
-		const calendar = await this.findById(id, user);
+		const calendar = await this.findById(id, currentUser);
 
-		const membership = calendar.users?.find((u) => u.userId === user.id);
+		const membership = calendar.users?.find(
+			(user) => user.userId === currentUser.id
+		);
 
 		if (
 			membership?.role === Role.VIEWER ||
@@ -151,7 +134,7 @@ export class CalendarService {
 		const calendar = await this.findById(calendarId, currentUser);
 
 		const currentUserMembership = calendar.users?.find(
-			(u) => u.userId === currentUser.id
+			(user) => user.userId === currentUser.id
 		);
 
 		if (currentUserMembership?.role !== Role.OWNER) {
@@ -194,9 +177,11 @@ export class CalendarService {
 		});
 	}
 
-	async remove(id: number, user: User): Promise<void> {
-		const calendar = await this.findById(id, user);
-		const membership = calendar.users?.find((u) => u.userId === user.id);
+	async remove(id: number, currentUser: User): Promise<void> {
+		const calendar = await this.findById(id, currentUser);
+		const membership = calendar.users?.find(
+			(user) => user.userId === currentUser.id
+		);
 
 		if (calendar.isPersonal || membership?.role !== Role.OWNER) {
 			throw new ForbiddenException('Access denied');
@@ -213,10 +198,10 @@ export class CalendarService {
 		const calendar = await this.findById(calendarId, currentUser);
 
 		const currentUserMembership = calendar.users?.find(
-			(u) => u.userId === currentUser.id
+			(user) => user.userId === currentUser.id
 		);
 		const targetUserMembership = calendar.users?.find(
-			(u) => u.userId === targetUserId
+			(user) => user.userId === targetUserId
 		);
 
 		if (calendar.isPersonal && targetUserMembership?.role === Role.OWNER) {
