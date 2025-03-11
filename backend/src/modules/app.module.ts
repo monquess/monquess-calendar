@@ -12,6 +12,7 @@ import * as path from 'path';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CalendarModule } from './calendar/calendar.module';
+import { EventModule } from './event/event.module';
 
 @Module({
 	imports: [
@@ -53,6 +54,7 @@ import { CalendarModule } from './calendar/calendar.module';
 			inject: [ConfigService],
 		}),
 		CalendarModule,
+		EventModule,
 	],
 	providers: [
 		{

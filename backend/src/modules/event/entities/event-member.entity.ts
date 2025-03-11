@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { InvitationStatus, Role } from '@prisma/client';
 
-export class CalendarMemberEntity {
+export class EventMemberEntity {
 	@ApiProperty({
 		type: Number,
 		example: 1,
@@ -28,7 +28,7 @@ export class CalendarMemberEntity {
 	})
 	createdAt: Date;
 
-	constructor(partial: Partial<CalendarMemberEntity>) {
+	constructor(partial: Partial<EventMemberEntity>) {
 		Object.assign(this, partial);
 	}
 }

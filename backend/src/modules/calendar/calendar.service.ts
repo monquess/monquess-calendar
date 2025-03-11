@@ -25,7 +25,11 @@ export class CalendarService {
 				},
 			},
 			include: {
-				users: true,
+				users: {
+					omit: {
+						calendarId: true,
+					},
+				},
 			},
 		});
 	}
@@ -33,21 +37,19 @@ export class CalendarService {
 	async findById(id: number, user: User): Promise<CalendarEntity> {
 		return this.prisma.calendar.findFirstOrThrow({
 			where: {
-				AND: [
-					{
-						id,
+				id,
+				users: {
+					some: {
+						userId: user.id,
 					},
-					{
-						users: {
-							some: {
-								userId: user.id,
-							},
-						},
-					},
-				],
+				},
 			},
 			include: {
-				users: true,
+				users: {
+					omit: {
+						calendarId: true,
+					},
+				},
 			},
 		});
 	}
@@ -69,6 +71,25 @@ export class CalendarService {
 			},
 		});
 	}
+
+	// async createEvent(
+	// 	id: number,
+	// 	createCalendarDto: CreateEventDto,
+	// 	user: User
+	// ): Promise<EventEntity> {
+	// 	return this.prisma.calendar.create({
+	// 		data: {
+	// 			...createCalendarDto,
+	// 			users: {
+	// 				create: {
+	// 					userId: user.id,
+	// 					role: Role.OWNER,
+	// 					status: InvitationStatus.ACCEPTED,
+	// 				},
+	// 			},
+	// 		},
+	// 	});
+	// }
 
 	async createCalendarMember(
 		calendarId: number,

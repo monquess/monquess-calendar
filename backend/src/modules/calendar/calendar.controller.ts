@@ -21,6 +21,7 @@ import { CalendarEntity } from './entities/calendar.entity';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import {
 	ApiCalendarCreate,
+	ApiCalendarEventCreate,
 	ApiCalendarFindAll,
 	ApiCalendarFindById,
 	ApiCalendarMemberCreate,
@@ -34,12 +35,18 @@ import { CalendarMemberEntity } from './entities/calendar-member.entity';
 import { UpdateCalendarMemberRoleDto } from './dto/update-calendar-member-role.dto';
 import { CreateCalendarMemberDto } from './dto/create-calendar-member.dto';
 import { UpdateCalendarMemberStatusDto } from './dto/update-calendar-member-status.dto';
+import { EventService } from '@modules/event/event.service';
+import { CreateEventDto } from '@modules/event/dto/create-event.dto';
+import { EventEntity } from '@modules/event/entities/event.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })
 @Controller('calendars')
 export class CalendarController {
-	constructor(private readonly calendarService: CalendarService) {}
+	constructor(
+		private readonly calendarService: CalendarService,
+		private readonly eventService: EventService
+	) {}
 
 	@ApiCalendarFindAll()
 	@Get()
@@ -63,6 +70,16 @@ export class CalendarController {
 		@Body() createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
 		return this.calendarService.create(user, createCalendarDto);
+	}
+
+	@ApiCalendarEventCreate()
+	@Post(':id/events')
+	createEvent(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() createCalendarMemberDto: CreateEventDto,
+		@CurrentUser() currentUser: User
+	): Promise<EventEntity> {
+		return this.eventService.create(id, createCalendarMemberDto, currentUser);
 	}
 
 	@ApiCalendarMemberCreate()

@@ -23,18 +23,14 @@ export class UserService {
 	}: FilteringOptionsDto): Promise<UserEntity[]> {
 		return this.prisma.user.findMany({
 			where: {
-				AND: [
-					{
-						username: {
-							contains: username,
-							mode: 'insensitive',
-						},
-						email: {
-							contains: email,
-							mode: 'insensitive',
-						},
-					},
-				],
+				username: {
+					contains: username,
+					mode: 'insensitive',
+				},
+				email: {
+					contains: email,
+					mode: 'insensitive',
+				},
 			},
 		});
 	}
