@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaGoogle } from 'react-icons/fa'
+import { config } from '@/config/config'
+import useStore from '@/helpers/store'
+import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Button,
 	Divider,
@@ -13,14 +13,20 @@ import {
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { config } from '@/config/config'
-import useStore from '@/helpers/store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { FaGoogle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
 const LoginForm: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState<boolean>(false)
+	const [recaptchaModalOpened, setRecaptchaModalOpened] =
+		useState<boolean>(false)
+
+	const recaptcha = React.useRef<ReCAPTCHA>(null)
 
 	const form = useForm({
 		mode: 'uncontrolled',
@@ -30,110 +36,147 @@ const LoginForm: React.FC = React.memo(() => {
 		},
 	})
 
+	const handleCaptchaSubmit = () => {
+		const values = form.getValues()
+		handleSubmit(values)
+		setRecaptchaModalOpened(false)
+	}
+
 	const handleSubmit = async (values: typeof form.values) => {
-		try {
-			setLoading(true)
-			const response = await axios.post(`${config.API_BASE_URL}/auth/login`, {
-				email: values.email,
-				password: values.password,
-			})
-			useStore.getState().login(response.data.user, response.data.accessToken)
-			form.reset()
-			navigate('/')
+		if (!recaptcha.current?.getValue()) {
 			notifications.show({
 				title: 'Login',
-				message: `Welcome, ${response.data.user.username}!`,
+				message: 'Please submit Captcha',
 				withCloseButton: true,
 				autoClose: 5000,
-				color: 'green',
-				position: 'top-center',
+				color: 'red',
 			})
-		} catch (error) {
-			if (error instanceof AxiosError && error.response) {
+		} else {
+			try {
+				setLoading(true)
+				const response = await axios.post(
+					`${config.API_BASE_URL}/auth/login`,
+					{
+						email: values.email,
+						password: values.password,
+					},
+					{
+						headers: {
+							'x-recaptcha-token': recaptcha.current.getValue(),
+						},
+					}
+				)
+				useStore.getState().login(response.data.user, response.data.accessToken)
+				form.reset()
+				navigate('/')
 				notifications.show({
 					title: 'Login',
-					message: error.response.data.message,
+					message: `Welcome, ${response.data.user.username}!`,
 					withCloseButton: true,
 					autoClose: 5000,
-					color: 'red',
+					color: 'green',
+					position: 'top-center',
 				})
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Login',
+						message: error.response.data.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
 			}
-		} finally {
-			setLoading(false)
 		}
 	}
 
 	return (
-		<form onSubmit={form.onSubmit(handleSubmit)}>
-			<TextInput
-				label="Email"
-				type="email"
-				required
-				mt="md"
-				size={isMobile ? 'sm' : 'md'}
-				key={form.key('email')}
-				{...form.getInputProps('email')}
-			/>
-			<PasswordInput
-				label="Password"
-				required
-				mt="md"
-				size={isMobile ? 'sm' : 'md'}
-				key={form.key('password')}
-				{...form.getInputProps('password')}
-			/>
-			<Divider
-				my="lg"
-				label="or continue with"
-				labelPosition="center"
-			></Divider>
-			<Group mt={isMobile ? 'sm' : 'md'} justify="center" grow={isMobile}>
-				<Button
-					type="button"
-					variant="light"
-					color="gray"
-					size={isMobile ? 'xs' : 'sm'}
-					w="100%"
-				>
-					<Group gap={6} justify="center">
-						<FaGoogle />
-						Google
-					</Group>
-				</Button>
-			</Group>
-			<Stack mt="sm" justify="space-between">
-				<Text
-					size={isMobile ? 'xs' : 'sm'}
-					ta="right"
-					component="a"
-					href="/reset-password"
-					style={{ textDecoration: 'none' }}
-				>
-					Forgot password?
-				</Text>
-			</Stack>
-			<Button
-				type="submit"
-				fullWidth
-				mt={isMobile ? 'lg' : 'xl'}
-				size={isMobile ? 'sm' : 'md'}
-				loading={loading}
+		<>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault()
+					setRecaptchaModalOpened(true)
+				}}
 			>
-				Login
-			</Button>
-			<Text size={isMobile ? 'xs' : 'sm'} ta="center" mt="sm">
-				Don't have an account?{' '}
-				<Text
-					component="a"
-					href="/register"
-					style={{ textDecoration: 'none' }}
-					inherit
-					c="blue"
+				<TextInput
+					label="Email"
+					type="email"
+					required
+					mt="md"
+					size={isMobile ? 'sm' : 'md'}
+					key={form.key('email')}
+					{...form.getInputProps('email')}
+				/>
+				<PasswordInput
+					label="Password"
+					required
+					mt="md"
+					size={isMobile ? 'sm' : 'md'}
+					key={form.key('password')}
+					{...form.getInputProps('password')}
+				/>
+				<Divider
+					my="lg"
+					label="or continue with"
+					labelPosition="center"
+				></Divider>
+				<Group mt={isMobile ? 'sm' : 'md'} justify="center" grow={isMobile}>
+					<Button
+						type="button"
+						variant="light"
+						color="gray"
+						size={isMobile ? 'xs' : 'sm'}
+						w="100%"
+					>
+						<Group gap={6} justify="center">
+							<FaGoogle />
+							Google
+						</Group>
+					</Button>
+				</Group>
+				<Stack mt="sm" justify="space-between">
+					<Text
+						size={isMobile ? 'xs' : 'sm'}
+						ta="right"
+						component="a"
+						href="/reset-password"
+						style={{ textDecoration: 'none' }}
+					>
+						Forgot password?
+					</Text>
+				</Stack>
+				<Button
+					type="submit"
+					fullWidth
+					mt={isMobile ? 'lg' : 'xl'}
+					size={isMobile ? 'sm' : 'md'}
+					loading={loading}
 				>
-					Register
+					Login
+				</Button>
+				<Text size={isMobile ? 'xs' : 'sm'} ta="center" mt="sm">
+					Don't have an account?{' '}
+					<Text
+						component="a"
+						href="/register"
+						style={{ textDecoration: 'none' }}
+						inherit
+						c="blue"
+					>
+						Register
+					</Text>
 				</Text>
-			</Text>
-		</form>
+			</form>
+			<GoogleRecaptchaModal
+				opened={recaptchaModalOpened}
+				onClose={() => setRecaptchaModalOpened(false)}
+				ref={recaptcha}
+				onSubmit={handleCaptchaSubmit}
+			/>
+		</>
 	)
 })
 

@@ -1,11 +1,11 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaArrowLeft } from 'react-icons/fa'
-import { Box, Paper, Text, Title } from '@mantine/core'
-import VerifyAccountForm from '@/components/auth/modals/verify-account-form'
+import VerifyAccountForm from '@/components/auth/verify-account-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
 import { useResponsive } from '@/hooks/use-responsive'
+import { Box, Paper, Text, Title } from '@mantine/core'
+import React from 'react'
+import { FaArrowLeft } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const VerifyPage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

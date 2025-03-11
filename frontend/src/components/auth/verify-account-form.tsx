@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { config } from '@/config/config'
+import { emailSchema } from '@/helpers/validations/reset-password-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import { Button, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { config } from '@/config/config'
-import { emailSchema } from '@/helpers/validations/reset-password-schema'
-import { useResponsive } from '@/hooks/use-responsive'
-import VerificationCodeModal from './verify-code-modal'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import VerificationCodeModal from './modals/verify-code-modal'
 
 const VerifyAccountForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()
