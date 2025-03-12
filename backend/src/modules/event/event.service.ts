@@ -9,6 +9,7 @@ import { CalendarService } from '@modules/calendar/calendar.service';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { EventEntity } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
+import { FilteringOptionsDto } from './dto/filtering-option.dto';
 
 @Injectable()
 export class EventService {
@@ -41,6 +42,31 @@ export class EventService {
 		}
 
 		return event;
+	}
+
+	async findByCalendarId(
+		calendarId: number,
+		{ type }: FilteringOptionsDto,
+		currentUser: User
+	): Promise<EventEntity[]> {
+		return this.prisma.event.findMany({
+			where: {
+				calendarId,
+				type: type,
+				members: {
+					some: {
+						userId: currentUser.id,
+					},
+				},
+			},
+			include: {
+				members: {
+					omit: {
+						eventId: true,
+					},
+				},
+			},
+		});
 	}
 
 	async create(

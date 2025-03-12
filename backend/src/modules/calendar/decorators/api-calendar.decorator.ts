@@ -71,6 +71,17 @@ export const ApiCalendarEventCreate = () =>
 		})
 	);
 
+export const ApiCalendarFindEvents = () =>
+	applyDecorators(
+		ApiBearerAuth(),
+		ApiOperation({ summary: 'Get all event in calendar' }),
+		ApiParam({
+			name: 'id',
+			description: 'calendar id',
+		}),
+		ApiOkResponse({ type: [EventEntity] })
+	);
+
 export const ApiCalendarMemberCreate = () =>
 	applyDecorators(
 		ApiBearerAuth(),

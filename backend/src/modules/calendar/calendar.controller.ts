@@ -11,6 +11,7 @@ import {
 	ParseIntPipe,
 	Patch,
 	Post,
+	Query,
 	SerializeOptions,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import {
 	ApiCalendarEventCreate,
 	ApiCalendarFindAll,
 	ApiCalendarFindById,
+	ApiCalendarFindEvents,
 	ApiCalendarMemberCreate,
 	ApiCalendarMemberRemove,
 	ApiCalendarMemberUpdateRole,
@@ -38,6 +40,7 @@ import { UpdateCalendarMemberStatusDto } from './dto/update-calendar-member-stat
 import { EventService } from '@modules/event/event.service';
 import { CreateEventDto } from '@modules/event/dto/create-event.dto';
 import { EventEntity } from '@modules/event/entities/event.entity';
+import { FilteringOptionsDto } from '@modules/event/dto/filtering-option.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })
@@ -70,6 +73,20 @@ export class CalendarController {
 		@Body() createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
 		return this.calendarService.create(user, createCalendarDto);
+	}
+
+	@ApiCalendarFindEvents()
+	@Get(':id/events')
+	findEvents(
+		@Param('id', ParseIntPipe) id: number,
+		@Query() filteringOptions: FilteringOptionsDto,
+		@CurrentUser() currentUser: User
+	): Promise<EventEntity[]> {
+		return this.eventService.findByCalendarId(
+			id,
+			filteringOptions,
+			currentUser
+		);
 	}
 
 	@ApiCalendarEventCreate()

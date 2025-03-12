@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EventType } from '@prisma/client';
-import { Type } from 'class-transformer';
 import {
-	IsDate,
 	IsEnum,
 	IsHexColor,
+	IsISO8601,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
@@ -46,21 +45,23 @@ export class CreateEventDto {
 	type: EventType;
 
 	@ApiProperty({
-		type: Date,
+		type: String,
 		format: 'date-time',
 		example: '2025-03-09T16:30:00.000Z',
 	})
-	@Type(() => Date)
-	@IsDate()
-	startDate: Date;
+	@IsISO8601({
+		strict: true,
+	})
+	startDate: string;
 
 	@ApiProperty({
-		type: Date,
+		type: String,
 		format: 'date-time',
 		example: '2025-03-09T17:45:00.000Z',
 	})
+	@IsISO8601({
+		strict: true,
+	})
 	@IsOptional()
-	@Type(() => Date)
-	@IsDate()
-	endDate?: Date;
+	endDate?: string;
 }
