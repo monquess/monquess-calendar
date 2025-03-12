@@ -39,6 +39,9 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup(`${prefix}/docs`, app, document);
 
+	const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+	console.log(date);
+
 	await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
