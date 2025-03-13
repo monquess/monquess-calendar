@@ -55,6 +55,10 @@ export class EnvironmentVariables {
 	readonly REDIS_HOST: string;
 
 	@IsNumber()
+	@Transform(({ value }) => Number(value))
+	readonly CACHE_TTL: number;
+
+	@IsNumber()
 	@Min(0)
 	@Max(65535)
 	@Transform(({ value }) => Number(value))
