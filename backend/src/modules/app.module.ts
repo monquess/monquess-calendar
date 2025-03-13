@@ -17,7 +17,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CalendarModule } from './calendar/calendar.module';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
 import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
-import { CachingInterceptor } from '@common/interceptors/caching.interceptor.ts.interceptor';
+import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.interceptor';
 
 @Module({
 	imports: [
@@ -90,7 +90,7 @@ import { CachingInterceptor } from '@common/interceptors/caching.interceptor.ts.
 		},
 		{
 			provide: APP_INTERCEPTOR,
-			useClass: CachingInterceptor,
+			useClass: CacheInterceptor,
 		},
 	],
 })

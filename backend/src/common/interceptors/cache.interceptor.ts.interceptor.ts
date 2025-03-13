@@ -12,7 +12,7 @@ import * as crypto from 'crypto';
 import { User } from '@prisma/client';
 
 @Injectable()
-export class CachingInterceptor implements NestInterceptor {
+export class CacheInterceptor implements NestInterceptor {
 	constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
