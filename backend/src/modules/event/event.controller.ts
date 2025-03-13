@@ -17,7 +17,6 @@ import {
 	ApiEventRemove,
 	ApiEventUpdate,
 } from './decorators/api-event.decorator';
-import { User } from '@prisma/client';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { UpdateCalendarDto } from '@modules/calendar/dto';
 import { EventEntity } from './entities/event.entity';
@@ -33,7 +32,7 @@ export class EventController {
 	@Get(':id')
 	async findById(
 		@Param('id', ParseIntPipe) id: number,
-		@CurrentUser() user: User
+		@CurrentUser() user: CurrentUser
 	): Promise<EventEntity> {
 		return this.eventService.findById(id, user);
 	}
@@ -44,7 +43,7 @@ export class EventController {
 	async update(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateEventDto: UpdateCalendarDto,
-		@CurrentUser() user: User
+		@CurrentUser() user: CurrentUser
 	): Promise<EventEntity> {
 		return this.eventService.update(id, updateEventDto, user);
 	}
@@ -54,7 +53,7 @@ export class EventController {
 	@Patch(':id')
 	async delete(
 		@Param('id', ParseIntPipe) id: number,
-		@CurrentUser() user: User
+		@CurrentUser() user: CurrentUser
 	): Promise<void> {
 		return this.eventService.remove(id, user);
 	}

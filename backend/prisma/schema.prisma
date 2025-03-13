@@ -59,8 +59,8 @@ model Event {
   calendarId  Int
   calendar    Calendar      @relation(fields: [calendarId], references: [id], onDelete: Cascade)
   type        EventType
-  startDate   DateTime
-  endDate     DateTime?
+  startDate   DateTime      @db.Timestamptz()
+  endDate     DateTime?     @db.Timestamptz()
   members     EventMember[]
 
   createdAt DateTime @default(now()) @map("created_at")

@@ -80,7 +80,7 @@ export class CalendarController {
 	findEvents(
 		@Param('id', ParseIntPipe) id: number,
 		@Query() filteringOptions: FilteringOptionsDto,
-		@CurrentUser() currentUser: User
+		@CurrentUser() currentUser: CurrentUser
 	): Promise<EventEntity[]> {
 		return this.eventService.findByCalendarId(
 			id,
@@ -94,7 +94,7 @@ export class CalendarController {
 	createEvent(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() createCalendarMemberDto: CreateEventDto,
-		@CurrentUser() currentUser: User
+		@CurrentUser() currentUser: CurrentUser
 	): Promise<EventEntity> {
 		return this.eventService.create(id, createCalendarMemberDto, currentUser);
 	}
@@ -104,7 +104,7 @@ export class CalendarController {
 	createCalendarMember(
 		@Param('calendarId', ParseIntPipe) calendarId: number,
 		@Param('userId', ParseIntPipe) targetUserId: number,
-		@CurrentUser() currentUser: User,
+		@CurrentUser() currentUser: CurrentUser,
 		@Body() createCalendarMemberDto: CreateCalendarMemberDto
 	): Promise<CalendarMemberEntity> {
 		return this.calendarService.createCalendarMember(
@@ -119,7 +119,7 @@ export class CalendarController {
 	@Patch(':id')
 	update(
 		@Param('id', ParseIntPipe) id: number,
-		@CurrentUser() user: User,
+		@CurrentUser() user: CurrentUser,
 		@Body() updateCalendarDto: UpdateCalendarDto
 	): Promise<CalendarEntity> {
 		return this.calendarService.update(id, user, updateCalendarDto);

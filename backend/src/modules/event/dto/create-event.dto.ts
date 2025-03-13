@@ -7,7 +7,23 @@ import {
 	IsNotEmpty,
 	IsOptional,
 	IsString,
+	Validate,
+	ValidationArguments,
+	ValidatorConstraint,
+	ValidatorConstraintInterface,
 } from 'class-validator';
+
+@ValidatorConstraint({ async: false })
+class IsEndDateForbiddenForReminder implements ValidatorConstraintInterface {
+	validate(value: string | undefined, args: ValidationArguments) {
+		const object = args.object as CreateEventDto;
+		return object.type !== EventType.REMINDER;
+	}
+
+	defaultMessage(_args: ValidationArguments) {
+		return `endDate should not be provided if type is REMINDER`;
+	}
+}
 
 export class CreateEventDto {
 	@ApiProperty({
@@ -59,6 +75,7 @@ export class CreateEventDto {
 		format: 'date-time',
 		example: '2025-03-09T17:45:00.000Z',
 	})
+	@Validate(IsEndDateForbiddenForReminder)
 	@IsISO8601({
 		strict: true,
 	})
