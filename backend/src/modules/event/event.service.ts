@@ -6,12 +6,18 @@ import {
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { InvitationStatus, Role } from '@prisma/client';
 import { CalendarService } from '@modules/calendar/calendar.service';
-import { UpdateEventDto } from './dto/update-event.dto';
-import { CreateEventDto } from './dto/create-event.dto';
-import { FilteringOptionsDto } from './dto/filtering-option.dto';
 import { EventEntity } from './entities/event.entity';
-import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+import { EventMemberEntity } from './entities/event-member.entity';
+import {
+	CreateEventDto,
+	UpdateEventDto,
+	FilteringOptionsDto,
+	CreateEventMemberDto,
+	UpdateEventMemberStatusDto,
+	UpdateEventMemberRoleDto,
+} from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 @Injectable()
 export class EventService {
@@ -113,15 +119,15 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		dto.startDate = toZonedTime(
-			fromZonedTime(dto.startDate, currentUser.timezone),
-			'UTC'
+		dto.startDate = fromZonedTime(
+			dto.startDate,
+			currentUser.timezone
 		).toISOString();
 
 		if (dto.endDate) {
-			dto.endDate = toZonedTime(
-				fromZonedTime(dto.startDate, currentUser.timezone),
-				'UTC'
+			dto.endDate = fromZonedTime(
+				dto.startDate,
+				currentUser.timezone
 			).toISOString();
 		}
 
@@ -172,15 +178,15 @@ export class EventService {
 		}
 
 		if (dto.startDate) {
-			dto.startDate = toZonedTime(
-				fromZonedTime(dto.startDate, currentUser.timezone),
-				'UTC'
+			dto.startDate = fromZonedTime(
+				dto.startDate,
+				currentUser.timezone
 			).toISOString();
 		}
 		if (dto.endDate) {
-			dto.endDate = toZonedTime(
-				fromZonedTime(dto.endDate, currentUser.timezone),
-				'UTC'
+			dto.endDate = fromZonedTime(
+				dto.endDate,
+				currentUser.timezone
 			).toISOString();
 		}
 
@@ -219,6 +225,121 @@ export class EventService {
 		await this.prisma.event.delete({
 			where: {
 				id,
+			},
+		});
+	}
+
+	async createMember(
+		eventId: number,
+		userId: number,
+		{ role }: CreateEventMemberDto,
+		currentUser: CurrentUser
+	): Promise<EventMemberEntity> {
+		const event = await this.findById(eventId, currentUser);
+
+		const membership = event.members?.find(
+			(user) => user.userId === currentUser.id
+		);
+
+		if (
+			membership?.role === Role.VIEWER ||
+			membership?.status !== InvitationStatus.ACCEPTED
+		) {
+			throw new ForbiddenException('Access denied');
+		}
+
+		return this.prisma.eventMember.create({
+			data: {
+				eventId: event.id,
+				userId: userId,
+				role,
+				status: InvitationStatus.INVITED,
+			},
+		});
+	}
+
+	async updateMemberStatus(
+		eventId: number,
+		userId: number,
+		{ status }: UpdateEventMemberStatusDto,
+		currentUser: CurrentUser
+	): Promise<EventMemberEntity> {
+		const event = await this.findById(eventId, currentUser);
+
+		const membership = event.members?.find(
+			(user) => user.userId === currentUser.id
+		);
+
+		if (
+			membership?.role === Role.VIEWER ||
+			membership?.status !== InvitationStatus.ACCEPTED
+		) {
+			throw new ForbiddenException('Access denied');
+		}
+
+		return this.prisma.eventMember.update({
+			where: {
+				eventId_userId: {
+					eventId: event.id,
+					userId: userId,
+				},
+			},
+			data: {
+				status,
+			},
+		});
+	}
+
+	async updateMemberRole(
+		eventId: number,
+		userId: number,
+		{ role }: UpdateEventMemberRoleDto,
+		currentUser: CurrentUser
+	): Promise<EventMemberEntity> {
+		const event = await this.findById(eventId, currentUser);
+
+		const membership = event.members?.find(
+			(user) => user.userId === currentUser.id
+		);
+
+		if (membership?.role !== Role.OWNER) {
+			throw new ForbiddenException('Access denied');
+		}
+
+		return this.prisma.eventMember.update({
+			where: {
+				eventId_userId: {
+					eventId: event.id,
+					userId: userId,
+				},
+			},
+			data: {
+				role,
+			},
+		});
+	}
+
+	async removeMember(
+		eventId: number,
+		userId: number,
+		currentUser: CurrentUser
+	): Promise<void> {
+		const event = await this.findById(eventId, currentUser);
+
+		const membership = event.members?.find(
+			(user) => user.userId === currentUser.id
+		);
+
+		if (membership?.role !== Role.OWNER && currentUser.id !== userId) {
+			throw new ForbiddenException('Access denied');
+		}
+
+		await this.prisma.eventMember.delete({
+			where: {
+				eventId_userId: {
+					eventId: event.id,
+					userId: userId,
+				},
 			},
 		});
 	}
