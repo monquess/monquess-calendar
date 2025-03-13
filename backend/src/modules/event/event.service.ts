@@ -1,10 +1,6 @@
-import {
-	ForbiddenException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
-import { PrismaService } from '@modules/prisma/prisma.service';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InvitationStatus, Role } from '@prisma/client';
+import { PrismaService } from '@modules/prisma/prisma.service';
 import { CalendarService } from '@modules/calendar/calendar.service';
 import { EventEntity } from './entities/event.entity';
 import { EventMemberEntity } from './entities/event-member.entity';
@@ -27,7 +23,7 @@ export class EventService {
 	) {}
 
 	async findById(id: number, currentUser: CurrentUser): Promise<EventEntity> {
-		const event = await this.prisma.event.findUnique({
+		const event = await this.prisma.event.findUniqueOrThrow({
 			where: {
 				id,
 				members: {
@@ -45,16 +41,7 @@ export class EventService {
 			},
 		});
 
-		if (!event) {
-			throw new NotFoundException('Event not found');
-		}
-
-		event.startDate = toZonedTime(event.startDate, currentUser.timezone);
-		if (event.endDate) {
-			event.endDate = toZonedTime(event.startDate, currentUser.timezone);
-		}
-
-		return event;
+		return this.convertEventDatesToTimezone(event, currentUser.timezone);
 	}
 
 	async findByCalendarId(
@@ -67,10 +54,7 @@ export class EventService {
 				calendarId,
 				type: type,
 				startDate: {
-					gte: toZonedTime(
-						fromZonedTime(startDate, currentUser.timezone),
-						'UTC'
-					),
+					gte: fromZonedTime(startDate, currentUser.timezone),
 				},
 				endDate: {
 					lte: toZonedTime(fromZonedTime(endDate, currentUser.timezone), 'UTC'),
@@ -91,11 +75,7 @@ export class EventService {
 		});
 
 		return events.map((event) => {
-			event.startDate = toZonedTime(event.startDate, currentUser.timezone);
-			if (event.endDate) {
-				event.endDate = toZonedTime(event.startDate, currentUser.timezone);
-			}
-			return event;
+			return this.convertEventDatesToTimezone(event, currentUser.timezone);
 		});
 	}
 
@@ -152,12 +132,7 @@ export class EventService {
 			},
 		});
 
-		result.startDate = toZonedTime(result.startDate, currentUser.timezone);
-		if (result.endDate) {
-			result.endDate = toZonedTime(result.startDate, currentUser.timezone);
-		}
-
-		return result;
+		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async update(
@@ -204,12 +179,7 @@ export class EventService {
 			},
 		});
 
-		result.startDate = toZonedTime(result.startDate, currentUser.timezone);
-		if (result.endDate) {
-			result.endDate = toZonedTime(result.startDate, currentUser.timezone);
-		}
-
-		return result;
+		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
@@ -264,23 +234,14 @@ export class EventService {
 		{ status }: UpdateEventMemberStatusDto,
 		currentUser: CurrentUser
 	): Promise<EventMemberEntity> {
-		const event = await this.findById(eventId, currentUser);
-
-		const membership = event.members?.find(
-			(user) => user.userId === currentUser.id
-		);
-
-		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
-		) {
+		if (currentUser.id !== userId) {
 			throw new ForbiddenException('Access denied');
 		}
 
 		return this.prisma.eventMember.update({
 			where: {
 				eventId_userId: {
-					eventId: event.id,
+					eventId,
 					userId: userId,
 				},
 			},
@@ -342,5 +303,16 @@ export class EventService {
 				},
 			},
 		});
+	}
+
+	private convertEventDatesToTimezone(
+		event: EventEntity,
+		timezone: string
+	): EventEntity {
+		event.startDate = toZonedTime(event.startDate, timezone);
+		if (event.endDate) {
+			event.endDate = toZonedTime(event.endDate, timezone);
+		}
+		return event;
 	}
 }
