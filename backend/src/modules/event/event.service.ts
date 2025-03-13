@@ -53,13 +53,22 @@ export class EventService {
 
 	async findByCalendarId(
 		calendarId: number,
-		{ type }: FilteringOptionsDto,
+		{ startDate, endDate, type }: FilteringOptionsDto,
 		currentUser: CurrentUser
 	): Promise<EventEntity[]> {
 		const events = await this.prisma.event.findMany({
 			where: {
 				calendarId,
 				type: type,
+				startDate: {
+					gte: toZonedTime(
+						fromZonedTime(startDate, currentUser.timezone),
+						'UTC'
+					),
+				},
+				endDate: {
+					lte: toZonedTime(fromZonedTime(endDate, currentUser.timezone), 'UTC'),
+				},
 				members: {
 					some: {
 						userId: currentUser.id,

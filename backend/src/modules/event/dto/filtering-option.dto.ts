@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EventType } from '@prisma/client';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, IsISO8601, IsOptional } from 'class-validator';
 
 export class FilteringOptionsDto {
 	@ApiProperty({
@@ -11,4 +11,24 @@ export class FilteringOptionsDto {
 	@IsEnum(EventType)
 	@IsOptional()
 	type?: EventType;
+
+	@ApiProperty({
+		type: String,
+		format: 'date-time',
+		example: '2025-03-09T16:30:00.000Z',
+	})
+	@IsISO8601({
+		strict: true,
+	})
+	startDate: string;
+
+	@ApiProperty({
+		type: String,
+		format: 'date-time',
+		example: '2025-03-09T17:45:00.000Z',
+	})
+	@IsISO8601({
+		strict: true,
+	})
+	endDate: string;
 }
