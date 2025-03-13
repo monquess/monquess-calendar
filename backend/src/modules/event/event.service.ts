@@ -57,7 +57,7 @@ export class EventService {
 					gte: fromZonedTime(startDate, currentUser.timezone),
 				},
 				endDate: {
-					lte: toZonedTime(fromZonedTime(endDate, currentUser.timezone), 'UTC'),
+					lte: fromZonedTime(endDate, currentUser.timezone),
 				},
 				members: {
 					some: {
@@ -309,10 +309,10 @@ export class EventService {
 		event: EventEntity,
 		timezone: string
 	): EventEntity {
-		event.startDate = toZonedTime(event.startDate, timezone);
-		if (event.endDate) {
-			event.endDate = toZonedTime(event.endDate, timezone);
-		}
-		return event;
+		return {
+			...event,
+			startDate: toZonedTime(event.startDate, timezone),
+			endDate: event.endDate ? toZonedTime(event.endDate, timezone) : null,
+		};
 	}
 }
