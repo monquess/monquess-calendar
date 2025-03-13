@@ -38,7 +38,7 @@ services:
     ports:
       - '${REDIS_PORT}:6379'
     volumes:
-      - ./redisdata:/data
+      - ./redis/data:/data
     deploy:
       resources:
         limits:
@@ -73,7 +73,7 @@ services:
       - '9000:9000'
       - '9001:9001'
     volumes:
-      - miniodata:/data
+      - ./minio/data:/data
     command: server /data --console-address ":9001"
     restart: unless-stopped
 
