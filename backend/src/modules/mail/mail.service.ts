@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as fs from 'node:fs';
 import { MailOptions } from './interfaces/mail-options.interface';
 import { MODULE_OPTIONS_TOKEN } from './mail.module-definition';
+import { SendMailOptions } from './interfaces/send-mail-options.interface';
 
 @Injectable()
 export class MailService {
@@ -41,12 +42,7 @@ export class MailService {
 		return handlebars.compile(template)(context);
 	}
 
-	async sendMail(
-		to: string,
-		subject: string,
-		templateName: string,
-		context?: Record<string, unknown>
-	) {
+	async sendMail({ to, subject, templateName, context }: SendMailOptions) {
 		const html = this.renderTemplate(templateName, context);
 
 		await this.transporter.sendMail({
