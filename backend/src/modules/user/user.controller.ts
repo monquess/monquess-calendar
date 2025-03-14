@@ -31,6 +31,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageTransformPipe } from '@modules/s3/pipes/image-transform.pipe';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
@@ -78,13 +79,14 @@ export class UserController {
 		@UploadedFile(
 			new ParseFilePipe({
 				validators: [
-					new FileTypeValidator({ fileType: '.(png|jpeg|jpg|svg|webp)' }),
+					new FileTypeValidator({ fileType: '.(png|jpeg|jpg|webp|tiff)' }),
 					new MaxFileSizeValidator({
 						maxSize: 10e6,
 						message: 'File is too large. Max file size is 10MB',
 					}),
 				],
-			})
+			}),
+			new ImageTransformPipe()
 		)
 		avatar: Express.Multer.File
 	): Promise<UserEntity> {
