@@ -9,12 +9,18 @@ import {
 	ApiBearerAuth,
 	ApiNotFoundResponse,
 	ApiBadRequestResponse,
+	ApiHeader,
 } from '@nestjs/swagger';
 import { AuthResponseDto } from '../dto/auth-response.dto';
 
 export const ApiAuthRegister = () =>
 	applyDecorators(
 		ApiOperation({ summary: 'Register a new user' }),
+		ApiHeader({
+			name: 'X-Recaptcha-Token',
+			description: 'Google reCAPTCHA token',
+			required: true,
+		}),
 		ApiCreatedResponse({
 			description: 'User has been successfully registered',
 		}),
@@ -24,6 +30,11 @@ export const ApiAuthRegister = () =>
 export const ApiAuthLogin = () =>
 	applyDecorators(
 		ApiOperation({ summary: 'Login user' }),
+		ApiHeader({
+			name: 'X-Recaptcha-Token',
+			description: 'Google reCAPTCHA token',
+			required: true,
+		}),
 		ApiOkResponse({ type: AuthResponseDto }),
 		ApiUnauthorizedResponse({ description: 'Invalid email or password' })
 	);

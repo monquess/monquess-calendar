@@ -124,7 +124,7 @@ export class EnvironmentVariables {
 	readonly DEFAULT_AVATAR_PATH: string;
 
 	@IsString()
-	readonly GOOGLE_RECAPTCHA_SITE_KEY: string;
+	readonly GOOGLE_RECAPTCHA_SECRET_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
