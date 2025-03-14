@@ -13,6 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CalendarModule } from './calendar/calendar.module';
 import { NotificationModule } from './notification/notification.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
 	imports: [
@@ -55,6 +56,16 @@ import { NotificationModule } from './notification/notification.module';
 		}),
 		CalendarModule,
 		NotificationModule,
+		BullModule.forRootAsync({
+			useFactory: (configService: ConfigService) => ({
+				connection: {
+					host: configService.get<string>('REDIS_HOST'),
+					port: configService.get<number>('REDIS_PORT'),
+					password: configService.get<string>('REDIS_PASSWORD'),
+				},
+			}),
+			inject: [ConfigService],
+		}),
 	],
 	providers: [
 		{

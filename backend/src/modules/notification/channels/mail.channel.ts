@@ -1,16 +1,18 @@
 import { User } from '@prisma/client';
 import { NotificationChannel } from '../interfaces/notification-channel.interface';
 import { Notification } from '../interfaces/notification.interface';
-import { MailService } from '@modules/mail/mail.service';
 import { Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { NotificationName } from '../constants/notification.constant';
 
 @Injectable()
 export class MailChannel implements NotificationChannel {
-	constructor(private readonly mailService: MailService) {}
+	constructor(@InjectQueue('notification') private notificationQueue: Queue) {}
 
 	async send(notifiable: User, notification: Notification): Promise<void> {
 		if (notification.toMail) {
-			await this.mailService.sendMail({
+			await this.notificationQueue.add(NotificationName.EMAIL, {
 				to: notifiable.email,
 				...notification.toMail(),
 			});
