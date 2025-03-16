@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { config } from '@/config/config'
+import { emailSchema } from '@/helpers/validations/reset-password-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import { Button, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { config } from '@/config/config'
-import { emailSchema } from '@/helpers/validations/reset-password-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ResetPasswordModal from './modals/reset-password-modal'
 
 const PasswordResetForm: React.FC = React.memo(() => {
@@ -89,8 +89,6 @@ const PasswordResetForm: React.FC = React.memo(() => {
 		<>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<TextInput
-					type="email"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('email')}

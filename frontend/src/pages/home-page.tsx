@@ -1,17 +1,49 @@
-import Navbar from '@/components/general/navbar'
+import Navbar from '@/components/general/navbar/navbar'
+import { useResponsive } from '@/hooks/use-responsive'
+import '@/pages/style.css'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
-import { Flex, Paper } from '@mantine/core'
-import React from 'react'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { Flex, Stack } from '@mantine/core'
+import React, { useEffect, useRef, useState } from 'react'
 
 const HomePage: React.FC = React.memo(() => {
+	const { isMobile } = useResponsive()
+	const calendarRef = useRef<FullCalendar | null>(null)
+	const [isNavbarOpen, setIsNavbarOpen] = useState(!isMobile)
+
+	useEffect(() => {
+		setIsNavbarOpen(!isMobile)
+	}, [isMobile])
+
+	const updateCalendarSize = () => {
+		if (calendarRef.current) {
+			calendarRef.current.getApi().updateSize()
+		}
+	}
+
+	useEffect(() => {
+		updateCalendarSize()
+	}, [isNavbarOpen])
+
 	return (
-		<Flex h="100vh">
-			<Navbar />
-			<Paper flex={1}>
+		<Flex
+			h="100vh"
+			direction={isNavbarOpen ? (isMobile ? 'column' : 'row') : 'column'}
+		>
+			<Navbar onToggle={() => setIsNavbarOpen((prev) => !prev)} />
+			<Stack
+				flex={1}
+				p="xl"
+				pt={!isNavbarOpen ? '0' : isMobile ? '0' : 'xl'}
+				pl={isNavbarOpen ? (!isMobile ? '0' : 'xl') : 'xl'}
+				style={{ borderRadius: '25%' }}
+			>
 				<FullCalendar
+					ref={calendarRef}
 					firstDay={1}
-					plugins={[dayGridPlugin]}
+					plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
 					headerToolbar={{
 						left: 'today prev,next',
 						center: 'title',
@@ -24,7 +56,7 @@ const HomePage: React.FC = React.memo(() => {
 					dayMaxEvents={true}
 					height="100%"
 				/>
-			</Paper>
+			</Stack>
 		</Flex>
 	)
 })

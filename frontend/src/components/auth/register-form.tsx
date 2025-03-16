@@ -40,6 +40,7 @@ const RegisterForm: React.FC = React.memo(() => {
 			password: '',
 			confirmPassword: '',
 		},
+		validateInputOnChange: true,
 	})
 
 	const handleCaptchaSubmit = () => {
@@ -131,12 +132,14 @@ const RegisterForm: React.FC = React.memo(() => {
 			<form
 				onSubmit={(e) => {
 					e.preventDefault()
-					setRecaptchaModalOpened(true)
+					const formError = form.validate()
+					if (!formError.hasErrors) {
+						setRecaptchaModalOpened(true)
+					}
 				}}
 			>
 				<TextInput
 					label="Username"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('fullname')}
@@ -144,8 +147,6 @@ const RegisterForm: React.FC = React.memo(() => {
 				/>
 				<TextInput
 					label="Email"
-					type="email"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('email')}
@@ -153,7 +154,6 @@ const RegisterForm: React.FC = React.memo(() => {
 				/>
 				<PasswordInput
 					label="Password"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('password')}
@@ -161,7 +161,6 @@ const RegisterForm: React.FC = React.memo(() => {
 				/>
 				<PasswordInput
 					label="Confirm password"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('confirmPassword')}

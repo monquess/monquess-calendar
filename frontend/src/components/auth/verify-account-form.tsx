@@ -87,8 +87,6 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 		<>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<TextInput
-					type="email"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('email')}

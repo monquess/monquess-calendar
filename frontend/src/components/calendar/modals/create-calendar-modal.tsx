@@ -37,8 +37,9 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 				size={isMobile ? 'sm' : 'md'}
 				centered
 				closeOnClickOutside={false}
+				zIndex={10000}
 			>
-				<form>
+				<form onSubmit={() => form.validate()}>
 					<Stack pos="relative">
 						<Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="unset">
 							Create a calendar for yourself or your team. Choose a name, add a
