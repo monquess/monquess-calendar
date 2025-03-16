@@ -5,6 +5,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { extname } from 'path';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -35,7 +36,7 @@ export class S3Service {
 		try {
 			const params = {
 				Bucket: this.bucket,
-				Key: `${path}/${uuid()}-${file.originalname}`,
+				Key: `${path}/${new Date().toISOString()}-${uuid()}${extname(file.originalname)}`,
 				Body: file.buffer,
 				ContentType: file.mimetype,
 			};
@@ -52,15 +53,17 @@ export class S3Service {
 	}
 
 	async deleteFile(url: string): Promise<void> {
-		try {
-			const params = {
-				Bucket: this.bucket,
-				Key: this.getKeyFromUrl(url),
-			};
+		if (url.startsWith(`${this.endpoint}/${this.bucket}`)) {
+			try {
+				const params = {
+					Bucket: this.bucket,
+					Key: this.getKeyFromUrl(url),
+				};
 
-			await this.client.send(new DeleteObjectCommand(params));
-		} catch (error) {
-			throw new InternalServerErrorException(error);
+				await this.client.send(new DeleteObjectCommand(params));
+			} catch (error) {
+				throw new InternalServerErrorException(error);
+			}
 		}
 	}
 
