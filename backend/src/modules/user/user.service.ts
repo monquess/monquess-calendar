@@ -23,18 +23,14 @@ export class UserService {
 	}: FilteringOptionsDto): Promise<UserEntity[]> {
 		return this.prisma.user.findMany({
 			where: {
-				AND: [
-					{
-						username: {
-							contains: username,
-							mode: 'insensitive',
-						},
-						email: {
-							contains: email,
-							mode: 'insensitive',
-						},
-					},
-				],
+				username: {
+					contains: username,
+					mode: 'insensitive',
+				},
+				email: {
+					contains: email,
+					mode: 'insensitive',
+				},
 			},
 		});
 	}
@@ -43,12 +39,24 @@ export class UserService {
 		return this.prisma.user.findUniqueOrThrow({ where: { id } });
 	}
 
+	async findByEmail(email: string): Promise<UserEntity> {
+		return this.prisma.user.findFirstOrThrow({
+			where: {
+				email: {
+					equals: email,
+					mode: 'insensitive',
+				},
+			},
+		});
+	}
+
 	async create(createUserDto: CreateUserDto) {
+		const salt = await bcrypt.genSalt();
 		return this.prisma.user.create({
 			data: {
 				...createUserDto,
 				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH')!,
-				password: await bcrypt.hash(createUserDto.password, 12),
+				password: await bcrypt.hash(createUserDto.password, salt),
 			},
 		});
 	}
@@ -62,23 +70,28 @@ export class UserService {
 
 	async updatePassword(
 		id: number,
-		updatePasswordDto: UpdatePasswordDto
+		{ newPassword, currentPassword }: UpdatePasswordDto
 	): Promise<UserEntity> {
 		const user = await this.findById(id);
 
-		const passwordMatch = await bcrypt.compare(
-			updatePasswordDto.currentPassword,
-			user.password
-		);
+		if (user.password) {
+			const passwordMatch = await bcrypt.compare(
+				currentPassword,
+				user.password
+			);
 
-		if (!passwordMatch) {
-			throw new BadRequestException('Current password is incorrect');
+			if (!passwordMatch) {
+				throw new BadRequestException('Current password is incorrect');
+			}
 		}
 
+		const salt = await bcrypt.genSalt();
 		return this.prisma.user.update({
-			where: { id },
+			where: {
+				id,
+			},
 			data: {
-				password: await bcrypt.hash(updatePasswordDto.newPassword, 12),
+				password: await bcrypt.hash(newPassword, salt),
 			},
 		});
 	}
@@ -97,14 +110,18 @@ export class UserService {
 		const avatarData = await this.s3Service.uploadFile('avatars', avatar);
 
 		return this.prisma.user.update({
-			where: { id },
+			where: {
+				id,
+			},
 			data: { avatar: avatarData.url },
 		});
 	}
 
 	async remove(id: number): Promise<void> {
 		await this.prisma.user.delete({
-			where: { id },
+			where: {
+				id,
+			},
 		});
 	}
 }

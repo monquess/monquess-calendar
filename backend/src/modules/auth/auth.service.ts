@@ -7,9 +7,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@modules/prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
 import { Response } from 'express';
-import { User } from '@prisma/client';
+import { Prisma, Provider, User } from '@prisma/client';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -19,6 +18,7 @@ import { UserService } from '@modules/user/user.service';
 import { UserEntity } from '@modules/user/entities/user.entity';
 import { MailService } from '@modules/mail/mail.service';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcryptjs';
 import { TOKEN_PREFIXES } from './constants/token-prefixes.constant';
 import { COOKIE_NAMES } from './constants/cookie-names.constant';
 
@@ -54,6 +54,32 @@ export class AuthService {
 			user: new UserEntity(user),
 			accessToken,
 		};
+	}
+
+	async socialLogin(
+		data: { email: string; username: string; avatar: string },
+		provider: Provider,
+		res: Response
+	): Promise<AuthResponseDto> {
+		try {
+			const user = await this.userService.findByEmail(data.email);
+			return this.login(user, res);
+		} catch (error) {
+			if (
+				error instanceof Prisma.PrismaClientKnownRequestError &&
+				error.code === 'P2025'
+			) {
+				const user = await this.prisma.user.create({
+					data: {
+						...data,
+						provider,
+						verified: true,
+					},
+				});
+				return this.login(user, res);
+			}
+			throw error;
+		}
 	}
 
 	async logout(userId: number, res: Response): Promise<void> {
@@ -111,12 +137,13 @@ export class AuthService {
 			throw new BadRequestException('Invalid email or token');
 		}
 
+		const salt = await bcrypt.genSalt();
 		await this.prisma.user.update({
 			where: {
 				email,
 			},
 			data: {
-				password: await bcrypt.hash(password, 10),
+				password: await bcrypt.hash(password, salt),
 			},
 		});
 		await this.redis.del(TOKEN_PREFIXES.RESET_PASSWORD, email);
@@ -124,11 +151,11 @@ export class AuthService {
 	}
 
 	async validateUser(email: string, password: string): Promise<User> {
-		const user = await this.prisma.user.findUniqueOrThrow({
-			where: {
-				email,
-			},
-		});
+		const user = await this.userService.findByEmail(email);
+
+		if (!user.password) {
+			throw new UnauthorizedException();
+		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -140,11 +167,7 @@ export class AuthService {
 	}
 
 	async sendVerificationEmail(email: string): Promise<void> {
-		const user = await this.prisma.user.findUniqueOrThrow({
-			where: {
-				email,
-			},
-		});
+		const user = await this.userService.findByEmail(email);
 
 		if (user.verified) {
 			return;
@@ -172,11 +195,7 @@ export class AuthService {
 	}
 
 	async sendPasswordResetEmail(email: string): Promise<void> {
-		const { username } = await this.prisma.user.findUniqueOrThrow({
-			where: {
-				email,
-			},
-		});
+		const { username } = await this.userService.findByEmail(email);
 		const token = crypto.randomBytes(3).toString('hex').toUpperCase();
 		const context = {
 			username,
@@ -199,17 +218,18 @@ export class AuthService {
 		res: Response
 	): Promise<void> {
 		const exp = this.configService.get<number>('JWT_REFRESH_EXPIRATION');
+		const salt = await bcrypt.genSalt();
 
 		await this.redis.set(
 			TOKEN_PREFIXES.REFRESH,
 			user.id,
-			await bcrypt.hash(token, 10),
+			await bcrypt.hash(token, salt),
 			exp
 		);
 
 		res.cookie(COOKIE_NAMES.REFRESH_TOKEN, token, {
 			httpOnly: true,
-			sameSite: 'strict',
+			sameSite: 'lax',
 			secure: this.configService.get('NODE_ENV') === 'production',
 			maxAge: exp * 1000,
 		});

@@ -2,6 +2,7 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Post,
@@ -21,31 +22,43 @@ import {
 	ApiAuthSendVerification,
 	ApiAuthVerifyEmail,
 } from './decorators/api-auth.decorator';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CurrentUser } from '@common/decorators/current-user.decorator';
-import { User } from '@prisma/client';
+import { Provider, User } from '@prisma/client';
 import { Response } from 'express';
 import { UserEntity } from '@modules/user/entities/user.entity';
-import { AuthResponseDto } from './dto/auth-response.dto';
-import { RegisterDto } from './dto/register.dto';
+import {
+	AuthResponseDto,
+	RegisterDto,
+	EmailVerifyDto,
+	SendEmailDto,
+	ResetPasswordDto,
+} from './dto';
+import {
+	LocalAuthGuard,
+	JwtRefreshAuthGuard,
+	RecaptchaGuard,
+	GoogleAuthGuard,
+} from './guards';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { Public } from '@common/decorators/public.decorator';
-import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { EmailVerifyDto } from './dto/email-verify.dto';
-import { SendEmailDto } from './dto/send-email.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { RecaptchaGuard } from './guards/recaptcha.guard';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authorization')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly configService: ConfigService<EnvironmentVariables, true>
+	) {}
 
 	@ApiAuthRegister()
 	@UseGuards(RecaptchaGuard)
 	@Public()
 	@Post('register')
-	register(@Body() dto: RegisterDto): Promise<void> {
+	async register(@Body() dto: RegisterDto): Promise<void> {
 		return this.authService.register(dto);
 	}
 
@@ -59,6 +72,26 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response
 	): Promise<AuthResponseDto> {
 		return this.authService.login(user, res);
+	}
+
+	@ApiExcludeEndpoint()
+	@Public()
+	@UseGuards(GoogleAuthGuard)
+	@HttpCode(HttpStatus.OK)
+	@Get('google')
+	async googleAuth(): Promise<void> {}
+
+	@ApiExcludeEndpoint()
+	@Public()
+	@UseGuards(GoogleAuthGuard)
+	@HttpCode(HttpStatus.OK)
+	@Get('google/callback')
+	async googleAuthCallback(
+		@CurrentUser() user: User,
+		@Res({ passthrough: true }) res: Response
+	): Promise<void> {
+		await this.authService.socialLogin(user, Provider.GOOGLE, res);
+		return res.redirect(this.configService.get('CLIENT_URL'));
 	}
 
 	@ApiAuthLogout()

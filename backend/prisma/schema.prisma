@@ -11,9 +11,10 @@ model User {
   id                  Int              @id @default(autoincrement())
   username            String           @unique @db.VarChar(255)
   email               String           @unique @db.VarChar(255)
-  password            String           @db.VarChar(60)
+  password            String?          @db.VarChar(60)
   verified            Boolean          @default(false)
   avatar              String
+  provider            Provider         @default(LOCAL)
   calendarMemberships CalendarMember[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -51,6 +52,11 @@ enum Role {
   VIEWER
   EDITOR
   OWNER
+}
+
+enum Provider {
+  LOCAL
+  GOOGLE
 }
 
 enum InvitationStatus {
