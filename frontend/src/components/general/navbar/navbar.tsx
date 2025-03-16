@@ -1,3 +1,4 @@
+import ThemeSwitch from '@/components/buttons/theme-switch'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Box, Drawer } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -40,17 +41,35 @@ const Navbar: React.FC<NavbarProps> = React.memo(({ onToggle }) => {
 				</Box>
 			)}
 			{isMobile ? (
-				<Drawer
-					opened={opened}
-					onClose={handleCloseClick}
-					title="Menu"
-					size="auto"
-				>
-					<NavbarContent
-						onClickMenu={handleClick}
-						onOpenModal={() => setCreateModalOpen(true)}
-					/>
-				</Drawer>
+				// <Drawer
+				// 	opened={opened}
+				// 	onClose={handleCloseClick}
+				// 	title="Monquees Calendar"
+				// 	size="auto"
+				// >
+				// 	<NavbarContent
+				// 		onClickMenu={handleClick}
+				// 		onOpenModal={() => setCreateModalOpen(true)}
+				// 	/>
+				// </Drawer>
+				<Drawer.Root opened={opened} onClose={handleCloseClick} size="auto">
+					<Drawer.Overlay />
+					<Drawer.Content>
+						<Drawer.Header>
+							<Drawer.Title>Monquees Calendar</Drawer.Title>
+							<Box pl="xl">
+								<ThemeSwitch />
+							</Box>
+							<Drawer.CloseButton />
+						</Drawer.Header>
+						<Drawer.Body h="90%">
+							<NavbarContent
+								onClickMenu={handleClick}
+								onOpenModal={() => setCreateModalOpen(true)}
+							/>
+						</Drawer.Body>
+					</Drawer.Content>
+				</Drawer.Root>
 			) : (
 				openNavbar && (
 					<NavbarContent

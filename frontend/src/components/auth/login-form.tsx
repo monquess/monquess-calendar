@@ -1,5 +1,5 @@
 import { config } from '@/config/config'
-import useStore from '@/helpers/store'
+import useStore from '@/helpers/store/user-store'
 import { schemaLogin } from '@/helpers/validations/login-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import {

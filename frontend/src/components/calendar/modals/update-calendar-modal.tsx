@@ -1,4 +1,5 @@
 import apiClient from '@/helpers/axios'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { useResponsive } from '@/hooks/use-responsive'
@@ -13,30 +14,34 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import React from 'react'
 
-interface createCalendarModalProps {
+interface updateCalendarModalProps {
 	opened: boolean
 	onClose: () => void
+	calendar: ICalendar
 }
 
-const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
-	({ opened, onClose }) => {
+const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
+	({ opened, onClose, calendar }) => {
 		const { isMobile } = useResponsive()
-		const { addCalendar } = useCalendarStore()
+		const { updateCalendar } = useCalendarStore()
 
 		const form = useForm({
 			mode: 'uncontrolled',
 			initialValues: {
-				name: '',
-				description: '',
-				color: '',
+				name: calendar.name,
+				description: calendar.description,
+				color: calendar.color,
 			},
 			validate: zodResolver(CalendarCreateSchema),
 		})
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
-				const response = await apiClient.post('/calendars', values)
-				addCalendar(response.data)
+				const response = await apiClient.patch(
+					`/calendars/${calendar.id}`,
+					values
+				)
+				updateCalendar(calendar.id, response.data)
 				onClose()
 			} catch {}
 		}
@@ -45,7 +50,7 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 			<Modal
 				opened={opened}
 				onClose={onClose}
-				title="Create calendar"
+				title="Update calendar"
 				size={isMobile ? 'sm' : 'md'}
 				centered
 				closeOnClickOutside={false}
@@ -54,7 +59,7 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 				<form onSubmit={form.onSubmit(handleSubmit)}>
 					<Stack pos="relative">
 						<Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="unset">
-							Create a calendar for yourself or your team. Choose a name, add a
+							Update a calendar for yourself or your team. Choose a name, add a
 							short description, and pick a color to make it uniquely yours!
 						</Text>
 						<TextInput
@@ -76,7 +81,7 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 							}}
 						/>
 						<Button type="submit" variant="outline">
-							Create
+							Update info
 						</Button>
 					</Stack>
 				</form>
@@ -85,4 +90,4 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 	}
 )
 
-export default CreateCalendarModal
+export default UpdateCalendarModal
