@@ -124,6 +124,15 @@ export class EnvironmentVariables {
 	readonly DEFAULT_AVATAR_PATH: string;
 
 	@IsString()
+	GOOGLE_CLIENT_ID: string;
+
+	@IsString()
+	GOOGLE_CLIENT_SECRET: string;
+
+	@IsString()
+	GOOGLE_CALLBACK_URL: string;
+
+	@IsString()
 	readonly GOOGLE_RECAPTCHA_SECRET_KEY: string;
 }
 

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Provider } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 
 export class UserEntity {
@@ -21,7 +22,10 @@ export class UserEntity {
 	email: string;
 
 	@Exclude()
-	password: string;
+	password: string | null;
+
+	@Exclude()
+	provider: Provider;
 
 	@ApiProperty({
 		example: true,
