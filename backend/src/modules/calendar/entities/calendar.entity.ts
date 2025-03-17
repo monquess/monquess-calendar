@@ -34,7 +34,7 @@ export class CalendarEntity {
 
 	@ApiProperty({
 		type: String,
-		example: new Date().toISOString(),
+		example: '2025-03-09T16:17:53.019Z',
 	})
 	createdAt: Date;
 
@@ -44,7 +44,7 @@ export class CalendarEntity {
 		Object.assign(this, partial);
 
 		if (partial?.users?.length) {
-			this.users = partial.users.map((u) => new CalendarMemberEntity(u));
+			this.users = partial.users.map((user) => new CalendarMemberEntity(user));
 		}
 	}
 }

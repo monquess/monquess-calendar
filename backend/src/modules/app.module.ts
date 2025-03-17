@@ -15,6 +15,7 @@ import * as path from 'path';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CalendarModule } from './calendar/calendar.module';
+import { EventModule } from './event/event.module';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
 import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
 import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.interceptor';
@@ -82,6 +83,7 @@ import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.inte
 			inject: [ConfigService],
 		}),
 		CalendarModule,
+		EventModule,
 	],
 	providers: [
 		{

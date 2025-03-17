@@ -21,7 +21,7 @@ export class CreateCalendarDto {
 
 	@ApiProperty({
 		type: String,
-		format: 'hex',
+		pattern: '^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$',
 		example: '#f542ec',
 	})
 	@IsHexColor()

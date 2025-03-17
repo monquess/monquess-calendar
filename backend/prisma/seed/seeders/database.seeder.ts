@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import Seeder from './abstract.seeder';
 import UserSeeder from './user.seeder';
 import CalendarSeeder from './calendar.seeder';
+import { EventSeeder } from './event.seeder';
 
 class DatabaseSeeder extends Seeder {
 	private seeders: Seeder[];
@@ -11,6 +12,7 @@ class DatabaseSeeder extends Seeder {
 		this.seeders = [
 			new UserSeeder(this.prisma),
 			new CalendarSeeder(this.prisma),
+			new EventSeeder(this.prisma),
 		];
 	}
 

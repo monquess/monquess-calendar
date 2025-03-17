@@ -14,9 +14,11 @@ import { FileUploadDto } from '@modules/user/dto/file-upload.dto';
 import { UpdatePasswordDto } from '@modules/user/dto/update-password.dto';
 import { UpdateUserDto } from '@modules/user/dto/update-user.dto';
 import { UserEntity } from '@modules/user/entities/user.entity';
+import { ApiAuth } from '@common/decorators/swagger/api-auth.decorator';
 
 export const ApiUserFindAll = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Get all users' }),
 		ApiQuery({
 			name: 'username',
@@ -35,6 +37,7 @@ export const ApiUserFindAll = () =>
 
 export const ApiUserFindById = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Get user by id' }),
 		ApiOkResponse({
 			type: UserEntity,
@@ -46,6 +49,7 @@ export const ApiUserFindById = () =>
 
 export const ApiUserUpdate = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Update user' }),
 		ApiParam({
 			name: 'id',
@@ -61,6 +65,7 @@ export const ApiUserUpdate = () =>
 
 export const ApiUserUpdatePassword = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Update password' }),
 		ApiParam({
 			name: 'id',
@@ -76,6 +81,7 @@ export const ApiUserUpdatePassword = () =>
 
 export const ApiUserUpdateAvatar = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Update avatar' }),
 		ApiParam({
 			name: 'id',
@@ -91,6 +97,7 @@ export const ApiUserUpdateAvatar = () =>
 
 export const ApiUserRemove = () =>
 	applyDecorators(
+		ApiAuth(),
 		ApiOperation({ summary: 'Delete user' }),
 		ApiParam({
 			name: 'id',

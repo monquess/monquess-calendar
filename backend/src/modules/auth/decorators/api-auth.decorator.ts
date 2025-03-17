@@ -6,12 +6,12 @@ import {
 	ApiOkResponse,
 	ApiUnauthorizedResponse,
 	ApiNoContentResponse,
-	ApiBearerAuth,
 	ApiNotFoundResponse,
 	ApiBadRequestResponse,
 	ApiHeader,
 } from '@nestjs/swagger';
 import { AuthResponseDto } from '../dto/auth-response.dto';
+import { ApiAuth } from '@common/decorators/swagger/api-auth.decorator';
 
 export const ApiAuthRegister = () =>
 	applyDecorators(
@@ -41,7 +41,7 @@ export const ApiAuthLogin = () =>
 
 export const ApiAuthLogout = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Logout user' }),
 		ApiNoContentResponse({
 			description: 'User has been successfully logged out',
@@ -50,7 +50,7 @@ export const ApiAuthLogout = () =>
 
 export const ApiAuthRefresh = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Refresh JWT tokens' }),
 		ApiOkResponse({ type: AuthResponseDto }),
 		ApiUnauthorizedResponse({ description: 'Invalid refresh token' }),

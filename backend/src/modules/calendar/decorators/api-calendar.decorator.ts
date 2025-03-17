@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
@@ -17,17 +16,20 @@ import { CreateCalendarMemberDto } from '../dto/create-calendar-member.dto';
 import { UpdateCalendarMemberRoleDto } from '../dto/update-calendar-member-role.dto';
 import { CalendarMemberEntity } from '../entities/calendar-member.entity';
 import { UpdateCalendarMemberStatusDto } from '../dto/update-calendar-member-status.dto';
+import { CreateEventDto } from '@modules/event/dto/create-event.dto';
+import { EventEntity } from '@modules/event/entities/event.entity';
+import { ApiAuth } from '@common/decorators/swagger/api-auth.decorator';
 
 export const ApiCalendarFindAll = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Get all calendars' }),
 		ApiOkResponse({ type: [CalendarEntity] })
 	);
 
 export const ApiCalendarFindById = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Get calendar by id' }),
 		ApiParam({
 			name: 'id',
@@ -41,7 +43,7 @@ export const ApiCalendarFindById = () =>
 
 export const ApiCalendarCreate = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Create calendar' }),
 		ApiBody({
 			type: CreateCalendarDto,
@@ -49,9 +51,40 @@ export const ApiCalendarCreate = () =>
 		ApiCreatedResponse({ type: CalendarEntity })
 	);
 
+export const ApiCalendarEventCreate = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Create event in calendar' }),
+		ApiParam({
+			name: 'id',
+			description: 'calendar id',
+		}),
+		ApiBody({
+			type: CreateEventDto,
+		}),
+		ApiCreatedResponse({ type: EventEntity }),
+		ApiNotFoundResponse({
+			description: 'Calendar not found',
+		}),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		})
+	);
+
+export const ApiCalendarFindEvents = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Get all event in calendar' }),
+		ApiParam({
+			name: 'id',
+			description: 'calendar id',
+		}),
+		ApiOkResponse({ type: [EventEntity] })
+	);
+
 export const ApiCalendarMemberCreate = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Create calendar member' }),
 		ApiParam({
 			name: 'calendarId',
@@ -66,7 +99,10 @@ export const ApiCalendarMemberCreate = () =>
 		}),
 		ApiCreatedResponse({ type: CalendarMemberEntity }),
 		ApiNotFoundResponse({
-			description: 'Calendar not found | User not found',
+			description: 'Calendar not found',
+		}),
+		ApiNotFoundResponse({
+			description: 'User not found',
 		}),
 		ApiForbiddenResponse({
 			description: 'Access denied',
@@ -75,8 +111,8 @@ export const ApiCalendarMemberCreate = () =>
 
 export const ApiCalendarUpdate = () =>
 	applyDecorators(
-		ApiBearerAuth(),
-		ApiOperation({ summary: 'Update calendar' }),
+		ApiAuth(),
+		ApiOperation({ summary: 'Update calendar by id' }),
 		ApiParam({
 			name: 'id',
 			description: 'calendar id',
@@ -95,7 +131,7 @@ export const ApiCalendarUpdate = () =>
 
 export const ApiCalendarMemberUpdateRole = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Update calendar member role' }),
 		ApiParam({
 			name: 'calendarId',
@@ -110,7 +146,10 @@ export const ApiCalendarMemberUpdateRole = () =>
 		}),
 		ApiOkResponse({ type: CalendarMemberEntity }),
 		ApiNotFoundResponse({
-			description: 'Calendar not found | User not found',
+			description: 'Calendar not found',
+		}),
+		ApiNotFoundResponse({
+			description: 'User not found',
 		}),
 		ApiForbiddenResponse({
 			description: 'Access denied',
@@ -119,7 +158,7 @@ export const ApiCalendarMemberUpdateRole = () =>
 
 export const ApiCalendarMemberUpdateStatus = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Update calendar member status' }),
 		ApiParam({
 			name: 'calendarId',
@@ -134,7 +173,10 @@ export const ApiCalendarMemberUpdateStatus = () =>
 		}),
 		ApiOkResponse({ type: CalendarMemberEntity }),
 		ApiNotFoundResponse({
-			description: 'Calendar not found | User not found',
+			description: 'Calendar not found',
+		}),
+		ApiNotFoundResponse({
+			description: 'User not found',
 		}),
 		ApiForbiddenResponse({
 			description: 'Access denied',
@@ -143,8 +185,8 @@ export const ApiCalendarMemberUpdateStatus = () =>
 
 export const ApiCalendarRemove = () =>
 	applyDecorators(
-		ApiBearerAuth(),
-		ApiOperation({ summary: 'Delete calendar' }),
+		ApiAuth(),
+		ApiOperation({ summary: 'Delete calendar by id' }),
 		ApiParam({
 			name: 'id',
 			description: 'calendar id',
@@ -160,7 +202,7 @@ export const ApiCalendarRemove = () =>
 
 export const ApiCalendarMemberRemove = () =>
 	applyDecorators(
-		ApiBearerAuth(),
+		ApiAuth(),
 		ApiOperation({ summary: 'Delete calendar member' }),
 		ApiParam({
 			name: 'calendarId',
@@ -172,7 +214,10 @@ export const ApiCalendarMemberRemove = () =>
 		}),
 		ApiNoContentResponse(),
 		ApiNotFoundResponse({
-			description: 'Calendar not found | User not found',
+			description: 'Calendar not found',
+		}),
+		ApiNotFoundResponse({
+			description: 'User not found',
 		}),
 		ApiForbiddenResponse({
 			description: 'Access denied',

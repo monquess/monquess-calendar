@@ -40,13 +40,13 @@ export class UserEntity {
 	avatar: string;
 
 	@ApiProperty({
-		example: '2024-11-21 16:49:11.733',
+		example: '2025-03-09T16:17:53.019Z',
 		type: String,
 	})
 	createdAt: Date;
 
 	@ApiProperty({
-		example: '2024-11-21 16:49:11.733',
+		example: '2025-03-09T16:18:14.889Z',
 		type: String,
 	})
 	updatedAt: Date;
