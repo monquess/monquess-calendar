@@ -10,10 +10,17 @@ import {
 } from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
+import { NotificationService } from '@modules/notification/notification.service';
+import { CalendarInvitationNotification } from '@modules/notification/notifications/calendar-invitation.notification';
+import { UserService } from '@modules/user/user.service';
 
 @Injectable()
 export class CalendarService {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly notificationService: NotificationService,
+		private readonly userService: UserService
+	) {}
 
 	async findAll(user: User): Promise<CalendarEntity[]> {
 		return this.prisma.calendar.findMany({
@@ -77,6 +84,7 @@ export class CalendarService {
 		{ role }: CreateCalendarMemberDto
 	): Promise<CalendarMemberEntity> {
 		const calendar = await this.findById(calendarId, currentUser);
+		const targetUser = await this.userService.findById(targetUserId);
 
 		const currentUserMembership = calendar.users?.find(
 			(u) => u.userId === currentUser.id
@@ -89,7 +97,7 @@ export class CalendarService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		return this.prisma.calendarMember.create({
+		const newCalendarMember = await this.prisma.calendarMember.create({
 			data: {
 				calendarId: calendar.id,
 				userId: targetUserId,
@@ -97,6 +105,16 @@ export class CalendarService {
 				status: InvitationStatus.INVITED,
 			},
 		});
+
+		await this.notificationService.send(
+			targetUser,
+			new CalendarInvitationNotification({
+				username: targetUser.username,
+				calendarName: calendar.name,
+			})
+		);
+
+		return newCalendarMember;
 	}
 
 	async update(
