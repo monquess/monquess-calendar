@@ -19,6 +19,8 @@ import { EventModule } from './event/event.module';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
 import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
 import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.interceptor';
+import { NotificationModule } from './notification/notification.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
 	imports: [
@@ -84,6 +86,17 @@ import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.inte
 		}),
 		CalendarModule,
 		EventModule,
+		NotificationModule,
+		BullModule.forRootAsync({
+			useFactory: (configService: ConfigService) => ({
+				connection: {
+					host: configService.get<string>('REDIS_HOST'),
+					port: configService.get<number>('REDIS_PORT'),
+					password: configService.get<string>('REDIS_PASSWORD'),
+				},
+			}),
+			inject: [ConfigService],
+		}),
 	],
 	providers: [
 		{

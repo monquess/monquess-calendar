@@ -186,12 +186,12 @@ export class AuthService {
 			15 * 60
 		);
 
-		await this.mailService.sendMail(
-			user.email,
-			'Account verification',
-			'verification',
-			context
-		);
+		await this.mailService.sendMail({
+			to: user.email,
+			subject: 'Account verification',
+			templateName: 'verification',
+			context,
+		});
 	}
 
 	async sendPasswordResetEmail(email: string): Promise<void> {
@@ -204,12 +204,12 @@ export class AuthService {
 
 		await this.redis.set(TOKEN_PREFIXES.RESET_PASSWORD, email, token, 15 * 60);
 
-		await this.mailService.sendMail(
-			email,
-			'Password reset',
-			'password-reset',
-			context
-		);
+		await this.mailService.sendMail({
+			to: email,
+			subject: 'Password reset',
+			templateName: 'password-reset',
+			context,
+		});
 	}
 
 	private async updateRefreshToken(
