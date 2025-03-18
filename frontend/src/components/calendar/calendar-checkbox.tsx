@@ -11,27 +11,41 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import CalendarMenu from './calendar-menu'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
-	const { calendars, calendarVisibility, toggleCalendar, setCalendars } =
+	const { calendarVisibility, toggleCalendar, setCalendars } =
 		useCalendarStore()
+
+	const [calendars, setCalendarsArray] = useState<ICalendar[]>([])
 
 	const { isMobile } = useResponsive()
 
 	useEffect(() => {
-		if (Object.keys(calendars).length !== 0) return
-
 		const fetchCalendars = async () => {
 			try {
 				const response = await apiClient.get<ICalendar[]>('/calendars')
-				setCalendars(response.data)
+				const fetchedCalendars = response.data
+				const existingCalendarIds = Object.keys(calendarVisibility).map(Number)
+
+				const newCalendarIds = fetchedCalendars
+					.map((calendar) => calendar.id)
+					.filter((id) => !existingCalendarIds.includes(id))
+
+				if (newCalendarIds.length > 0) {
+					setCalendars([...existingCalendarIds, ...newCalendarIds])
+				}
+
+				setCalendarsArray(fetchedCalendars)
 			} catch {}
 		}
-		fetchCalendars()
-	}, [setCalendars, calendars])
+
+		if (!calendars || calendars.length === 0) {
+			fetchCalendars()
+		}
+	}, [setCalendars, calendars, calendarVisibility])
 
 	return (
 		<Stack>

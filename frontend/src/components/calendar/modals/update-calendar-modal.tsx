@@ -1,6 +1,5 @@
 import apiClient from '@/helpers/axios'
 import { ICalendar } from '@/helpers/interface/calendar-interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import {
@@ -23,7 +22,6 @@ interface updateCalendarModalProps {
 const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { isMobile } = useResponsive()
-		const { updateCalendar } = useCalendarStore()
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -37,11 +35,7 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
-				const response = await apiClient.patch(
-					`/calendars/${calendar.id}`,
-					values
-				)
-				updateCalendar(calendar.id, response.data)
+				await apiClient.patch(`/calendars/${calendar.id}`, values)
 				onClose()
 			} catch {}
 		}

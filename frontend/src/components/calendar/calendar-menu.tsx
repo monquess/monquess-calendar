@@ -1,3 +1,4 @@
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 import { ActionIcon, Menu } from '@mantine/core'
 import React, { useState } from 'react'
 import { FcInvite } from 'react-icons/fc'
@@ -5,24 +6,17 @@ import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
 import { HiOutlineDotsHorizontal } from 'react-icons/hi'
 import DeleteCalendarModal from './modals/delete-calendar.modal'
+import InviteMemberModal from './modals/invite-member-modal'
 import UpdateCalendarModal from './modals/update-calendar-modal'
 
-interface Calendar {
-	id: number
-	isPersonal: boolean
-	name: string
-	description?: string
-	color: string
-	createdAt: string
-}
-
 interface CalendarMenuProps {
-	calendar: Calendar
+	calendar: ICalendar
 }
 
 const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
-	const [openUpdateModal, setOpenUpdateModal] = useState(false)
-	const [openDeleteModal, setDeleteUpdateModal] = useState(false)
+	const [openUpdateModal, setUpdateModal] = useState(false)
+	const [openDeleteModal, setDeleteModal] = useState(false)
+	const [openInviteModal, setInviteModal] = useState(false)
 
 	return (
 		<>
@@ -35,18 +29,21 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 				<Menu.Dropdown>
 					<Menu.Item
 						leftSection={<GrUpdate size={14} />}
-						onClick={() => setOpenUpdateModal(true)}
+						onClick={() => setUpdateModal(true)}
 					>
 						Update info
 					</Menu.Item>
-					<Menu.Item leftSection={<FcInvite size={14} />}>
+					<Menu.Item
+						leftSection={<FcInvite size={14} />}
+						onClick={() => setInviteModal(true)}
+					>
 						Invite member
 					</Menu.Item>
 					<Menu.Divider />
 					<Menu.Item
 						color="red"
 						leftSection={<GoTrash size={14} />}
-						onClick={() => setDeleteUpdateModal(true)}
+						onClick={() => setDeleteModal(true)}
 					>
 						Delete calendar
 					</Menu.Item>
@@ -55,12 +52,17 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 			<UpdateCalendarModal
 				calendar={calendar}
 				opened={openUpdateModal}
-				onClose={() => setOpenUpdateModal(false)}
+				onClose={() => setUpdateModal(false)}
 			/>
 			<DeleteCalendarModal
 				calendar={calendar}
 				opened={openDeleteModal}
-				onClose={() => setDeleteUpdateModal(false)}
+				onClose={() => setDeleteModal(false)}
+			/>
+			<InviteMemberModal
+				calendar={calendar}
+				opened={openInviteModal}
+				onClose={() => setInviteModal(false)}
 			/>
 		</>
 	)
