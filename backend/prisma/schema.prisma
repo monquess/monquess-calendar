@@ -16,20 +16,21 @@ model User {
   avatar              String
   provider            Provider         @default(LOCAL)
   calendarMemberships CalendarMember[]
+  EventMember         EventMember[]
 
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  EventMember EventMember[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 model Calendar {
   id          Int              @id @default(autoincrement())
-  isPersonal  Boolean          @default(false) @map("is_personal")
   name        String           @db.VarChar(255)
   description String?
   color       String           @db.VarChar(7)
+  type        CalendarType     @default(SHARED)
+  region      String?
   users       CalendarMember[]
   events      Event[]
 
@@ -57,11 +58,11 @@ model Event {
   name        String        @db.VarChar(30)
   description String?       @db.VarChar(255)
   color       String        @db.VarChar(7)
-  calendarId  Int
+  calendarId  Int           @map("calendar_id")
   calendar    Calendar      @relation(fields: [calendarId], references: [id], onDelete: Cascade)
   type        EventType
-  startDate   DateTime      @db.Timestamptz()
-  endDate     DateTime?     @db.Timestamptz()
+  startDate   DateTime      @map("start_date") @db.Timestamptz()
+  endDate     DateTime?     @map("end_date") @db.Timestamptz()
   members     EventMember[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -70,9 +71,9 @@ model Event {
 }
 
 model EventMember {
-  eventId Int
+  eventId Int              @map("event_id")
   event   Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userId  Int
+  userId  Int              @map("user_id")
   user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   status  InvitationStatus
   role    Role             @default(VIEWER)
@@ -100,8 +101,15 @@ enum InvitationStatus {
   DECLINED
 }
 
+enum CalendarType {
+  PERSONAL
+  SHARED
+  HOLIDAYS
+}
+
 enum EventType {
   MEETING
   REMINDER
   TASK
+  HOLIDAY
 }

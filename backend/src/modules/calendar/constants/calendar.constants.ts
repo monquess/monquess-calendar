@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client';
+import { Role, CalendarType } from '@prisma/client';
 
 export const DEFAULT_CALENDAR_COLOR = '#0000ff';
 
@@ -7,3 +7,11 @@ export const AllowedRoles = Object.fromEntries(
 );
 
 export type AllowedRoles = (typeof AllowedRoles)[keyof typeof AllowedRoles];
+
+export const AllowedTypes = Object.fromEntries(
+	Object.entries(CalendarType).filter(
+		([_key, value]) => value !== CalendarType.PERSONAL
+	)
+);
+
+export type AllowedTypes = (typeof AllowedTypes)[keyof typeof AllowedTypes];

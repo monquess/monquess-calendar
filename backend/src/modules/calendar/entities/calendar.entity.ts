@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CalendarMemberEntity } from './calendar-member.entity';
+import { CalendarType } from '@prisma/client';
 
 export class CalendarEntity {
 	@ApiProperty({
@@ -9,10 +10,11 @@ export class CalendarEntity {
 	id: number;
 
 	@ApiProperty({
-		type: Boolean,
-		example: true,
+		type: String,
+		enum: CalendarType,
+		example: CalendarType.SHARED,
 	})
-	isPersonal: boolean;
+	type: CalendarType;
 
 	@ApiProperty({
 		type: String,
@@ -31,6 +33,12 @@ export class CalendarEntity {
 		example: '#f542ec',
 	})
 	color: string;
+
+	@ApiProperty({
+		type: String,
+		example: 'US',
+	})
+	region: string | null;
 
 	@ApiProperty({
 		type: String,

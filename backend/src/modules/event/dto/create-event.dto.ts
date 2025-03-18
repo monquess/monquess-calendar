@@ -15,13 +15,13 @@ import {
 
 @ValidatorConstraint({ async: false })
 class IsEndDateForbiddenForReminder implements ValidatorConstraintInterface {
-	validate(value: string | undefined, args: ValidationArguments) {
+	validate(_value: string | undefined, args: ValidationArguments) {
 		const object = args.object as CreateEventDto;
 		return object.type !== EventType.REMINDER;
 	}
 
 	defaultMessage(_args: ValidationArguments) {
-		return `endDate should not be provided if type is REMINDER`;
+		return `End date should not be provided if type is REMINDER`;
 	}
 }
 

@@ -1,6 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { InvitationStatus, Role, User } from '@prisma/client';
+import { CalendarType, InvitationStatus, Role, User } from '@prisma/client';
 import {
 	CreateCalendarDto,
 	UpdateCalendarDto,
@@ -183,7 +183,10 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (calendar.isPersonal || membership?.role !== Role.OWNER) {
+		if (
+			calendar.type === CalendarType.PERSONAL ||
+			membership?.role !== Role.OWNER
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 
@@ -204,7 +207,10 @@ export class CalendarService {
 			(user) => user.userId === targetUserId
 		);
 
-		if (calendar.isPersonal && targetUserMembership?.role === Role.OWNER) {
+		if (
+			calendar.type === CalendarType.PERSONAL &&
+			targetUserMembership?.role === Role.OWNER
+		) {
 			// can't delete your personal calenar
 			throw new ForbiddenException('Access denied');
 		}
