@@ -230,7 +230,7 @@ export class AuthService {
 		res.cookie(COOKIE_NAMES.REFRESH_TOKEN, token, {
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: this.configService.get('NODE_ENV') === 'production',
+			secure: this.configService.get<string>('NODE_ENV') === 'production',
 			maxAge: exp * 1000,
 		});
 	}
@@ -254,11 +254,11 @@ export class AuthService {
 	private async generateTokens(payload: JwtPayload): Promise<[string, string]> {
 		return Promise.all([
 			this.jwtService.signAsync(payload, {
-				secret: this.configService.get('JWT_ACCESS_SECRET'),
+				secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
 				expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRATION'),
 			}),
 			this.jwtService.signAsync(payload, {
-				secret: this.configService.get('JWT_REFRESH_SECRET'),
+				secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
 				expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRATION'),
 			}),
 		]);

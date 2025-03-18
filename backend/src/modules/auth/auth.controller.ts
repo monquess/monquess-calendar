@@ -91,7 +91,7 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response
 	): Promise<void> {
 		await this.authService.socialLogin(user, Provider.GOOGLE, res);
-		return res.redirect(this.configService.get('CLIENT_URL'));
+		return res.redirect(this.configService.get<string>('CLIENT_URL'));
 	}
 
 	@ApiAuthLogout()

@@ -16,9 +16,9 @@ import { GoogleStrategy } from './strategies/google.strategy';
 		PrismaModule,
 		RedisModule.registerAsync({
 			useFactory: (configService: ConfigService) => ({
-				host: configService.get('REDIS_HOST'),
+				host: configService.get<string>('REDIS_HOST'),
 				port: configService.get<number>('REDIS_PORT'),
-				password: configService.get('REDIS_PASSWORD'),
+				password: configService.get<string>('REDIS_PASSWORD'),
 			}),
 			inject: [ConfigService],
 		}),

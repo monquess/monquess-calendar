@@ -3,6 +3,7 @@ import {
 	PutObjectCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { extname } from 'path';
@@ -14,15 +15,17 @@ export class S3Service {
 	private bucket: string;
 	private endpoint: string;
 
-	constructor(private readonly configService: ConfigService) {
-		this.bucket = this.configService.get<string>('S3_BUCKET_NAME')!;
-		this.endpoint = this.configService.get<string>('S3_ENDPOINT')!;
+	constructor(
+		private readonly configService: ConfigService<EnvironmentVariables, true>
+	) {
+		this.bucket = this.configService.get<string>('S3_BUCKET_NAME');
+		this.endpoint = this.configService.get<string>('S3_ENDPOINT');
 
 		this.client = new S3Client({
 			region: this.configService.get<string>('S3_REGION'),
 			credentials: {
-				accessKeyId: this.configService.get('S3_ACCESS_KEY_ID')!,
-				secretAccessKey: this.configService.get('S3_SECRET_ACCESS_KEY')!,
+				accessKeyId: this.configService.get<string>('S3_ACCESS_KEY_ID'),
+				secretAccessKey: this.configService.get<string>('S3_SECRET_ACCESS_KEY'),
 			},
 			endpoint: this.endpoint,
 			forcePathStyle: true,

@@ -34,7 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 		const user = {
 			username: email.split('@')[0],
 			email,
-			avatar: photo || this.configService.get('DEFAULT_AVATAR_PATH'),
+			avatar: photo || this.configService.get<string>('DEFAULT_AVATAR_PATH'),
 			verified: true,
 		};
 

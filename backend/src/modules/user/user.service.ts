@@ -8,13 +8,14 @@ import { UserEntity } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { S3Service } from '@modules/s3/s3.service';
 import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
 
 @Injectable()
 export class UserService {
 	constructor(
 		private readonly prisma: PrismaService,
 		private readonly s3Service: S3Service,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService<EnvironmentVariables, true>
 	) {}
 
 	async findAll({
@@ -55,7 +56,7 @@ export class UserService {
 		return this.prisma.user.create({
 			data: {
 				...createUserDto,
-				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH')!,
+				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH'),
 				password: await bcrypt.hash(createUserDto.password, salt),
 			},
 		});

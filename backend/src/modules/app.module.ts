@@ -41,10 +41,10 @@ import { BullModule } from '@nestjs/bullmq';
 				configService: ConfigService<EnvironmentVariables, true>
 			): CacheModuleOptions => {
 				const redisOptions: RedisClientOptions = {
-					password: configService.get('REDIS_PASSWORD'),
+					password: configService.get<string>('REDIS_PASSWORD'),
 					socket: {
-						host: configService.get('REDIS_HOST'),
-						port: configService.get('REDIS_PORT'),
+						host: configService.get<string>('REDIS_HOST'),
+						port: configService.get<number>('REDIS_PORT'),
 					},
 				};
 				return {
@@ -63,7 +63,9 @@ import { BullModule } from '@nestjs/bullmq';
 		S3Module,
 		MailModule.forRootAsync({
 			isGlobal: true,
-			useFactory: (configService: ConfigService): MailOptions => ({
+			useFactory: (
+				configService: ConfigService<EnvironmentVariables, true>
+			): MailOptions => ({
 				transport: {
 					host: configService.get<string>('MAIL_HOST'),
 					port: configService.get<number>('MAIL_PORT'),
@@ -74,8 +76,8 @@ import { BullModule } from '@nestjs/bullmq';
 				},
 				defaults: {
 					from: {
-						name: configService.get<string>('MAIL_FROM_NAME')!,
-						address: configService.get<string>('MAIL_FROM_ADDRESS')!,
+						name: configService.get<string>('MAIL_FROM_NAME'),
+						address: configService.get<string>('MAIL_FROM_ADDRESS'),
 					},
 				},
 				template: {
