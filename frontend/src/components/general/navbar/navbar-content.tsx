@@ -1,7 +1,9 @@
+import UserMenu from '@/components/user/user-menu'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Avatar, Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
+import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
 import { Calendar } from '@mantine/dates'
+import { useMediaQuery } from '@mantine/hooks'
 import React from 'react'
 import { IoMenu } from 'react-icons/io5'
 import ThemeSwitch from '../../buttons/theme-switch'
@@ -18,6 +20,7 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 }) => {
 	const { user } = useStore()
 	const { isMobile } = useResponsive()
+	const isSmallMobile = useMediaQuery('(max-width: 420px)')
 
 	return (
 		<Stack m="md" justify="space-between" h={isMobile ? '100%' : 'auto'}>
@@ -37,13 +40,13 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 				<CalendarCheckbox />
 			</Stack>
 			<Stack>
-				<Divider mt="xl" />
-				<Flex>
-					<Avatar src={user?.avatar} alt={user?.username} size="lg" />
-					<Stack>
-						<Text>{user?.username}</Text>
-						<Text>{user?.email}</Text>
-					</Stack>
+				<Divider />
+				<Flex align="center" gap="md">
+					<UserMenu />
+					<Box mb={isSmallMobile ? 'xs' : '0'}>
+						<Text fw={700}>{user?.username}</Text>
+						<Text c="dimmed">{user?.email}</Text>
+					</Box>
 				</Flex>
 			</Stack>
 		</Stack>

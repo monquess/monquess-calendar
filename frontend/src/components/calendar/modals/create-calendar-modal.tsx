@@ -1,5 +1,4 @@
 import apiClient from '@/helpers/axios'
-import useCalendarStore from '@/helpers/store/calendar-store'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import {
@@ -21,7 +20,6 @@ interface createCalendarModalProps {
 const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 	({ opened, onClose }) => {
 		const { isMobile } = useResponsive()
-		const { addCalendar } = useCalendarStore()
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -35,8 +33,7 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
-				const response = await apiClient.post('/calendars', values)
-				addCalendar(response.data)
+				await apiClient.post('/calendars', values)
 				onClose()
 			} catch {}
 		}

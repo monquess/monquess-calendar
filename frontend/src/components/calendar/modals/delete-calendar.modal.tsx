@@ -31,6 +31,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 
 		const handleSubmit = async () => {
 			try {
+				console.log(role)
 				if (role === 'OWNER') {
 					await apiClient.delete(`/calendars/${calendar.id}`)
 				}
@@ -40,6 +41,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 				}
 
 				deleteCalendar(calendar.id)
+				onClose()
 			} catch {}
 		}
 		return (
