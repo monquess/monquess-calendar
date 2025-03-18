@@ -26,13 +26,12 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
-				//console.log(values.file)
 				const formData = new FormData()
+
 				if (values.file) {
 					formData.append('file', values.file)
-					//console.log(values.file)
 				}
-				console.log(formData)
+
 				const response = await apiClient.patch<User>(
 					`/users/${user?.id}/avatar`,
 					formData,
@@ -42,12 +41,10 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 						},
 					}
 				)
-				console.log(response)
+
 				updateUser(response.data)
 				onClose()
-			} catch (error) {
-				console.error(error)
-			}
+			} catch {}
 		}
 		return (
 			<Modal

@@ -10,7 +10,11 @@ import DeleteAccountModal from './modals/delete-account-modal'
 import UpdateUserModal from './modals/update-user-modal'
 import UploadAvatarModal from './modals/upload-avatar-modal'
 
-const UserMenu: React.FC = React.memo(() => {
+interface Props {
+	size: string
+}
+
+const UserMenu: React.FC<Props> = React.memo(({ size }) => {
 	const isSmallMobile = useMediaQuery('(max-width: 420px)')
 	const { user, logout } = useStore()
 	const navigate = useNavigate()
@@ -30,7 +34,7 @@ const UserMenu: React.FC = React.memo(() => {
 					<Avatar
 						src={user?.avatar}
 						alt={user?.username}
-						size="lg"
+						size={size}
 						mb={isSmallMobile ? 'xs' : '0'}
 					/>
 				</Menu.Target>

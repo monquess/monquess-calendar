@@ -1,6 +1,7 @@
 import ThemeSwitch from '@/components/buttons/theme-switch'
+import UserMenu from '@/components/user/user-menu'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Box, Drawer } from '@mantine/core'
+import { Box, Drawer, Flex } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import React, { useEffect, useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
@@ -16,6 +17,7 @@ const Navbar: React.FC<NavbarProps> = React.memo(({ onToggle }) => {
 	const [openCreateModal, setCreateModalOpen] = useState(false)
 	const [openNavbar, setNavbarOpen] = useState(!isMobile)
 	const [opened, { open, close }] = useDisclosure(false)
+	//const { user } = useStore()
 
 	useEffect(() => {
 		setNavbarOpen(!isMobile)
@@ -36,9 +38,14 @@ const Navbar: React.FC<NavbarProps> = React.memo(({ onToggle }) => {
 	return (
 		<>
 			{(isMobile || !openNavbar) && (
-				<Box pt="md" pl="md">
+				<Flex pt="md" pl="md" justify="space-between">
 					<IoMenu onClick={handleClick} size={28} />
-				</Box>
+					{isMobile && (
+						<Flex mr="md" align="center">
+							<UserMenu size="sm" />
+						</Flex>
+					)}
+				</Flex>
 			)}
 			{isMobile ? (
 				// <Drawer

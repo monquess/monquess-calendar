@@ -42,7 +42,7 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 			<Stack>
 				<Divider />
 				<Flex align="center" gap="md">
-					<UserMenu />
+					<UserMenu size="lg" />
 					<Box mb={isSmallMobile ? 'xs' : '0'}>
 						<Text fw={700}>{user?.username}</Text>
 						<Text c="dimmed">{user?.email}</Text>

@@ -26,7 +26,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 					return
 				}
 				try {
-					const response = await apiClient.get('/users', {
+					const response = await apiClient.get<User[]>('/users', {
 						params: { email: query },
 					})
 					setData(response.data)
@@ -42,11 +42,24 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 		const handleSubmit = async (event: React.FormEvent) => {
 			event.preventDefault()
 			try {
+				const response = await Promise.all(
+					selectedUser.map((user) =>
+						apiClient.get<User[]>('/users', { params: { email: user } })
+					)
+				)
+
+				const userIds = response
+					.map((res) => {
+						return res.data.length > 0 ? res.data[0].id : null
+					})
+					.filter(Boolean)
+
 				await Promise.all(
-					selectedUser.map((userId) =>
+					userIds.map((userId) =>
 						apiClient.post(`/calendars/${calendar.id}/users/${userId}`)
 					)
 				)
+
 				onClose()
 			} catch {}
 		}
@@ -72,10 +85,11 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 							onSearchChange={setSearch}
 							onChange={setSelectedUser}
 							data={data.map((user) => ({
-								value: user.id.toString(),
+								value: user.email,
 								label: user.email,
 							}))}
 							styles={{ dropdown: { zIndex: 1100 } }}
+							hidePickedOptions
 						/>
 						<Button type="submit">Invite users</Button>
 					</Stack>
