@@ -86,9 +86,16 @@ export class EventService {
 				startDate: {
 					gte: fromZonedTime(startDate, currentUser.timezone),
 				},
-				endDate: {
-					lte: fromZonedTime(endDate, currentUser.timezone),
-				},
+				OR: [
+					{
+						endDate: {
+							lte: fromZonedTime(endDate, currentUser.timezone),
+						},
+					},
+					{
+						endDate: null,
+					},
+				],
 				members: {
 					some: {
 						userId: currentUser.id,

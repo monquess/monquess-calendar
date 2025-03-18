@@ -14,14 +14,23 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ async: false })
-class IsEndDateForbiddenForReminder implements ValidatorConstraintInterface {
-	validate(_value: string | undefined, args: ValidationArguments) {
+class EndDateValidator implements ValidatorConstraintInterface {
+	validate(date: string | undefined, args: ValidationArguments) {
 		const object = args.object as CreateEventDto;
-		return object.type !== EventType.REMINDER;
+
+		if (object.type === EventType.REMINDER) {
+			return date === undefined;
+		}
+
+		return date !== undefined && new Date(object.startDate) < new Date(date);
 	}
 
-	defaultMessage(_args: ValidationArguments) {
-		return `End date should not be provided if type is REMINDER`;
+	defaultMessage(args: ValidationArguments) {
+		const object = args.object as CreateEventDto;
+		if (object.type === EventType.REMINDER) {
+			return `End date should not be provided for reminder event`;
+		}
+		return `End date must be greater than start date`;
 	}
 }
 
@@ -75,10 +84,10 @@ export class CreateEventDto {
 		format: 'date-time',
 		example: '2025-03-09T17:45:00.000Z',
 	})
-	@Validate(IsEndDateForbiddenForReminder)
 	@IsISO8601({
 		strict: true,
 	})
+	@Validate(EndDateValidator)
 	@IsOptional()
 	endDate?: string;
 }

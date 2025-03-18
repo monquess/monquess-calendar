@@ -67,6 +67,8 @@ model Event {
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([calendarId])
+  @@index([startDate, endDate])
   @@map("events")
 }
 
