@@ -3,6 +3,8 @@ import { ICalendar } from '@/helpers/interface/calendar-interface'
 import { User } from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Button, Modal, MultiSelect, Stack } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
+import { AxiosError } from 'axios'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -18,6 +20,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 		const [data, setData] = useState<User[]>([])
 		const [search, setSearch] = useState('')
 		const [selectedUser, setSelectedUser] = useState<string[]>([])
+		const [loading, setLoading] = useState(false)
 
 		const fetchUsers = useCallback(
 			debounce(async (query: string) => {
@@ -42,6 +45,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 		const handleSubmit = async (event: React.FormEvent) => {
 			event.preventDefault()
 			try {
+				setLoading(true)
 				const response = await Promise.all(
 					selectedUser.map((user) =>
 						apiClient.get<User[]>('/users', { params: { email: user } })
@@ -60,8 +64,27 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 					)
 				)
 
+				notifications.show({
+					title: 'Member Invitation',
+					message: 'Members have been successfully invited to the calendar.',
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'green',
+				})
 				onClose()
-			} catch {}
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Member Invitation',
+						message: error.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
+			}
 		}
 
 		return (
@@ -91,7 +114,9 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 							styles={{ dropdown: { zIndex: 1100 } }}
 							hidePickedOptions
 						/>
-						<Button type="submit">Invite users</Button>
+						<Button type="submit" loading={loading} variant="outline">
+							Invite users
+						</Button>
 					</Stack>
 				</form>
 			</Modal>

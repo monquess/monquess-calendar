@@ -35,8 +35,8 @@ const PasswordResetForm: React.FC = React.memo(() => {
 			setVerificationModalOpened(true)
 			form.reset()
 			notifications.show({
-				title: 'Send reset password email',
-				message: `Reset password email send successfully to ${values.email}`,
+				title: 'Password Reset Email Sent',
+				message: `A password reset email has been successfully sent to ${values.email}.`,
 				withCloseButton: true,
 				autoClose: 5000,
 				color: 'green',
@@ -44,7 +44,7 @@ const PasswordResetForm: React.FC = React.memo(() => {
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
 				notifications.show({
-					title: 'Send reset password email',
+					title: 'Password Reset Email Sent',
 					message: error.response.data.message,
 					withCloseButton: true,
 					autoClose: 5000,

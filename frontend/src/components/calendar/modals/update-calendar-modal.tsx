@@ -11,7 +11,9 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import React from 'react'
+import { notifications } from '@mantine/notifications'
+import { AxiosError } from 'axios'
+import React, { useState } from 'react'
 
 interface updateCalendarModalProps {
 	opened: boolean
@@ -22,6 +24,7 @@ interface updateCalendarModalProps {
 const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { isMobile } = useResponsive()
+		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -35,9 +38,29 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
+				setLoading(true)
 				await apiClient.patch(`/calendars/${calendar.id}`, values)
+				notifications.show({
+					title: 'Calendar Update',
+					message: 'Your calendar has been successfully updated.',
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'green',
+				})
 				onClose()
-			} catch {}
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Calendar Update',
+						message: error.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
+			}
 		}
 
 		return (
@@ -74,7 +97,7 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 								dropdown: { zIndex: 1100 },
 							}}
 						/>
-						<Button type="submit" variant="outline">
+						<Button type="submit" variant="outline" loading={loading}>
 							Update info
 						</Button>
 					</Stack>

@@ -2,9 +2,9 @@ import UserMenu from '@/components/user/user-menu'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
-import { Calendar } from '@mantine/dates'
+import { DatePicker } from '@mantine/dates'
 import { useMediaQuery } from '@mantine/hooks'
-import React from 'react'
+import React, { useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
 import ThemeSwitch from '../../buttons/theme-switch'
 import CalendarCheckbox from '../../calendar/calendar-checkbox'
@@ -21,6 +21,7 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 	const { user } = useStore()
 	const { isMobile } = useResponsive()
 	const isSmallMobile = useMediaQuery('(max-width: 420px)')
+	const [value, setValue] = useState<Date | null>(new Date())
 
 	return (
 		<Stack m="md" justify="space-between" h={isMobile ? '100%' : 'auto'}>
@@ -36,7 +37,11 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 				<Button onClick={onOpenModal} mt={isMobile ? '0' : 'xl'}>
 					Create
 				</Button>
-				<Calendar />
+				<DatePicker
+					defaultDate={new Date()}
+					value={value}
+					onChange={setValue}
+				/>
 				<CalendarCheckbox />
 			</Stack>
 			<Stack>

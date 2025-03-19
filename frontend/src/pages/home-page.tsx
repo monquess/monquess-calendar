@@ -55,6 +55,7 @@ const HomePage: React.FC = React.memo(() => {
 					selectMirror={true}
 					dayMaxEvents={true}
 					height="100%"
+					themeSystem="bootstrap5"
 				/>
 			</Stack>
 		</Flex>

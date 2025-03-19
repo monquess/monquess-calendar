@@ -78,8 +78,9 @@ const RegisterForm: React.FC = React.memo(() => {
 				setVerificationModalOpened(true)
 				form.reset()
 				notifications.show({
-					title: 'Register',
-					message: 'Register successfully, now you need to verify your account',
+					title: 'Registration',
+					message:
+						'You have registered successfully. Please verify your account.',
 					withCloseButton: true,
 					autoClose: 5000,
 					color: 'green',
@@ -87,7 +88,7 @@ const RegisterForm: React.FC = React.memo(() => {
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
 					notifications.show({
-						title: 'Register',
+						title: 'Registration',
 						message: error.response.data.message,
 						withCloseButton: true,
 						autoClose: 5000,

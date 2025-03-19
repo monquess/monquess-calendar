@@ -4,7 +4,9 @@ import { updateUserSchema } from '@/helpers/validations/update-user-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Button, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import React from 'react'
+import { notifications } from '@mantine/notifications'
+import { AxiosError } from 'axios'
+import React, { useState } from 'react'
 
 interface updateUserModalProps {
 	opened: boolean
@@ -15,6 +17,7 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 	({ opened, onClose }) => {
 		const { isMobile } = useResponsive()
 		const { user, updateUser } = useStore()
+		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -27,13 +30,34 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
+				setLoading(true)
 				const response = await apiClient.patch<User>(
 					`/users/${user?.id}`,
 					values
 				)
 				updateUser(response.data)
+
+				notifications.show({
+					title: 'Account Update',
+					message: 'Your account information has been successfully updated.',
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'green',
+				})
 				onClose()
-			} catch {}
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Account Update',
+						message: error.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
+			}
 		}
 
 		return (
@@ -62,7 +86,7 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 							key={form.key('email')}
 							{...form.getInputProps('email')}
 						></TextInput>
-						<Button type="submit" variant="outline">
+						<Button type="submit" variant="outline" loading={loading}>
 							Save changes
 						</Button>
 					</Stack>

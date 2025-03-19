@@ -4,7 +4,9 @@ import { avatarSchema } from '@/helpers/validations/avatar-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import React from 'react'
+import { notifications } from '@mantine/notifications'
+import { AxiosError } from 'axios'
+import React, { useState } from 'react'
 
 interface UploadAvatarModalProps {
 	opened: boolean
@@ -15,6 +17,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 	({ opened, onClose }) => {
 		const { isMobile } = useResponsive()
 		const { user, updateUser } = useStore()
+		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -26,6 +29,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
+				setLoading(true)
 				const formData = new FormData()
 
 				if (values.file) {
@@ -42,9 +46,28 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 					}
 				)
 
+				notifications.show({
+					title: 'Avatar Upload',
+					message: 'Avatar uploaded successfully.',
+					withCloseButton: true,
+					autoClose: 5000,
+					color: 'green',
+				})
 				updateUser(response.data)
 				onClose()
-			} catch {}
+			} catch (error) {
+				if (error instanceof AxiosError && error.response) {
+					notifications.show({
+						title: 'Avatar Upload',
+						message: error.message,
+						withCloseButton: true,
+						autoClose: 5000,
+						color: 'red',
+					})
+				}
+			} finally {
+				setLoading(false)
+			}
 		}
 		return (
 			<Modal
@@ -70,7 +93,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 							key={form.key('file')}
 							{...form.getInputProps('file')}
 						/>
-						<Button type="submit" variant="outline">
+						<Button type="submit" variant="outline" loading={loading}>
 							Upload avatar
 						</Button>
 					</Stack>
