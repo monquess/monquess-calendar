@@ -10,6 +10,10 @@ import {
 } from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
+import {
+	CountryCode,
+	GOOGLE_CALENDARS,
+} from '@common/constants/country-codes.constant';
 
 @Injectable()
 export class CalendarService {
@@ -58,6 +62,12 @@ export class CalendarService {
 		currentUser: User,
 		createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
+		if (createCalendarDto.type === CalendarType.HOLIDAYS) {
+			createCalendarDto.name =
+				GOOGLE_CALENDARS[createCalendarDto.region as CountryCode].country;
+			createCalendarDto.description = undefined;
+		}
+
 		return this.prisma.calendar.create({
 			data: {
 				...createCalendarDto,
@@ -107,6 +117,10 @@ export class CalendarService {
 		updateCalendarDto: UpdateCalendarDto
 	): Promise<CalendarEntity> {
 		const calendar = await this.findById(id, currentUser);
+
+		if (calendar.type === CalendarType.HOLIDAYS) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
 
 		const membership = calendar.users?.find(
 			(user) => user.userId === currentUser.id

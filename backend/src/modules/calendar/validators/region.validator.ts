@@ -5,7 +5,7 @@ import {
 	ValidatorConstraintInterface,
 } from 'class-validator';
 import { CreateCalendarDto } from '../dto/create-calendar.dto';
-import { GOOGLE_CALENDARS } from '@modules/event/constants/country-codes.constant';
+import { GOOGLE_CALENDARS } from '@common/constants/country-codes.constant';
 
 @ValidatorConstraint({ async: false })
 export class RegionValidator implements ValidatorConstraintInterface {

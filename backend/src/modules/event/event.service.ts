@@ -27,7 +27,7 @@ import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import {
 	CountryCode,
 	GOOGLE_CALENDARS,
-} from './constants/country-codes.constant';
+} from '../../common/constants/country-codes.constant';
 import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
 
 @Injectable()
@@ -121,6 +121,11 @@ export class EventService {
 			calendarId,
 			currentUser
 		);
+
+		if (calendar.type === CalendarType.HOLIDAYS) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
+
 		const membership = calendar.users?.find(
 			(user) => user.userId === currentUser.id
 		);
@@ -174,6 +179,11 @@ export class EventService {
 		currentUser: CurrentUser
 	): Promise<EventEntity> {
 		const event = await this.findById(id, currentUser);
+
+		if (event.type === EventType.HOLIDAY) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
+
 		const membership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
@@ -355,7 +365,7 @@ export class EventService {
 		timeMax: Date | string
 	): Promise<EventEntity[]> {
 		const region = encodeURIComponent(
-			GOOGLE_CALENDARS[calendar.region as CountryCode]
+			GOOGLE_CALENDARS[calendar.region as CountryCode].region
 		);
 		const url = `https://www.googleapis.com/calendar/v3/calendars/${region}/events`;
 
