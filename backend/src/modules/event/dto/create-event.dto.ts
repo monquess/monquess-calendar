@@ -8,31 +8,8 @@ import {
 	IsOptional,
 	IsString,
 	Validate,
-	ValidationArguments,
-	ValidatorConstraint,
-	ValidatorConstraintInterface,
 } from 'class-validator';
-
-@ValidatorConstraint({ async: false })
-class EndDateValidator implements ValidatorConstraintInterface {
-	validate(date: string | undefined, args: ValidationArguments) {
-		const object = args.object as CreateEventDto;
-
-		if (object.type === EventType.REMINDER) {
-			return date === undefined;
-		}
-
-		return date !== undefined && new Date(object.startDate) < new Date(date);
-	}
-
-	defaultMessage(args: ValidationArguments) {
-		const object = args.object as CreateEventDto;
-		if (object.type === EventType.REMINDER) {
-			return `End date should not be provided for reminder event`;
-		}
-		return `End date must be greater than start date`;
-	}
-}
+import { EndDateValidator } from '../validators/end-date.validator';
 
 export class CreateEventDto {
 	@ApiProperty({

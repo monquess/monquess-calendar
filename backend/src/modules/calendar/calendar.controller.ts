@@ -53,13 +53,13 @@ export class CalendarController {
 
 	@ApiCalendarFindAll()
 	@Get()
-	async findAll(@CurrentUser() user: User): Promise<CalendarEntity[]> {
+	findAll(@CurrentUser() user: User): Promise<CalendarEntity[]> {
 		return this.calendarService.findAll(user);
 	}
 
 	@ApiCalendarFindById()
 	@Get(':id')
-	async findById(
+	findById(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: User
 	): Promise<CalendarEntity> {
@@ -68,7 +68,7 @@ export class CalendarController {
 
 	@ApiCalendarCreate()
 	@Post()
-	async create(
+	create(
 		@CurrentUser() user: User,
 		@Body() createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
@@ -77,7 +77,7 @@ export class CalendarController {
 
 	@ApiCalendarFindEvents()
 	@Get(':id/events')
-	async findEvents(
+	findEvents(
 		@Param('id', ParseIntPipe) id: number,
 		@Query() filteringOptions: FilteringOptionsDto,
 		@CurrentUser() currentUser: CurrentUser

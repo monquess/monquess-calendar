@@ -24,15 +24,11 @@ import { HttpService } from '@nestjs/axios';
 import { CalendarEntity } from '@modules/calendar/entities/calendar.entity';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
-import { CountryCode, GOOGLE_CALENDARS } from './country-codes.constant';
-
-interface GoogleHolidayResponse {
-	items: {
-		summary: string;
-		start: { date: string };
-		end: { date: string };
-	}[];
-}
+import {
+	CountryCode,
+	GOOGLE_CALENDARS,
+} from './constants/country-codes.constant';
+import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
 
 @Injectable()
 export class EventService {

@@ -6,34 +6,9 @@ import {
 	IsOptional,
 	IsString,
 	Validate,
-	ValidationArguments,
-	ValidatorConstraint,
-	ValidatorConstraintInterface,
 } from 'class-validator';
 import { AllowedTypes } from '../constants/calendar.constants';
-import { CalendarType } from '@prisma/client';
-import { GOOGLE_CALENDARS } from '@modules/event/country-codes.constant';
-
-@ValidatorConstraint({ async: false })
-class RegionValidator implements ValidatorConstraintInterface {
-	validate(region: string | undefined, args: ValidationArguments) {
-		const object = args.object as CreateCalendarDto;
-
-		if (object.type === CalendarType.HOLIDAYS) {
-			return !!region && Object.keys(GOOGLE_CALENDARS).includes(region);
-		}
-
-		return region !== undefined;
-	}
-
-	defaultMessage(args: ValidationArguments) {
-		const object = args.object as CreateCalendarDto;
-		if (object.type === CalendarType.HOLIDAYS) {
-			return `Region is must be valid ISO 3166-1 code`;
-		}
-		return `Region is not allowed for calendars of type ${object.type}`;
-	}
-}
+import { RegionValidator } from '../validators/region.validator';
 
 export class CreateCalendarDto {
 	@ApiProperty({
