@@ -26,7 +26,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import {
 	CountryCode,
-	GOOGLE_CALENDARS,
+	COUNTRIES,
 } from '../../common/constants/country-codes.constant';
 import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
 
@@ -365,7 +365,7 @@ export class EventService {
 		timeMax: Date | string
 	): Promise<EventEntity[]> {
 		const region = encodeURIComponent(
-			GOOGLE_CALENDARS[calendar.region as CountryCode].region
+			COUNTRIES[calendar.region as CountryCode].region
 		);
 		const url = `https://www.googleapis.com/calendar/v3/calendars/${region}/events`;
 

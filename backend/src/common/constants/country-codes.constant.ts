@@ -1,924 +1,924 @@
-export const GOOGLE_CALENDARS = {
+export const COUNTRIES = {
 	AD: {
-		country: 'Andorra',
+		name: 'Andorra',
 		region: 'en.ad#holiday@group.v.calendar.google.com',
 	},
 	AE: {
-		country: 'United Arab Emirates',
+		name: 'United Arab Emirates',
 		region: 'en.ae#holiday@group.v.calendar.google.com',
 	},
 	AF: {
-		country: 'Afghanistan',
+		name: 'Afghanistan',
 		region: 'en.af#holiday@group.v.calendar.google.com',
 	},
 	AG: {
-		country: 'Antigua and Barbuda',
+		name: 'Antigua and Barbuda',
 		region: 'en.ag#holiday@group.v.calendar.google.com',
 	},
 	AI: {
-		country: 'Anguilla',
+		name: 'Anguilla',
 		region: 'en.ai#holiday@group.v.calendar.google.com',
 	},
 	AL: {
-		country: 'Albania',
+		name: 'Albania',
 		region: 'en.al#holiday@group.v.calendar.google.com',
 	},
 	AM: {
-		country: 'Armenia',
+		name: 'Armenia',
 		region: 'en.am#holiday@group.v.calendar.google.com',
 	},
 	AO: {
-		country: 'Angola',
+		name: 'Angola',
 		region: 'en.ao#holiday@group.v.calendar.google.com',
 	},
 	AR: {
-		country: 'Argentina',
+		name: 'Argentina',
 		region: 'en.ar#holiday@group.v.calendar.google.com',
 	},
 	AS: {
-		country: 'American Samoa',
+		name: 'American Samoa',
 		region: 'en.as#holiday@group.v.calendar.google.com',
 	},
 	AT: {
-		country: 'Austria',
+		name: 'Austria',
 		region: 'en.austrian#holiday@group.v.calendar.google.com',
 	},
 	AU: {
-		country: 'Australia',
+		name: 'Australia',
 		region: 'en.australian#holiday@group.v.calendar.google.com',
 	},
 	AW: {
-		country: 'Aruba',
+		name: 'Aruba',
 		region: 'en.aw#holiday@group.v.calendar.google.com',
 	},
 	AZ: {
-		country: 'Azerbaijan',
+		name: 'Azerbaijan',
 		region: 'en.az#holiday@group.v.calendar.google.com',
 	},
 	BA: {
-		country: 'Bosnia and Herzegovina',
+		name: 'Bosnia and Herzegovina',
 		region: 'en.ba#holiday@group.v.calendar.google.com',
 	},
 	BB: {
-		country: 'Barbados',
+		name: 'Barbados',
 		region: 'en.bb#holiday@group.v.calendar.google.com',
 	},
 	BD: {
-		country: 'Bangladesh',
+		name: 'Bangladesh',
 		region: 'en.bd#holiday@group.v.calendar.google.com',
 	},
 	BE: {
-		country: 'Belgium',
+		name: 'Belgium',
 		region: 'en.be#holiday@group.v.calendar.google.com',
 	},
 	BF: {
-		country: 'Burkina Faso',
+		name: 'Burkina Faso',
 		region: 'en.bf#holiday@group.v.calendar.google.com',
 	},
 	BG: {
-		country: 'Bulgaria',
+		name: 'Bulgaria',
 		region: 'en.bulgarian#holiday@group.v.calendar.google.com',
 	},
 	BH: {
-		country: 'Bahrain',
+		name: 'Bahrain',
 		region: 'en.bh#holiday@group.v.calendar.google.com',
 	},
 	BI: {
-		country: 'Burundi',
+		name: 'Burundi',
 		region: 'en.bi#holiday@group.v.calendar.google.com',
 	},
 	BJ: {
-		country: 'Benin',
+		name: 'Benin',
 		region: 'en.bj#holiday@group.v.calendar.google.com',
 	},
 	BL: {
-		country: 'Saint Barthélemy',
+		name: 'Saint Barthélemy',
 		region: 'en.bl#holiday@group.v.calendar.google.com',
 	},
 	BM: {
-		country: 'Bermuda',
+		name: 'Bermuda',
 		region: 'en.bm#holiday@group.v.calendar.google.com',
 	},
 	BN: {
-		country: 'Brunei Darussalam',
+		name: 'Brunei Darussalam',
 		region: 'en.bn#holiday@group.v.calendar.google.com',
 	},
 	BO: {
-		country: 'Bolivia, Plurinational State of',
+		name: 'Bolivia, Plurinational State of',
 		region: 'en.bo#holiday@group.v.calendar.google.com',
 	},
 	BR: {
-		country: 'Brazil',
+		name: 'Brazil',
 		region: 'en.brazilian#holiday@group.v.calendar.google.com',
 	},
 	BS: {
-		country: 'Bahamas',
+		name: 'Bahamas',
 		region: 'en.bs#holiday@group.v.calendar.google.com',
 	},
 	BT: {
-		country: 'Bhutan',
+		name: 'Bhutan',
 		region: 'en.bt#holiday@group.v.calendar.google.com',
 	},
 	BW: {
-		country: 'Botswana',
+		name: 'Botswana',
 		region: 'en.bw#holiday@group.v.calendar.google.com',
 	},
 	BY: {
-		country: 'Belarus',
+		name: 'Belarus',
 		region: 'en.by#holiday@group.v.calendar.google.com',
 	},
 	BZ: {
-		country: 'Belize',
+		name: 'Belize',
 		region: 'en.bz#holiday@group.v.calendar.google.com',
 	},
 	CA: {
-		country: 'Canada',
+		name: 'Canada',
 		region: 'en.canadian#holiday@group.v.calendar.google.com',
 	},
 	CD: {
-		country: 'Congo, Democratic Republic of the',
+		name: 'Democratic Republic of the Congo',
 		region: 'en.cd#holiday@group.v.calendar.google.com',
 	},
 	CF: {
-		country: 'Central African Republic',
+		name: 'Central African Republic',
 		region: 'en.cf#holiday@group.v.calendar.google.com',
 	},
 	CG: {
-		country: 'Congo',
+		name: 'Congo',
 		region: 'en.cg#holiday@group.v.calendar.google.com',
 	},
 	CH: {
-		country: 'Switzerland',
+		name: 'Switzerland',
 		region: 'en.ch#holiday@group.v.calendar.google.com',
 	},
 	CI: {
-		country: "Côte d'Ivoire",
+		name: "Côte d'Ivoire",
 		region: 'en.ci#holiday@group.v.calendar.google.com',
 	},
 	CK: {
-		country: 'Cook Islands',
+		name: 'Cook Islands',
 		region: 'en.ck#holiday@group.v.calendar.google.com',
 	},
 	CL: {
-		country: 'Chile',
+		name: 'Chile',
 		region: 'en.cl#holiday@group.v.calendar.google.com',
 	},
 	CM: {
-		country: 'Cameroon',
+		name: 'Cameroon',
 		region: 'en.cm#holiday@group.v.calendar.google.com',
 	},
 	CN: {
-		country: 'China',
+		name: 'China',
 		region: 'en.china#holiday@group.v.calendar.google.com',
 	},
 	CO: {
-		country: 'Colombia',
+		name: 'Colombia',
 		region: 'en.co#holiday@group.v.calendar.google.com',
 	},
 	CR: {
-		country: 'Costa Rica',
+		name: 'Costa Rica',
 		region: 'en.cr#holiday@group.v.calendar.google.com',
 	},
 	CU: {
-		country: 'Cuba',
+		name: 'Cuba',
 		region: 'en.cu#holiday@group.v.calendar.google.com',
 	},
 	CV: {
-		country: 'Cabo Verde',
+		name: 'Cabo Verde',
 		region: 'en.cv#holiday@group.v.calendar.google.com',
 	},
 	CW: {
-		country: 'Curaçao',
+		name: 'Curaçao',
 		region: 'en.cw#holiday@group.v.calendar.google.com',
 	},
 	CY: {
-		country: 'Cyprus',
+		name: 'Cyprus',
 		region: 'en.cy#holiday@group.v.calendar.google.com',
 	},
 	CZ: {
-		country: 'Czechia',
+		name: 'Czechia',
 		region: 'en.czech#holiday@group.v.calendar.google.com',
 	},
 	DE: {
-		country: 'Germany',
+		name: 'Germany',
 		region: 'en.german#holiday@group.v.calendar.google.com',
 	},
 	DJ: {
-		country: 'Djibouti',
+		name: 'Djibouti',
 		region: 'en.dj#holiday@group.v.calendar.google.com',
 	},
 	DK: {
-		country: 'Denmark',
+		name: 'Denmark',
 		region: 'en.danish#holiday@group.v.calendar.google.com',
 	},
 	DM: {
-		country: 'Dominica',
+		name: 'Dominica',
 		region: 'en.dm#holiday@group.v.calendar.google.com',
 	},
 	DO: {
-		country: 'Dominican Republic',
+		name: 'Dominican Republic',
 		region: 'en.do#holiday@group.v.calendar.google.com',
 	},
 	DZ: {
-		country: 'Algeria',
+		name: 'Algeria',
 		region: 'en.dz#holiday@group.v.calendar.google.com',
 	},
 	EC: {
-		country: 'Ecuador',
+		name: 'Ecuador',
 		region: 'en.ec#holiday@group.v.calendar.google.com',
 	},
 	EE: {
-		country: 'Estonia',
+		name: 'Estonia',
 		region: 'en.ee#holiday@group.v.calendar.google.com',
 	},
 	EG: {
-		country: 'Egypt',
+		name: 'Egypt',
 		region: 'en.eg#holiday@group.v.calendar.google.com',
 	},
 	ER: {
-		country: 'Eritrea',
+		name: 'Eritrea',
 		region: 'en.er#holiday@group.v.calendar.google.com',
 	},
 	ES: {
-		country: 'Spain',
+		name: 'Spain',
 		region: 'en.spain#holiday@group.v.calendar.google.com',
 	},
 	ET: {
-		country: 'Ethiopia',
+		name: 'Ethiopia',
 		region: 'en.et#holiday@group.v.calendar.google.com',
 	},
 	FI: {
-		country: 'Finland',
+		name: 'Finland',
 		region: 'en.finnish#holiday@group.v.calendar.google.com',
 	},
 	FJ: {
-		country: 'Fiji',
+		name: 'Fiji',
 		region: 'en.fj#holiday@group.v.calendar.google.com',
 	},
 	FK: {
-		country: 'Falkland Islands (Malvinas)',
+		name: 'Falkland Islands (Malvinas)',
 		region: 'en.fk#holiday@group.v.calendar.google.com',
 	},
 	FM: {
-		country: 'Micronesia, Federated States of',
+		name: 'Federated States of Micronesia',
 		region: 'en.fm#holiday@group.v.calendar.google.com',
 	},
 	FO: {
-		country: 'Faroe Islands',
+		name: 'Faroe Islands',
 		region: 'en.fo#holiday@group.v.calendar.google.com',
 	},
 	FR: {
-		country: 'France',
+		name: 'France',
 		region: 'en.french#holiday@group.v.calendar.google.com',
 	},
 	GA: {
-		country: 'Gabon',
+		name: 'Gabon',
 		region: 'en.ga#holiday@group.v.calendar.google.com',
 	},
 	GB: {
-		country: 'United Kingdom of Great Britain and Northern Ireland',
+		name: 'United Kingdom of Great Britain and Northern Ireland',
 		region: 'en.uk#holiday@group.v.calendar.google.com',
 	},
 	GD: {
-		country: 'Grenada',
+		name: 'Grenada',
 		region: 'en.gd#holiday@group.v.calendar.google.com',
 	},
 	GE: {
-		country: 'Georgia',
+		name: 'Georgia',
 		region: 'en.ge#holiday@group.v.calendar.google.com',
 	},
 	GF: {
-		country: 'French Guiana',
+		name: 'French Guiana',
 		region: 'en.gf#holiday@group.v.calendar.google.com',
 	},
 	GG: {
-		country: 'Guernsey',
+		name: 'Guernsey',
 		region: 'en.gg#holiday@group.v.calendar.google.com',
 	},
 	GH: {
-		country: 'Ghana',
+		name: 'Ghana',
 		region: 'en.gh#holiday@group.v.calendar.google.com',
 	},
 	GI: {
-		country: 'Gibraltar',
+		name: 'Gibraltar',
 		region: 'en.gi#holiday@group.v.calendar.google.com',
 	},
 	GL: {
-		country: 'Greenland',
+		name: 'Greenland',
 		region: 'en.gl#holiday@group.v.calendar.google.com',
 	},
 	GM: {
-		country: 'Gambia',
+		name: 'Gambia',
 		region: 'en.gm#holiday@group.v.calendar.google.com',
 	},
 	GN: {
-		country: 'Guinea',
+		name: 'Guinea',
 		region: 'en.gn#holiday@group.v.calendar.google.com',
 	},
 	GQ: {
-		country: 'Equatorial Guinea',
+		name: 'Equatorial Guinea',
 		region: 'en.gq#holiday@group.v.calendar.google.com',
 	},
 	GR: {
-		country: 'Greece',
+		name: 'Greece',
 		region: 'en.greek#holiday@group.v.calendar.google.com',
 	},
 	GT: {
-		country: 'Guatemala',
+		name: 'Guatemala',
 		region: 'en.gt#holiday@group.v.calendar.google.com',
 	},
 	GU: {
-		country: 'Guam',
+		name: 'Guam',
 		region: 'en.gu#holiday@group.v.calendar.google.com',
 	},
 	GW: {
-		country: 'Guinea-Bissau',
+		name: 'Guinea-Bissau',
 		region: 'en.gw#holiday@group.v.calendar.google.com',
 	},
 	GY: {
-		country: 'Guyana',
+		name: 'Guyana',
 		region: 'en.gy#holiday@group.v.calendar.google.com',
 	},
 	HK: {
-		country: 'Hong Kong',
+		name: 'Hong Kong',
 		region: 'en.hong_kong#holiday@group.v.calendar.google.com',
 	},
 	HN: {
-		country: 'Honduras',
+		name: 'Honduras',
 		region: 'en.hn#holiday@group.v.calendar.google.com',
 	},
 	HR: {
-		country: 'Croatia',
+		name: 'Croatia',
 		region: 'en.croatian#holiday@group.v.calendar.google.com',
 	},
 	HT: {
-		country: 'Haiti',
+		name: 'Haiti',
 		region: 'en.ht#holiday@group.v.calendar.google.com',
 	},
 	HU: {
-		country: 'Hungary',
+		name: 'Hungary',
 		region: 'en.hungarian#holiday@group.v.calendar.google.com',
 	},
 	ID: {
-		country: 'Indonesia',
+		name: 'Indonesia',
 		region: 'en.indonesian#holiday@group.v.calendar.google.com',
 	},
 	IE: {
-		country: 'Ireland',
+		name: 'Ireland',
 		region: 'en.irish#holiday@group.v.calendar.google.com',
 	},
 	IL: {
-		country: 'Israel',
+		name: 'Israel',
 		region: 'en.jewish#holiday@group.v.calendar.google.com',
 	},
 	IM: {
-		country: 'Isle of Man',
+		name: 'Isle of Man',
 		region: 'en.im#holiday@group.v.calendar.google.com',
 	},
 	IN: {
-		country: 'India',
+		name: 'India',
 		region: 'en.indian#holiday@group.v.calendar.google.com',
 	},
 	IQ: {
-		country: 'Iraq',
+		name: 'Iraq',
 		region: 'en.iq#holiday@group.v.calendar.google.com',
 	},
 	IR: {
-		country: 'Iran, Islamic Republic of',
+		name: 'Islamic Republic of Iran',
 		region: 'en.ir#holiday@group.v.calendar.google.com',
 	},
 	IS: {
-		country: 'Iceland',
+		name: 'Iceland',
 		region: 'en.is#holiday@group.v.calendar.google.com',
 	},
 	IT: {
-		country: 'Italy',
+		name: 'Italy',
 		region: 'en.italian#holiday@group.v.calendar.google.com',
 	},
 	JE: {
-		country: 'Jersey',
+		name: 'Jersey',
 		region: 'en.je#holiday@group.v.calendar.google.com',
 	},
 	JM: {
-		country: 'Jamaica',
+		name: 'Jamaica',
 		region: 'en.jm#holiday@group.v.calendar.google.com',
 	},
 	JO: {
-		country: 'Jordan',
+		name: 'Jordan',
 		region: 'en.jo#holiday@group.v.calendar.google.com',
 	},
 	JP: {
-		country: 'Japan',
+		name: 'Japan',
 		region: 'en.japanese#holiday@group.v.calendar.google.com',
 	},
 	KE: {
-		country: 'Kenya',
+		name: 'Kenya',
 		region: 'en.ke#holiday@group.v.calendar.google.com',
 	},
 	KG: {
-		country: 'Kyrgyzstan',
+		name: 'Kyrgyzstan',
 		region: 'en.kg#holiday@group.v.calendar.google.com',
 	},
 	KH: {
-		country: 'Cambodia',
+		name: 'Cambodia',
 		region: 'en.kh#holiday@group.v.calendar.google.com',
 	},
 	KI: {
-		country: 'Kiribati',
+		name: 'Kiribati',
 		region: 'en.ki#holiday@group.v.calendar.google.com',
 	},
 	KM: {
-		country: 'Comoros',
+		name: 'Comoros',
 		region: 'en.km#holiday@group.v.calendar.google.com',
 	},
 	KN: {
-		country: 'Saint Kitts and Nevis',
+		name: 'Saint Kitts and Nevis',
 		region: 'en.kn#holiday@group.v.calendar.google.com',
 	},
 	KP: {
-		country: "Korea, Democratic People's Republic of",
+		name: "Democratic People's Republic of Korea",
 		region: 'en.kp#holiday@group.v.calendar.google.com',
 	},
 	KR: {
-		country: 'Korea, Republic of',
+		name: 'Republic of Korea',
 		region: 'en.south_korea#holiday@group.v.calendar.google.com',
 	},
 	KW: {
-		country: 'Kuwait',
+		name: 'Kuwait',
 		region: 'en.kw#holiday@group.v.calendar.google.com',
 	},
 	KY: {
-		country: 'Cayman Islands',
+		name: 'Cayman Islands',
 		region: 'en.ky#holiday@group.v.calendar.google.com',
 	},
 	KZ: {
-		country: 'Kazakhstan',
+		name: 'Kazakhstan',
 		region: 'en.kz#holiday@group.v.calendar.google.com',
 	},
 	LA: {
-		country: "Lao People's Democratic Republic",
+		name: "Lao People's Democratic Republic",
 		region: 'en.la#holiday@group.v.calendar.google.com',
 	},
 	LB: {
-		country: 'Lebanon',
+		name: 'Lebanon',
 		region: 'en.lb#holiday@group.v.calendar.google.com',
 	},
 	LC: {
-		country: 'Saint Lucia',
+		name: 'Saint Lucia',
 		region: 'en.lc#holiday@group.v.calendar.google.com',
 	},
 	LI: {
-		country: 'Liechtenstein',
+		name: 'Liechtenstein',
 		region: 'en.li#holiday@group.v.calendar.google.com',
 	},
 	LK: {
-		country: 'Sri Lanka',
+		name: 'Sri Lanka',
 		region: 'en.lk#holiday@group.v.calendar.google.com',
 	},
 	LR: {
-		country: 'Liberia',
+		name: 'Liberia',
 		region: 'en.lr#holiday@group.v.calendar.google.com',
 	},
 	LS: {
-		country: 'Lesotho',
+		name: 'Lesotho',
 		region: 'en.ls#holiday@group.v.calendar.google.com',
 	},
 	LT: {
-		country: 'Lithuania',
+		name: 'Lithuania',
 		region: 'en.lithuanian#holiday@group.v.calendar.google.com',
 	},
 	LU: {
-		country: 'Luxembourg',
+		name: 'Luxembourg',
 		region: 'en.lu#holiday@group.v.calendar.google.com',
 	},
 	LV: {
-		country: 'Latvia',
+		name: 'Latvia',
 		region: 'en.latvian#holiday@group.v.calendar.google.com',
 	},
 	LY: {
-		country: 'Libya',
+		name: 'Libya',
 		region: 'en.ly#holiday@group.v.calendar.google.com',
 	},
 	MA: {
-		country: 'Morocco',
+		name: 'Morocco',
 		region: 'en.ma#holiday@group.v.calendar.google.com',
 	},
 	MC: {
-		country: 'Monaco',
+		name: 'Monaco',
 		region: 'en.mc#holiday@group.v.calendar.google.com',
 	},
 	MD: {
-		country: 'Moldova, Republic of',
+		name: 'Moldova, Republic of',
 		region: 'en.md#holiday@group.v.calendar.google.com',
 	},
 	ME: {
-		country: 'Montenegro',
+		name: 'Montenegro',
 		region: 'en.me#holiday@group.v.calendar.google.com',
 	},
 	MF: {
-		country: 'Saint Martin (French part)',
+		name: 'Saint Martin (French part)',
 		region: 'en.mf#holiday@group.v.calendar.google.com',
 	},
 	MG: {
-		country: 'Madagascar',
+		name: 'Madagascar',
 		region: 'en.mg#holiday@group.v.calendar.google.com',
 	},
 	MH: {
-		country: 'Marshall Islands',
+		name: 'Marshall Islands',
 		region: 'en.mh#holiday@group.v.calendar.google.com',
 	},
 	MK: {
-		country: 'North Macedonia',
+		name: 'North Macedonia',
 		region: 'en.mk#holiday@group.v.calendar.google.com',
 	},
 	ML: {
-		country: 'Mali',
+		name: 'Mali',
 		region: 'en.ml#holiday@group.v.calendar.google.com',
 	},
 	MM: {
-		country: 'Myanmar',
+		name: 'Myanmar',
 		region: 'en.mm#holiday@group.v.calendar.google.com',
 	},
 	MN: {
-		country: 'Mongolia',
+		name: 'Mongolia',
 		region: 'en.mn#holiday@group.v.calendar.google.com',
 	},
 	MO: {
-		country: 'Macao',
+		name: 'Macao',
 		region: 'en.mo#holiday@group.v.calendar.google.com',
 	},
 	MP: {
-		country: 'Northern Mariana Islands',
+		name: 'Northern Mariana Islands',
 		region: 'en.mp#holiday@group.v.calendar.google.com',
 	},
 	MQ: {
-		country: 'Martinique',
+		name: 'Martinique',
 		region: 'en.mq#holiday@group.v.calendar.google.com',
 	},
 	MR: {
-		country: 'Mauritania',
+		name: 'Mauritania',
 		region: 'en.mr#holiday@group.v.calendar.google.com',
 	},
 	MS: {
-		country: 'Montserrat',
+		name: 'Montserrat',
 		region: 'en.ms#holiday@group.v.calendar.google.com',
 	},
 	MT: {
-		country: 'Malta',
+		name: 'Malta',
 		region: 'en.mt#holiday@group.v.calendar.google.com',
 	},
 	MU: {
-		country: 'Mauritius',
+		name: 'Mauritius',
 		region: 'en.mu#holiday@group.v.calendar.google.com',
 	},
 	MV: {
-		country: 'Maldives',
+		name: 'Maldives',
 		region: 'en.mv#holiday@group.v.calendar.google.com',
 	},
 	MW: {
-		country: 'Malawi',
+		name: 'Malawi',
 		region: 'en.mw#holiday@group.v.calendar.google.com',
 	},
 	MX: {
-		country: 'Mexico',
+		name: 'Mexico',
 		region: 'en.mexican#holiday@group.v.calendar.google.com',
 	},
 	MY: {
-		country: 'Malaysia',
+		name: 'Malaysia',
 		region: 'en.malaysia#holiday@group.v.calendar.google.com',
 	},
 	MZ: {
-		country: 'Mozambique',
+		name: 'Mozambique',
 		region: 'en.mz#holiday@group.v.calendar.google.com',
 	},
 	NA: {
-		country: 'Namibia',
+		name: 'Namibia',
 		region: 'en.na#holiday@group.v.calendar.google.com',
 	},
 	NC: {
-		country: 'New Caledonia',
+		name: 'New Caledonia',
 		region: 'en.nc#holiday@group.v.calendar.google.com',
 	},
 	NE: {
-		country: 'Niger',
+		name: 'Niger',
 		region: 'en.ne#holiday@group.v.calendar.google.com',
 	},
 	NG: {
-		country: 'Nigeria',
+		name: 'Nigeria',
 		region: 'en.ng#holiday@group.v.calendar.google.com',
 	},
 	NI: {
-		country: 'Nicaragua',
+		name: 'Nicaragua',
 		region: 'en.ni#holiday@group.v.calendar.google.com',
 	},
 	NL: {
-		country: 'Netherlands, Kingdom of the',
+		name: 'Kingdom of the Netherlands',
 		region: 'en.dutch#holiday@group.v.calendar.google.com',
 	},
 	NO: {
-		country: 'Norway',
+		name: 'Norway',
 		region: 'en.norwegian#holiday@group.v.calendar.google.com',
 	},
 	NP: {
-		country: 'Nepal',
+		name: 'Nepal',
 		region: 'en.np#holiday@group.v.calendar.google.com',
 	},
 	NR: {
-		country: 'Nauru',
+		name: 'Nauru',
 		region: 'en.nr#holiday@group.v.calendar.google.com',
 	},
 	NZ: {
-		country: 'New Zealand',
+		name: 'New Zealand',
 		region: 'en.new_zealand#holiday@group.v.calendar.google.com',
 	},
 	OM: {
-		country: 'Oman',
+		name: 'Oman',
 		region: 'en.om#holiday@group.v.calendar.google.com',
 	},
 	PA: {
-		country: 'Panama',
+		name: 'Panama',
 		region: 'en.pa#holiday@group.v.calendar.google.com',
 	},
 	PE: {
-		country: 'Peru',
+		name: 'Peru',
 		region: 'en.pe#holiday@group.v.calendar.google.com',
 	},
 	PF: {
-		country: 'French Polynesia',
+		name: 'French Polynesia',
 		region: 'en.pf#holiday@group.v.calendar.google.com',
 	},
 	PG: {
-		country: 'Papua New Guinea',
+		name: 'Papua New Guinea',
 		region: 'en.pg#holiday@group.v.calendar.google.com',
 	},
 	PH: {
-		country: 'Philippines',
+		name: 'Philippines',
 		region: 'en.philippines#holiday@group.v.calendar.google.com',
 	},
 	PK: {
-		country: 'Pakistan',
+		name: 'Pakistan',
 		region: 'en.pk#holiday@group.v.calendar.google.com',
 	},
 	PL: {
-		country: 'Poland',
+		name: 'Poland',
 		region: 'en.polish#holiday@group.v.calendar.google.com',
 	},
 	PM: {
-		country: 'Saint Pierre and Miquelon',
+		name: 'Saint Pierre and Miquelon',
 		region: 'en.pm#holiday@group.v.calendar.google.com',
 	},
 	PR: {
-		country: 'Puerto Rico',
+		name: 'Puerto Rico',
 		region: 'en.pr#holiday@group.v.calendar.google.com',
 	},
 	PT: {
-		country: 'Portugal',
+		name: 'Portugal',
 		region: 'en.portuguese#holiday@group.v.calendar.google.com',
 	},
 	PW: {
-		country: 'Palau',
+		name: 'Palau',
 		region: 'en.pw#holiday@group.v.calendar.google.com',
 	},
 	PY: {
-		country: 'Paraguay',
+		name: 'Paraguay',
 		region: 'en.py#holiday@group.v.calendar.google.com',
 	},
 	QA: {
-		country: 'Qatar',
+		name: 'Qatar',
 		region: 'en.qa#holiday@group.v.calendar.google.com',
 	},
 	RE: {
-		country: 'Réunion',
+		name: 'Réunion',
 		region: 'en.re#holiday@group.v.calendar.google.com',
 	},
 	RO: {
-		country: 'Romania',
+		name: 'Romania',
 		region: 'en.romanian#holiday@group.v.calendar.google.com',
 	},
 	RS: {
-		country: 'Serbia',
+		name: 'Serbia',
 		region: 'en.rs#holiday@group.v.calendar.google.com',
 	},
 	RU: {
-		country: 'Russian Federation',
+		name: 'Russian Federation',
 		region: 'en.russian#holiday@group.v.calendar.google.com',
 	},
 	RW: {
-		country: 'Rwanda',
+		name: 'Rwanda',
 		region: 'en.rw#holiday@group.v.calendar.google.com',
 	},
 	SA: {
-		country: 'Saudi Arabia',
+		name: 'Saudi Arabia',
 		region: 'en.saudiarabian#holiday@group.v.calendar.google.com',
 	},
 	SB: {
-		country: 'Solomon Islands',
+		name: 'Solomon Islands',
 		region: 'en.sb#holiday@group.v.calendar.google.com',
 	},
 	SC: {
-		country: 'Seychellesm',
+		name: 'Seychellesm',
 		region: 'en.sc#holiday@group.v.calendar.google.com',
 	},
 	SD: {
-		country: 'Sudan',
+		name: 'Sudan',
 		region: 'en.sd#holiday@group.v.calendar.google.com',
 	},
 	SE: {
-		country: 'Sweden',
+		name: 'Sweden',
 		region: 'en.swedish#holiday@group.v.calendar.google.com',
 	},
 	SG: {
-		country: 'Singapore',
+		name: 'Singapore',
 		region: 'en.singapore#holiday@group.v.calendar.google.com',
 	},
 	SH: {
-		country: 'Saint Helena, Ascension and Tristan da Cunha',
+		name: 'Saint Helena, Ascension and Tristan da Cunha',
 		region: 'en.sh#holiday@group.v.calendar.google.com',
 	},
 	SI: {
-		country: 'Slovenia',
+		name: 'Slovenia',
 		region: 'en.slovenian#holiday@group.v.calendar.google.com',
 	},
 	SK: {
-		country: 'Slovakia',
+		name: 'Slovakia',
 		region: 'en.slovak#holiday@group.v.calendar.google.com',
 	},
 	SL: {
-		country: 'Sierra Leone',
+		name: 'Sierra Leone',
 		region: 'en.sl#holiday@group.v.calendar.google.com',
 	},
 	SM: {
-		country: 'San Marino',
+		name: 'San Marino',
 		region: 'en.sm#holiday@group.v.calendar.google.com',
 	},
 	SN: {
-		country: 'Senegal',
+		name: 'Senegal',
 		region: 'en.sn#holiday@group.v.calendar.google.com',
 	},
 	SO: {
-		country: 'Somalia',
+		name: 'Somalia',
 		region: 'en.so#holiday@group.v.calendar.google.com',
 	},
 	SR: {
-		country: 'Suriname',
+		name: 'Suriname',
 		region: 'en.sr#holiday@group.v.calendar.google.com',
 	},
 	SS: {
-		country: 'South Sudan',
+		name: 'South Sudan',
 		region: 'en.ss#holiday@group.v.calendar.google.com',
 	},
 	ST: {
-		country: 'Sao Tome and Principe',
+		name: 'Sao Tome and Principe',
 		region: 'en.st#holiday@group.v.calendar.google.com',
 	},
 	SV: {
-		country: 'El Salvador',
+		name: 'El Salvador',
 		region: 'en.sv#holiday@group.v.calendar.google.com',
 	},
 	SX: {
-		country: 'Sint Maarten (Dutch part)',
+		name: 'Sint Maarten (Dutch part)',
 		region: 'en.sx#holiday@group.v.calendar.google.com',
 	},
 	SY: {
-		country: 'Syrian Arab Republic',
+		name: 'Syrian Arab Republic',
 		region: 'en.sy#holiday@group.v.calendar.google.com',
 	},
 	SZ: {
-		country: 'Eswatini',
+		name: 'Eswatini',
 		region: 'en.sz#holiday@group.v.calendar.google.com',
 	},
 	TC: {
-		country: 'Turks and Caicos Islands',
+		name: 'Turks and Caicos Islands',
 		region: 'en.tc#holiday@group.v.calendar.google.com',
 	},
 	TD: {
-		country: 'Chad',
+		name: 'Chad',
 		region: 'en.td#holiday@group.v.calendar.google.com',
 	},
 	TG: {
-		country: 'Togo',
+		name: 'Togo',
 		region: 'en.tg#holiday@group.v.calendar.google.com',
 	},
 	TH: {
-		country: 'Thailand',
+		name: 'Thailand',
 		region: 'en.th#holiday@group.v.calendar.google.com',
 	},
 	TJ: {
-		country: 'Tajikistan',
+		name: 'Tajikistan',
 		region: 'en.tj#holiday@group.v.calendar.google.com',
 	},
 	TL: {
-		country: 'Timor-Leste',
+		name: 'Timor-Leste',
 		region: 'en.tl#holiday@group.v.calendar.google.com',
 	},
 	TM: {
-		country: 'Turkmenistan',
+		name: 'Turkmenistan',
 		region: 'en.tm#holiday@group.v.calendar.google.com',
 	},
 	TN: {
-		country: 'Tunisia',
+		name: 'Tunisia',
 		region: 'en.tn#holiday@group.v.calendar.google.com',
 	},
 	TO: {
-		country: 'Tonga',
+		name: 'Tonga',
 		region: 'en.to#holiday@group.v.calendar.google.com',
 	},
 	TR: {
-		country: 'Türkiye',
+		name: 'Türkiye',
 		region: 'en.turkish#holiday@group.v.calendar.google.com',
 	},
 	TT: {
-		country: 'Trinidad and Tobago',
+		name: 'Trinidad and Tobago',
 		region: 'en.tt#holiday@group.v.calendar.google.com',
 	},
 	TV: {
-		country: 'Tuvalu',
+		name: 'Tuvalu',
 		region: 'en.tv#holiday@group.v.calendar.google.com',
 	},
 	TW: {
-		country: 'Taiwan, Province of China',
+		name: 'Taiwan',
 		region: 'en.taiwan#holiday@group.v.calendar.google.com',
 	},
 	TZ: {
-		country: 'Tanzania, United Republic of',
+		name: 'United Republic of Tanzania',
 		region: 'en.tz#holiday@group.v.calendar.google.com',
 	},
 	UA: {
-		country: 'Ukraine',
+		name: 'Ukraine',
 		region: 'en.ukrainian#holiday@group.v.calendar.google.com',
 	},
 	UG: {
-		country: 'Uganda',
+		name: 'Uganda',
 		region: 'en.ug#holiday@group.v.calendar.google.com',
 	},
 	US: {
-		country: 'United States of America',
+		name: 'United States of America',
 		region: 'en.usa#holiday@group.v.calendar.google.com',
 	},
 	UY: {
-		country: 'Uruguay',
+		name: 'Uruguay',
 		region: 'en.uy#holiday@group.v.calendar.google.com',
 	},
 	UZ: {
-		country: 'Uzbekistan',
+		name: 'Uzbekistan',
 		region: 'en.uz#holiday@group.v.calendar.google.com',
 	},
 	VA: {
-		country: 'Holy See',
+		name: 'Holy See',
 		region: 'en.va#holiday@group.v.calendar.google.com',
 	},
 	VC: {
-		country: 'Saint Vincent and the Grenadines',
+		name: 'Saint Vincent and the Grenadines',
 		region: 'en.vc#holiday@group.v.calendar.google.com',
 	},
 	VE: {
-		country: 'Venezuela, Bolivarian Republic of',
+		name: 'Bolivarian Republic of Venezuela',
 		region: 'en.ve#holiday@group.v.calendar.google.com',
 	},
 	VG: {
-		country: 'Virgin Islands (British)',
+		name: 'Virgin Islands (British)',
 		region: 'en.vg#holiday@group.v.calendar.google.com',
 	},
 	VI: {
-		country: 'Virgin Islands (U.S.)',
+		name: 'Virgin Islands (U.S.)',
 		region: 'en.vi#holiday@group.v.calendar.google.com',
 	},
 	VN: {
-		country: 'Viet Nam',
+		name: 'Viet Nam',
 		region: 'en.vietnamese#holiday@group.v.calendar.google.com',
 	},
 	VU: {
-		country: 'Vanuatu',
+		name: 'Vanuatu',
 		region: 'en.vu#holiday@group.v.calendar.google.com',
 	},
 	WF: {
-		country: 'Wallis and Futuna',
+		name: 'Wallis and Futuna',
 		region: 'en.wf#holiday@group.v.calendar.google.com',
 	},
 	WS: {
-		country: 'Samoa',
+		name: 'Samoa',
 		region: 'en.ws#holiday@group.v.calendar.google.com',
 	},
 	YE: {
-		country: 'Yemen',
+		name: 'Yemen',
 		region: 'en.ye#holiday@group.v.calendar.google.com',
 	},
 	YT: {
-		country: 'Mayotte',
+		name: 'Mayotte',
 		region: 'en.yt#holiday@group.v.calendar.google.com',
 	},
 	ZA: {
-		country: 'South Africa',
+		name: 'South Africa',
 		region: 'en.sa#holiday@group.v.calendar.google.com',
 	},
 	ZM: {
-		country: 'Zambia',
+		name: 'Zambia',
 		region: 'en.zm#holiday@group.v.calendar.google.com',
 	},
 	ZW: {
-		country: 'Zimbabwe',
+		name: 'Zimbabwe',
 		region: 'en.zw#holiday@group.v.calendar.google.com',
 	},
 } as const;
 
-export type CountryCode = keyof typeof GOOGLE_CALENDARS;
+export type CountryCode = keyof typeof COUNTRIES;

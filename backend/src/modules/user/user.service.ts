@@ -8,6 +8,12 @@ import { UserEntity } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { S3Service } from '@modules/s3/s3.service';
 import { ConfigService } from '@nestjs/config';
+import { CalendarType, InvitationStatus, Role } from '@prisma/client';
+import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
+import {
+	CountryCode,
+	COUNTRIES,
+} from '@common/constants/country-codes.constant';
 
 @Injectable()
 export class UserService {
@@ -50,20 +56,36 @@ export class UserService {
 		});
 	}
 
-	async create(createUserDto: CreateUserDto) {
+	async create(createUserDto: CreateUserDto, country: CountryCode) {
 		const salt = await bcrypt.genSalt();
 		return this.prisma.user.create({
 			data: {
 				...createUserDto,
 				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH')!,
 				password: await bcrypt.hash(createUserDto.password, salt),
+				calendarMemberships: {
+					create: {
+						calendar: {
+							create: {
+								name: `Holidays of ${COUNTRIES[country].name}`,
+								type: CalendarType.HOLIDAYS,
+								color: DEFAULT_CALENDAR_COLOR,
+								region: country,
+							},
+						},
+						status: InvitationStatus.ACCEPTED,
+						role: Role.OWNER,
+					},
+				},
 			},
 		});
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {
 		return this.prisma.user.update({
-			where: { id },
+			where: {
+				id,
+			},
 			data: updateUserDto,
 		});
 	}

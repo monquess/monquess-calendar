@@ -5,7 +5,7 @@ import {
 	ValidatorConstraintInterface,
 } from 'class-validator';
 import { CreateCalendarDto } from '../dto/create-calendar.dto';
-import { GOOGLE_CALENDARS } from '@common/constants/country-codes.constant';
+import { COUNTRIES } from '@common/constants/country-codes.constant';
 
 @ValidatorConstraint({ async: false })
 export class RegionValidator implements ValidatorConstraintInterface {
@@ -13,7 +13,7 @@ export class RegionValidator implements ValidatorConstraintInterface {
 		const object = args.object as CreateCalendarDto;
 
 		if (object.type === CalendarType.HOLIDAYS) {
-			return !!region && Object.keys(GOOGLE_CALENDARS).includes(region);
+			return !!region && Object.keys(COUNTRIES).includes(region);
 		}
 
 		return region !== undefined;

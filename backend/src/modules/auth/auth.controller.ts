@@ -42,6 +42,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { Public } from '@common/decorators/public.decorator';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Authorization')
@@ -56,10 +57,15 @@ export class AuthController {
 
 	@ApiAuthRegister()
 	@UseGuards(RecaptchaGuard)
+	@UseInterceptors(UserLocationInterceptor)
 	@Public()
 	@Post('register')
-	async register(@Body() dto: RegisterDto): Promise<void> {
-		return this.authService.register(dto);
+	async register(
+		@Body() dto: RegisterDto,
+		@CurrentUser() { country }: CurrentUser
+	): Promise<void> {
+		console.log(country);
+		return this.authService.register(dto, country);
 	}
 
 	@ApiAuthLogin()

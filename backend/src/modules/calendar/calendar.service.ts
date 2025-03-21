@@ -12,7 +12,7 @@ import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
 import {
 	CountryCode,
-	GOOGLE_CALENDARS,
+	COUNTRIES,
 } from '@common/constants/country-codes.constant';
 
 @Injectable()
@@ -35,6 +35,7 @@ export class CalendarService {
 					},
 				},
 			},
+			orderBy: { createdAt: 'asc' },
 		});
 	}
 
@@ -64,7 +65,7 @@ export class CalendarService {
 	): Promise<CalendarEntity> {
 		if (createCalendarDto.type === CalendarType.HOLIDAYS) {
 			createCalendarDto.name =
-				GOOGLE_CALENDARS[createCalendarDto.region as CountryCode].country;
+				COUNTRIES[createCalendarDto.region as CountryCode].name;
 			createCalendarDto.description = undefined;
 		}
 

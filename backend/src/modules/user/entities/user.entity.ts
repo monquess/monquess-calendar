@@ -25,6 +25,12 @@ export class UserEntity {
 	password: string | null;
 
 	@Exclude()
+	country?: string;
+
+	@Exclude()
+	timezone?: string;
+
+	@Exclude()
 	provider: Provider;
 
 	@ApiProperty({
@@ -34,7 +40,7 @@ export class UserEntity {
 	verified: boolean;
 
 	@ApiProperty({
-		example: '/avatars/default.png',
+		example: 'https://s3.com/avatars/default.webp',
 		type: String,
 	})
 	avatar: string;
