@@ -10,7 +10,15 @@ import { NotificationProcessor } from './processors/notification.processor';
 			name: 'notification',
 		}),
 	],
-	providers: [NotificationService, MailChannel, NotificationProcessor],
+	providers: [
+		NotificationService,
+		MailChannel,
+		{
+			provide: 'MailChannel',
+			useExisting: MailChannel,
+		},
+		NotificationProcessor,
+	],
 	exports: [NotificationService],
 })
 export class NotificationModule {}
