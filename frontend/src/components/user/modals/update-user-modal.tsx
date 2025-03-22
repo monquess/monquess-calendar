@@ -31,11 +31,11 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
 				setLoading(true)
-				const response = await apiClient.patch<User>(
+				const { data } = await apiClient.patch<User>(
 					`/users/${user?.id}`,
 					values
 				)
-				updateUser(response.data)
+				updateUser(data)
 
 				notifications.show({
 					title: 'Account Update',

@@ -1,27 +1,30 @@
+import React, { useState } from 'react'
+import { IoMenu } from 'react-icons/io5'
+import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
+import { DatePicker, DatesRangeValue } from '@mantine/dates'
+import { useMediaQuery } from '@mantine/hooks'
 import UserMenu from '@/components/user/user-menu'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
-import { DatePicker } from '@mantine/dates'
-import { useMediaQuery } from '@mantine/hooks'
-import React, { useState } from 'react'
-import { IoMenu } from 'react-icons/io5'
 import ThemeSwitch from '../../buttons/theme-switch'
 import CalendarCheckbox from '../../calendar/calendar-checkbox'
+import FullCalendar from '@fullcalendar/react'
 
 interface NavbarContentProps {
 	onClickMenu: () => void
 	onOpenModal: () => void
+	calendarRef: React.RefObject<FullCalendar | null>
 }
 
 const NavbarContent: React.FC<NavbarContentProps> = ({
 	onClickMenu,
 	onOpenModal,
+	calendarRef,
 }) => {
 	const { user } = useStore()
 	const { isMobile } = useResponsive()
 	const isSmallMobile = useMediaQuery('(max-width: 420px)')
-	const [value, setValue] = useState<Date | null>(new Date())
+	const [value, setValue] = useState<DatesRangeValue>([new Date(), new Date()])
 
 	return (
 		<Stack m="md" justify="space-between" h={isMobile ? '100%' : 'auto'}>
@@ -38,9 +41,19 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 					Create
 				</Button>
 				<DatePicker
+					type="range"
+					allowSingleDateInRange
 					defaultDate={new Date()}
 					value={value}
-					onChange={setValue}
+					onChange={([start, end]) => {
+						if (calendarRef.current && start && end) {
+							calendarRef.current.getApi().setOption('validRange', {
+								start: start,
+								end: new Date(end).setDate(new Date(end).getDate() + 1),
+							})
+						}
+						setValue([start, end])
+					}}
 				/>
 				<CalendarCheckbox />
 			</Stack>

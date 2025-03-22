@@ -26,14 +26,12 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 			debounce(async (query: string) => {
 				if (!query.trim()) {
 					setData([])
-					return
-				}
-				try {
+				} else {
 					const response = await apiClient.get<User[]>('/users', {
 						params: { email: query },
 					})
 					setData(response.data)
-				} catch {}
+				}
 			}, 500),
 			[]
 		)
@@ -46,21 +44,21 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 			event.preventDefault()
 			try {
 				setLoading(true)
-				const response = await Promise.all(
+				const users = await Promise.all(
 					selectedUser.map((user) =>
 						apiClient.get<User[]>('/users', { params: { email: user } })
 					)
 				)
 
-				const userIds = response
-					.map((res) => {
-						return res.data.length > 0 ? res.data[0].id : null
+				const userIds = users
+					.map(({ data }) => {
+						return data.length > 0 ? data[0].id : null
 					})
 					.filter(Boolean)
 
 				await Promise.all(
-					userIds.map((userId) =>
-						apiClient.post(`/calendars/${calendar.id}/users/${userId}`)
+					userIds.map((id) =>
+						apiClient.post(`/calendars/${calendar.id}/users/${id}`)
 					)
 				)
 

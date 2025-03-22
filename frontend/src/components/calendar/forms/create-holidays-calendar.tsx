@@ -1,15 +1,40 @@
+import React, { useState } from 'react'
 import apiClient from '@/helpers/axios'
 import { countryConst } from '@/helpers/country-code-const'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
-import { Button, ColorInput, Select, Stack, TextInput } from '@mantine/core'
+import {
+	Button,
+	ColorInput,
+	Group,
+	Select,
+	SelectProps,
+	Stack,
+	TextInput,
+} from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { AxiosError } from 'axios'
-import React, { useState } from 'react'
+
+import { Twemoji } from 'react-emoji-render'
 
 interface createCalendarFormProps {
 	onClose: () => void
 }
+
+const getFlagEmoji = (countryCode: string) => {
+	return countryCode
+		.toUpperCase()
+		.split('')
+		.map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+		.join('')
+}
+
+const renderSelectOption: SelectProps['renderOption'] = ({ option }) => (
+	<Group flex="1" gap="xs">
+		<Twemoji svg text={getFlagEmoji(option.value)} />
+		{option.label}
+	</Group>
+)
 
 const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 	React.memo(({ onClose }) => {
@@ -53,14 +78,6 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 			}
 		}
 
-		const getFlagEmoji = (countryCode: string) => {
-			return countryCode
-				.toUpperCase()
-				.split('')
-				.map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
-				.join('')
-		}
-
 		return (
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack pos="relative">
@@ -75,8 +92,9 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 						onChange={setValue}
 						data={Object.entries(countryConst).map(([code, name]) => ({
 							value: code,
-							label: `${getFlagEmoji(code)} ${name}`,
+							label: name,
 						}))}
+						renderOption={renderSelectOption}
 						styles={{ dropdown: { zIndex: 1100 } }}
 						placeholder="Start writing name..."
 						searchable

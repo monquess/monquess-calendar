@@ -3,7 +3,7 @@ export interface IUserMember {
 	calendarId: number
 	role: string
 	status: string
-	createAt: string
+	createdAt: string
 }
 
 export interface ICalendar {

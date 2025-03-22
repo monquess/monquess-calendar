@@ -36,7 +36,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 					formData.append('file', values.file)
 				}
 
-				const response = await apiClient.patch<User>(
+				const { data } = await apiClient.patch<User>(
 					`/users/${user?.id}/avatar`,
 					formData,
 					{
@@ -53,7 +53,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 					autoClose: 5000,
 					color: 'green',
 				})
-				updateUser(response.data)
+				updateUser(data)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {

@@ -23,26 +23,24 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 
 	const { isMobile } = useResponsive()
 
+	// TODO existingCalendarIds logic fix
 	useEffect(() => {
 		const fetchCalendars = async () => {
-			try {
-				const response = await apiClient.get<ICalendar[]>('/calendars')
-				const fetchedCalendars = response.data
-				const existingCalendarIds = Object.keys(calendarVisibility).map(Number)
+			const { data } = await apiClient.get<ICalendar[]>('/calendars')
+			const existingCalendarIds = Object.keys(calendarVisibility).map(Number)
 
-				const newCalendarIds = fetchedCalendars
-					.map((calendar) => calendar.id)
-					.filter((id) => !existingCalendarIds.includes(id))
+			const newCalendarIds = data
+				.map((calendar) => calendar.id)
+				.filter((id) => !existingCalendarIds.includes(id))
 
-				if (newCalendarIds.length > 0) {
-					setCalendars([...existingCalendarIds, ...newCalendarIds])
-				}
+			if (newCalendarIds.length > 0) {
+				setCalendars([...existingCalendarIds, ...newCalendarIds])
+			}
 
-				setCalendarsArray(fetchedCalendars)
-			} catch {}
+			setCalendarsArray(data)
 		}
 
-		if (!calendars || calendars.length === 0) {
+		if (calendars?.length === 0) {
 			fetchCalendars()
 		}
 	}, [setCalendars, calendars, calendarVisibility])

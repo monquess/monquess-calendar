@@ -25,7 +25,9 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 
 		useEffect(() => {
 			const findUser = calendar.users.find((e) => e.userId === user?.id)
-			if (findUser) setRole(findUser.role)
+			if (findUser) {
+				setRole(findUser.role)
+			}
 		}, [calendar.users, user])
 
 		const form = useForm({
@@ -37,9 +39,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 				setLoading(true)
 				if (role === 'OWNER') {
 					await apiClient.delete(`/calendars/${calendar.id}`)
-				}
-
-				if (role === 'VIEWER') {
+				} else {
 					await apiClient.delete(`/calendars/${calendar.id}/users/${user?.id}`)
 				}
 
