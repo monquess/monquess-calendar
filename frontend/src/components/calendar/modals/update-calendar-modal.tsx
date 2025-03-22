@@ -1,7 +1,4 @@
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
 import {
 	Button,
 	ColorInput,
@@ -11,9 +8,12 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import { AxiosError } from 'axios'
-import React, { useState } from 'react'
+import apiClient from '@/helpers/axios'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { showNotification } from '@/helpers/show-notification'
+import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface updateCalendarModalProps {
 	opened: boolean
@@ -40,23 +40,16 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 			try {
 				setLoading(true)
 				await apiClient.patch(`/calendars/${calendar.id}`, values)
-				notifications.show({
-					title: 'Calendar Update',
-					message: 'Your calendar has been successfully updated.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+
+				showNotification(
+					'Calendar update',
+					'Your calendar has been successfully updated.',
+					'green'
+				)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Calendar Update',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Calendar update error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

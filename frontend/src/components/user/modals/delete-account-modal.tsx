@@ -1,12 +1,12 @@
-import apiClient from '@/helpers/axios'
-import useStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
-import { Button, Flex, Modal, Stack, Text, TextInput } from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button, Flex, Modal, Stack, Text, TextInput } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { AxiosError } from 'axios'
+import apiClient from '@/helpers/axios'
+import { showNotification } from '@/helpers/show-notification'
+import useStore from '@/helpers/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface DeleteAccountModalProps {
 	opened: boolean
@@ -30,24 +30,15 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = React.memo(
 				await apiClient.delete(`/users/${user?.id}`)
 
 				logout()
-
-				notifications.show({
-					title: 'Account Deletion',
-					message: 'Your account has been successfully deleted.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Account deletion',
+					'Your account has been successfully deleted.',
+					'green'
+				)
 				navigate('/login')
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Account Deletion',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Account deletion error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

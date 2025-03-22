@@ -1,13 +1,13 @@
+import React, { useEffect, useState } from 'react'
+import { IoMenu } from 'react-icons/io5'
+import { Box, Drawer, Flex } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import FullCalendar from '@fullcalendar/react'
 import ThemeSwitch from '@/components/buttons/theme-switch'
 import UserMenu from '@/components/user/user-menu'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Box, Drawer, Flex } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import React, { useEffect, useState } from 'react'
-import { IoMenu } from 'react-icons/io5'
 import CreateCalendarModal from '../../calendar/modals/create-calendar-modal'
 import NavbarContent from './navbar-content'
-import FullCalendar from '@fullcalendar/react'
 
 interface NavbarProps {
 	onToggle: () => void

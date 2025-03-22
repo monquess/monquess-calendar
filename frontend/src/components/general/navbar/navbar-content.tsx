@@ -3,12 +3,12 @@ import { IoMenu } from 'react-icons/io5'
 import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
 import { DatePicker, DatesRangeValue } from '@mantine/dates'
 import { useMediaQuery } from '@mantine/hooks'
+import FullCalendar from '@fullcalendar/react'
 import UserMenu from '@/components/user/user-menu'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import ThemeSwitch from '../../buttons/theme-switch'
 import CalendarCheckbox from '../../calendar/calendar-checkbox'
-import FullCalendar from '@fullcalendar/react'
 
 interface NavbarContentProps {
 	onClickMenu: () => void

@@ -1,10 +1,10 @@
+import React, { useState } from 'react'
 import apiClient from '@/helpers/axios'
+import { showNotification } from '@/helpers/show-notification'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import { AxiosError } from 'axios'
-import React, { useState } from 'react'
 
 interface createCalendarFormProps {
 	onClose: () => void
@@ -28,23 +28,20 @@ const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
 			try {
 				setLoading(true)
 				await apiClient.post('/calendars', values)
-				notifications.show({
-					title: 'Shared Calendar Created',
-					message: `Calendar "${values.name}" has been successfully created.`,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Holidays calendar created',
+					`Calendar "${values.name}" has been successfully created.`,
+					'green'
+				)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Shared Calendar Created',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification(
+						'Holidays calendar creation error',
+						error.response.data.message,
+						'red'
+					)
+					showNotification('Shared calendar created', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

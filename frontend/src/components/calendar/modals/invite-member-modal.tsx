@@ -1,12 +1,12 @@
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
-import { User } from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Modal, MultiSelect, Stack } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
 import { AxiosError } from 'axios'
 import { debounce } from 'lodash'
-import React, { useCallback, useEffect, useState } from 'react'
+import apiClient from '@/helpers/axios'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { showNotification } from '@/helpers/show-notification'
+import { User } from '@/helpers/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface InviteMemberModalProps {
 	opened: boolean
@@ -62,23 +62,15 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 					)
 				)
 
-				notifications.show({
-					title: 'Member Invitation',
-					message: 'Members have been successfully invited to the calendar.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Member invitation',
+					'Members have been successfully invited to the calendar.',
+					'green'
+				)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Member Invitation',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Member invitation error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

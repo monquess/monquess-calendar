@@ -1,11 +1,11 @@
 import apiClient from '@/helpers/axios'
 import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Button, Flex, Modal, Stack, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import { AxiosError } from 'axios'
 import React, { useEffect, useState } from 'react'
 
@@ -44,23 +44,15 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 				}
 
 				deleteCalendar(calendar.id)
-				notifications.show({
-					title: 'Calendar Deletion',
-					message: 'The calendar has been successfully deleted.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Calendar deletion',
+					'The calendar has been successfully deleted.',
+					'green'
+				)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Calendar Deletion',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Calendar deletion error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

@@ -1,3 +1,9 @@
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { FaGoogle } from 'react-icons/fa'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { useForm, zodResolver } from '@mantine/form'
+import axios, { AxiosError } from 'axios'
 import { config } from '@/config/config'
 import useStore from '@/helpers/store/user-store'
 import { schemaLogin } from '@/helpers/validations/login-schema'
@@ -11,14 +17,8 @@ import {
 	Text,
 	TextInput,
 } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import ReCAPTCHA from 'react-google-recaptcha'
-import { FaGoogle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
+import { showNotification } from '@/helpers/show-notification'
 
 const LoginForm: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -46,13 +46,7 @@ const LoginForm: React.FC = React.memo(() => {
 
 	const handleSubmit = async (values: typeof form.values) => {
 		if (!recaptcha.current?.getValue()) {
-			notifications.show({
-				title: 'Login',
-				message: 'Please submit Captcha',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'red',
-			})
+			showNotification('Login', 'Please submit Captcha', 'red')
 		} else {
 			try {
 				setLoading(true)
@@ -71,23 +65,14 @@ const LoginForm: React.FC = React.memo(() => {
 				useStore.getState().login(response.data.user, response.data.accessToken)
 				form.reset()
 				navigate('/')
-				notifications.show({
-					title: 'Login',
-					message: `Welcome, ${response.data.user.username}!`,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-					position: 'top-center',
-				})
+				showNotification(
+					'Login',
+					`Welcome, ${response.data.user.username}!`,
+					'green'
+				)
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Login',
-						message: error.response.data.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Login error', error.response.data.message, 'red')
 				}
 			} finally {
 				setLoading(false)
@@ -125,11 +110,12 @@ const LoginForm: React.FC = React.memo(() => {
 				></Divider>
 				<Group mt={isMobile ? 'sm' : 'md'} justify="center" grow={isMobile}>
 					<Button
-						type="button"
 						variant="light"
 						color="gray"
 						size={isMobile ? 'xs' : 'sm'}
 						w="100%"
+						href={`${config.API_BASE_URL}/auth/google`}
+						component="a"
 					>
 						<Group gap={6} justify="center">
 							<FaGoogle />

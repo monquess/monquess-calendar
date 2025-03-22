@@ -1,12 +1,12 @@
+import React, { useState } from 'react'
+import { Button, Modal, Stack, Text, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import { AxiosError } from 'axios'
 import apiClient from '@/helpers/axios'
+import { showNotification } from '@/helpers/show-notification'
 import useStore, { User } from '@/helpers/store/user-store'
 import { updateUserSchema } from '@/helpers/validations/update-user-schema'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Button, Modal, Stack, Text, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import { AxiosError } from 'axios'
-import React, { useState } from 'react'
 
 interface updateUserModalProps {
 	opened: boolean
@@ -36,24 +36,15 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 					values
 				)
 				updateUser(data)
-
-				notifications.show({
-					title: 'Account Update',
-					message: 'Your account information has been successfully updated.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Account update',
+					'Your account information has been successfully updated.',
+					'green'
+				)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Account Update',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Account update error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

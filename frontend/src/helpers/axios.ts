@@ -7,8 +7,7 @@ const apiClient = axios.create({
 	withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',
-		// 'Accept-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
-		'Accept-Timezone': 'Europe/Warsaw',
+		'Accept-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 	},
 })
 

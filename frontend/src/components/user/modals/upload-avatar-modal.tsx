@@ -1,12 +1,12 @@
+import React, { useState } from 'react'
+import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import { AxiosError } from 'axios'
 import apiClient from '@/helpers/axios'
+import { showNotification } from '@/helpers/show-notification'
 import useStore, { User } from '@/helpers/store/user-store'
 import { avatarSchema } from '@/helpers/validations/avatar-schema'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import { AxiosError } from 'axios'
-import React, { useState } from 'react'
 
 interface UploadAvatarModalProps {
 	opened: boolean
@@ -46,24 +46,16 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 					}
 				)
 
-				notifications.show({
-					title: 'Avatar Upload',
-					message: 'Avatar uploaded successfully.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Avatar upload',
+					'Avatar uploaded successfully.',
+					'green'
+				)
 				updateUser(data)
 				onClose()
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Avatar Upload',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Avatar upload error', error.message, 'red')
 				}
 			} finally {
 				setLoading(false)

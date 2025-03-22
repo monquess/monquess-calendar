@@ -26,5 +26,3 @@ function App() {
 }
 
 export default App
-
-//switcha236@gmail.com
