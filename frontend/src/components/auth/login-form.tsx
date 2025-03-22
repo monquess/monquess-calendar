@@ -1,5 +1,6 @@
 import { config } from '@/config/config'
-import useStore from '@/helpers/store'
+import useStore from '@/helpers/store/user-store'
+import { schemaLogin } from '@/helpers/validations/login-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Button,
@@ -10,7 +11,7 @@ import {
 	Text,
 	TextInput,
 } from '@mantine/core'
-import { useForm } from '@mantine/form'
+import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
@@ -34,6 +35,7 @@ const LoginForm: React.FC = React.memo(() => {
 			email: '',
 			password: '',
 		},
+		validate: zodResolver(schemaLogin),
 	})
 
 	const handleCaptchaSubmit = () => {
@@ -98,13 +100,12 @@ const LoginForm: React.FC = React.memo(() => {
 			<form
 				onSubmit={(e) => {
 					e.preventDefault()
-					setRecaptchaModalOpened(true)
+					const formError = form.validate()
+					if (!formError.hasErrors) setRecaptchaModalOpened(true)
 				}}
 			>
 				<TextInput
 					label="Email"
-					type="email"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('email')}
@@ -112,7 +113,6 @@ const LoginForm: React.FC = React.memo(() => {
 				/>
 				<PasswordInput
 					label="Password"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('password')}

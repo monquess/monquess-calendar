@@ -1,6 +1,4 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaBars, FaCalendarAlt } from 'react-icons/fa'
+import { useResponsive } from '@/hooks/use-responsive'
 import {
 	ActionIcon,
 	Box,
@@ -11,7 +9,9 @@ import {
 	useMantineColorScheme,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { useResponsive } from '@/hooks/use-responsive'
+import React from 'react'
+import { FaBars, FaCalendarAlt } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import ThemeSwitch from '../buttons/theme-switch'
 
 const Header: React.FC = React.memo(() => {

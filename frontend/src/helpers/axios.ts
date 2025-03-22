@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { config } from '@/config/config'
-import useStore from './store'
+import axios from 'axios'
+import useStore from './store/user-store'
 
 const apiClient = axios.create({
 	baseURL: config.API_BASE_URL,

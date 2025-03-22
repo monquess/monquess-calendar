@@ -64,8 +64,9 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 			})
 			navigate('/login')
 			notifications.show({
-				title: 'Verify',
-				message: 'Verify successfully, you can now login to your account',
+				title: 'Verification',
+				message:
+					'You have successfully verified your account. You can now log in.',
 				withCloseButton: true,
 				autoClose: 5000,
 				color: 'green',
@@ -73,7 +74,7 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
 				notifications.show({
-					title: 'Verify',
+					title: 'Verification',
 					message: error.response.data.message,
 					withCloseButton: true,
 					autoClose: 5000,
@@ -87,8 +88,6 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 		<>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<TextInput
-					type="email"
-					required
 					mt="md"
 					size={isMobile ? 'sm' : 'md'}
 					key={form.key('email')}

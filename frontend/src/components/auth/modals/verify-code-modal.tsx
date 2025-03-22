@@ -1,4 +1,6 @@
-import React from 'react'
+import { config } from '@/config/config'
+import { verifyCodeSchema } from '@/helpers/validations/verify-code-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Button,
 	Group,
@@ -11,9 +13,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import axios, { AxiosError } from 'axios'
-import { config } from '@/config/config'
-import { verifyCodeSchema } from '@/helpers/validations/verify-code-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React from 'react'
 
 interface VerificationCodeModalProps {
 	opened: boolean
@@ -34,6 +34,7 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 	const [loadingVerify, setLoadingVerify] = React.useState(false)
 
 	const form = useForm({
+		mode: 'uncontrolled',
 		initialValues: {
 			code: '',
 		},
