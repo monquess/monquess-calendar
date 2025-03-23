@@ -1,10 +1,12 @@
+import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ActionIcon, Menu } from '@mantine/core'
 import React, { useState } from 'react'
 import { FcInvite } from 'react-icons/fc'
 import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
 import { HiOutlineDotsHorizontal } from 'react-icons/hi'
-import { ActionIcon, Menu } from '@mantine/core'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { IoMdPeople } from 'react-icons/io'
+import CalendarMemberModal from './modals/calendar-member-modal'
 import DeleteCalendarModal from './modals/delete-calendar.modal'
 import InviteMemberModal from './modals/invite-member-modal'
 import UpdateCalendarModal from './modals/update-calendar-modal'
@@ -17,6 +19,7 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 	const [openUpdateModal, setUpdateModal] = useState(false)
 	const [openDeleteModal, setDeleteModal] = useState(false)
 	const [openInviteModal, setInviteModal] = useState(false)
+	const [openMembersModal, setMembersModal] = useState(false)
 
 	return (
 		<>
@@ -38,6 +41,12 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 						onClick={() => setInviteModal(true)}
 					>
 						Invite member
+					</Menu.Item>
+					<Menu.Item
+						leftSection={<IoMdPeople size={14} />}
+						onClick={() => setMembersModal(true)}
+					>
+						Members
 					</Menu.Item>
 					<Menu.Divider />
 					<Menu.Item
@@ -63,6 +72,11 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 				calendar={calendar}
 				opened={openInviteModal}
 				onClose={() => setInviteModal(false)}
+			/>
+			<CalendarMemberModal
+				calendar={calendar}
+				opened={openMembersModal}
+				onClose={() => setMembersModal(false)}
 			/>
 		</>
 	)
