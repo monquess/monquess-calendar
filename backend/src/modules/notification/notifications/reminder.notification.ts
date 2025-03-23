@@ -1,7 +1,7 @@
 import { MailChannel } from '../channels/mail.channel';
 import { Notification } from '../interfaces/notification.interface';
 
-export class CalendarInvitationNotification implements Notification {
+export class ReminderNotification implements Notification {
 	constructor(private readonly context?: Record<string, unknown>) {}
 
 	channels() {
@@ -10,8 +10,8 @@ export class CalendarInvitationNotification implements Notification {
 
 	toMail() {
 		return {
-			subject: 'Calendar invitation',
-			templateName: 'calendar-invitation',
+			subject: 'Event reminder',
+			templateName: 'reminder',
 			context: this?.context,
 		};
 	}

@@ -16,6 +16,7 @@ import {
 } from '../dto';
 import { EventMemberEntity } from '../entities/event-member.entity';
 import { EventEntity } from '../entities/event.entity';
+import { ReminderEntity } from '../entities/reminder.entity';
 
 export const ApiEventFindById = () =>
 	applyDecorators(
@@ -63,6 +64,38 @@ export const ApiEventRemove = () =>
 		ApiForbiddenResponse({
 			description: 'Access denied',
 		}),
+		ApiNotFoundResponse({
+			description: 'Event not found',
+		})
+	);
+
+export const ApiReminderCreate = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Create reminder for event' }),
+		ApiParam({
+			name: 'id',
+			description: 'event id',
+		}),
+		ApiOkResponse({ type: ReminderEntity }),
+		ApiNotFoundResponse({
+			description: 'Event not found',
+		})
+	);
+
+export const ApiReminderRemove = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Remove reminder for event' }),
+		ApiParam({
+			name: 'id',
+			description: 'event id',
+		}),
+		ApiParam({
+			name: 'reminderId',
+			description: 'reminder id',
+		}),
+		ApiNoContentResponse(),
 		ApiNotFoundResponse({
 			description: 'Event not found',
 		})

@@ -6,4 +6,6 @@ export interface Notification {
 	channels(): Type<NotificationChannel>[];
 
 	toMail?(): Omit<SendMailOptions, 'to'>;
+
+	toObject(): Record<string, unknown> | undefined;
 }
