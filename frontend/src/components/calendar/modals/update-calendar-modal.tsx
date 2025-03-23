@@ -14,6 +14,7 @@ import { ICalendar } from '@/helpers/interface/calendar-interface'
 import { showNotification } from '@/helpers/show-notification'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { useResponsive } from '@/hooks/use-responsive'
+import useCalendarStore from '@/helpers/store/calendar-store'
 
 interface updateCalendarModalProps {
 	opened: boolean
@@ -24,6 +25,7 @@ interface updateCalendarModalProps {
 const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { isMobile } = useResponsive()
+		const { updateCalendar } = useCalendarStore()
 		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
@@ -39,8 +41,14 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
 				setLoading(true)
-				await apiClient.patch(`/calendars/${calendar.id}`, values)
+				const { data } = await apiClient.patch(
+					`/calendars/${calendar.id}`,
+					values
+				)
 
+				console.log(data)
+
+				updateCalendar(data)
 				showNotification(
 					'Calendar update',
 					'Your calendar has been successfully updated.',

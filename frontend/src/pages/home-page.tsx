@@ -15,13 +15,10 @@ import '@/pages/style.css'
 
 const HomePage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
+	const { calendars } = useCalendarStore()
 	const calendarRef = useRef<FullCalendar | null>(null)
 	const [isNavbarOpen, setIsNavbarOpen] = useState(!isMobile)
-	const { calendarVisibility } = useCalendarStore()
-
-	useEffect(() => {
-		setIsNavbarOpen(!isMobile)
-	}, [isMobile])
+	const [events, setEvents] = useState<IEvent[]>([])
 
 	const updateCalendarSize = () => {
 		if (calendarRef.current) {
@@ -30,14 +27,13 @@ const HomePage: React.FC = React.memo(() => {
 	}
 
 	useEffect(() => {
-		updateCalendarSize()
-	}, [isNavbarOpen])
-
-	useEffect(() => {
 		setIsNavbarOpen(!isMobile)
 	}, [isMobile])
 
-	const [events, setEvents] = useState<IEvent[]>([])
+	useEffect(() => {
+		updateCalendarSize()
+	}, [isNavbarOpen])
+
 	useEffect(() => {
 		if (!calendarRef.current) {
 			return
@@ -45,9 +41,10 @@ const HomePage: React.FC = React.memo(() => {
 		const { currentStart, currentEnd } = calendarRef.current.getApi().view
 
 		const fetchEvents = async () => {
-			const calendarIds = Object.entries(calendarVisibility)
-				.filter(([_, value]) => value)
+			const calendarIds = Object.entries(calendars)
+				.filter(([_, value]) => value.visible)
 				.map(([key]) => key)
+
 			const response = await Promise.all(
 				calendarIds.map((id) =>
 					apiClient.get<IEvent[]>(`/calendars/${id}/events`, {
@@ -60,7 +57,7 @@ const HomePage: React.FC = React.memo(() => {
 			)
 			setEvents(
 				response
-					.reduce<IEvent[]>((res, events) => [...res, ...events.data], [])
+					.flatMap((events) => events.data)
 					.map((event) => ({
 						...event,
 						id: event.id.toString(),
@@ -73,7 +70,7 @@ const HomePage: React.FC = React.memo(() => {
 			)
 		}
 		fetchEvents()
-	}, [calendarVisibility])
+	}, [calendars])
 
 	return (
 		<Flex

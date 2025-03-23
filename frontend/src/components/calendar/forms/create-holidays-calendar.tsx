@@ -16,6 +16,8 @@ import { AxiosError } from 'axios'
 
 import { Twemoji } from 'react-emoji-render'
 import { showNotification } from '@/helpers/show-notification'
+import useCalendarStore from '@/helpers/store/calendar-store'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 
 interface createCalendarFormProps {
 	onClose: () => void
@@ -38,6 +40,7 @@ const renderSelectOption: SelectProps['renderOption'] = ({ option }) => (
 
 const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 	React.memo(({ onClose }) => {
+		const { addCalendar } = useCalendarStore()
 		const [value, setValue] = useState<string | null>('')
 		const [loading, setLoading] = useState(false)
 
@@ -54,7 +57,10 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
 				setLoading(true)
-				await apiClient.post('/calendars', values)
+
+				const { data } = await apiClient.post<ICalendar>('/calendars', values)
+				addCalendar(data.id)
+
 				showNotification(
 					'Holidays calendar created',
 					`Calendar "${values.name}" has been successfully created.`,
@@ -64,7 +70,7 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
 					showNotification(
-						'Holidays calendar error',
+						'Holidays calendar creation error',
 						error.response.data.message,
 						'red'
 					)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import {
 	Box,
@@ -16,34 +16,34 @@ import { useResponsive } from '@/hooks/use-responsive'
 import CalendarMenu from './calendar-menu'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
-	const { calendarVisibility, toggleCalendar, setCalendars } =
-		useCalendarStore()
-
-	const [calendars, setCalendarsArray] = useState<ICalendar[]>([])
-
 	const { isMobile } = useResponsive()
+	const { calendars, toggleCalendar, setCalendars } = useCalendarStore()
+
+	// const [calendars, setCalendarsArray] = useState<ICalendar[]>([])
 
 	// TODO existingCalendarIds logic fix
 	useEffect(() => {
 		const fetchCalendars = async () => {
 			const { data } = await apiClient.get<ICalendar[]>('/calendars')
-			const existingCalendarIds = Object.keys(calendarVisibility).map(Number)
+			console.table(data)
 
-			const newCalendarIds = data
-				.map((calendar) => calendar.id)
-				.filter((id) => !existingCalendarIds.includes(id))
+			const newCalendars = data.filter(
+				({ id }) => !Object.keys(calendars).includes(id.toString())
+			)
 
-			if (newCalendarIds.length > 0) {
-				setCalendars([...existingCalendarIds, ...newCalendarIds])
+			if (newCalendars.length > 0) {
+				console.table(newCalendars)
+				setCalendars([
+					...Object.entries(calendars).map(([_, value]) => value),
+					...newCalendars,
+				])
 			}
 
-			setCalendarsArray(data)
+			// setCalendarsArray(data)
 		}
 
-		if (calendars?.length === 0) {
-			fetchCalendars()
-		}
-	}, [setCalendars, calendars, calendarVisibility])
+		fetchCalendars()
+	}, [setCalendars, calendars])
 
 	return (
 		<Stack>
@@ -52,11 +52,10 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			{Object.values(calendars)
 				.filter((calendar) => calendar.isPersonal)
 				.map((calendar) => (
-					<Flex justify="space-between">
+					<Flex key={calendar.id} justify="space-between">
 						<Checkbox
-							key={calendar.id}
 							label={calendar.name}
-							checked={calendarVisibility[calendar.id] ?? true}
+							checked={calendars[calendar.id].visible ?? true}
 							onChange={() => toggleCalendar(calendar.id)}
 							color={calendar.color}
 						/>
@@ -85,11 +84,10 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			{Object.values(calendars)
 				.filter((calendar) => !calendar.isPersonal)
 				.map((calendar) => (
-					<Flex justify="space-between">
+					<Flex key={calendar.id} justify="space-between">
 						<Checkbox
-							key={calendar.id}
 							label={calendar.name}
-							checked={calendarVisibility[calendar.id] ?? true}
+							checked={calendars[calendar.id].visible ?? true}
 							onChange={() => toggleCalendar(calendar.id)}
 							color={calendar.color}
 						/>

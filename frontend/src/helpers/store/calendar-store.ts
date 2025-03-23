@@ -1,40 +1,74 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { ICalendar } from '../interface/calendar-interface'
 
 type CalendarVisibilityState = {
-	calendarVisibility: Record<number, boolean>
+	calendars: Record<number, ICalendar & { visible: boolean }>
 	toggleCalendar: (calendarId: number) => void
-	setCalendars: (calendarIds: number[]) => void
+	setCalendars: (calendars: ICalendar[]) => void
+	addCalendar: (calendar: ICalendar) => void
+	updateCalendar: (calendar: ICalendar) => void
 	deleteCalendar: (calendarId: number) => void
 }
 
 const useCalendarStore = create<CalendarVisibilityState>()(
 	persist(
 		(set) => ({
-			calendarVisibility: {},
+			calendars: {},
 
 			toggleCalendar: (calendarId) =>
 				set((state) => ({
-					calendarVisibility: {
-						...state.calendarVisibility,
-						[calendarId]: !state.calendarVisibility[calendarId],
+					calendars: {
+						...state.calendars,
+						[calendarId]: {
+							...state.calendars[calendarId],
+							visible: !state.calendars[calendarId].visible,
+						},
 					},
 				})),
 
-			setCalendars: (calendarIds) =>
+			setCalendars: (calendars) =>
 				set({
-					calendarVisibility: Object.fromEntries(
-						calendarIds.map((id) => [id, true])
+					calendars: Object.fromEntries(
+						calendars.map((calendar) => [
+							calendar.id,
+							{ ...calendar, visible: true },
+						])
 					),
+				}),
+
+			addCalendar: (calendar) =>
+				set((state) => ({
+					calendars: {
+						...state.calendars,
+						[calendar.id]: {
+							...calendar,
+							visible: true,
+						},
+					},
+				})),
+
+			updateCalendar: (calendar) =>
+				set((state) => {
+					const old = state.calendars[calendar.id]
+					return {
+						calendars: {
+							...state.calendars,
+							[calendar.id]: {
+								...old,
+								...calendar,
+							},
+						},
+					}
 				}),
 
 			deleteCalendar: (calendarId) =>
 				set((state) => {
-					const newVisibility = { ...state.calendarVisibility }
+					const newVisibility = { ...state.calendars }
 					delete newVisibility[calendarId]
 
 					return {
-						calendarVisibility: newVisibility,
+						calendars: newVisibility,
 					}
 				}),
 		}),

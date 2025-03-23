@@ -5,6 +5,8 @@ import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-sche
 import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
+import useCalendarStore from '@/helpers/store/calendar-store'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 
 interface createCalendarFormProps {
 	onClose: () => void
@@ -12,6 +14,7 @@ interface createCalendarFormProps {
 
 const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
 	({ onClose }) => {
+		const { addCalendar } = useCalendarStore()
 		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
@@ -27,7 +30,11 @@ const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
 				setLoading(true)
-				await apiClient.post('/calendars', values)
+
+				const { data } = await apiClient.post<ICalendar>('/calendars', values)
+				console.log(data)
+				addCalendar(data)
+
 				showNotification(
 					'Holidays calendar created',
 					`Calendar "${values.name}" has been successfully created.`,
