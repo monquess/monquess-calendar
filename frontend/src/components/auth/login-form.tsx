@@ -57,6 +57,7 @@ const LoginForm: React.FC = React.memo(() => {
 						password: values.password,
 					},
 					{
+						withCredentials: true,
 						headers: {
 							'x-recaptcha-token': recaptcha.current.getValue(),
 						},

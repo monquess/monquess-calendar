@@ -36,15 +36,22 @@ apiClient.interceptors.response.use(
 			originalRequest._retry = true
 
 			try {
-				const response = await axios.post(`${config.API_BASE_URL}/auth/refresh`)
-				const newAccessToken = response.data.accessToken
-				useStore.getState().updateToken(newAccessToken)
-				originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+				const response = await axios.post<{ accessToken: string }>(
+					`${config.API_BASE_URL}/auth/refresh`,
+					{},
+					{ withCredentials: true }
+				)
+				const { accessToken } = response.data
+
+				useStore.getState().updateToken(accessToken)
+				originalRequest.headers.Authorization = `Bearer ${accessToken}`
+
 				return axios(originalRequest)
 			} catch {
 				useStore.getState().logout()
 			}
 		}
+
 		return Promise.reject(error)
 	}
 )
