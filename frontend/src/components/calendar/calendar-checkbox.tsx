@@ -82,12 +82,7 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 
 			<Divider />
 			<Text fw={500}>Other calendars</Text>
-			<ScrollArea
-				h={isMobile ? 'auto' : '300px'}
-				scrollbarSize={8}
-				type="auto"
-				offsetScrollbars
-			>
+			<ScrollArea mah="300px" scrollbarSize={8} type="auto" offsetScrollbars>
 				{Object.values(calendars)
 					.filter((calendar) => !calendar.isPersonal)
 					.map((calendar) => (
@@ -99,35 +94,6 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 								color={calendar.color}
 							/>
 
-							<Flex justify="center">
-								{(calendar.description?.length ?? 0) > 0 && (
-									<HoverCard>
-										<HoverCard.Target>
-											<IoInformationCircleOutline size={20} />
-										</HoverCard.Target>
-										<HoverCard.Dropdown>
-											<Text size={isMobile ? 'xs' : 'md'}>
-												{calendar.description}
-											</Text>
-										</HoverCard.Dropdown>
-									</HoverCard>
-								)}
-								<Box ml="xs">
-									<CalendarMenu calendar={calendar} />
-								</Box>
-							</Flex>
-						</Flex>
-					))}
-				{Object.values(calendars)
-					.filter((calendar) => !calendar.isPersonal)
-					.map((calendar) => (
-						<Flex key={calendar.id} justify="space-between" pb="xs">
-							<Checkbox
-								label={calendar.name}
-								checked={calendars[calendar.id].visible ?? true}
-								onChange={() => toggleCalendar(calendar.id)}
-								color={calendar.color}
-							/>
 							<Flex justify="center">
 								{(calendar.description?.length ?? 0) > 0 && (
 									<HoverCard>
