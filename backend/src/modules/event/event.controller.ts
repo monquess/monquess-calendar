@@ -1,13 +1,14 @@
 import {
+	Controller,
 	Body,
 	ClassSerializerInterceptor,
-	Controller,
 	Get,
+	Patch,
+	Delete,
 	HttpCode,
 	HttpStatus,
 	Param,
 	ParseIntPipe,
-	Patch,
 	SerializeOptions,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -58,7 +59,7 @@ export class EventController {
 
 	@ApiEventRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch(':id')
+	@Delete(':id')
 	async delete(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser
