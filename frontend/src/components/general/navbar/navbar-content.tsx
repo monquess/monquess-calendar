@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { IoMenu } from 'react-icons/io5'
+import UserMenu from '@/components/user/user-menu'
+import useUserStore from '@/helpers/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+import FullCalendar from '@fullcalendar/react'
 import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
 import { DatePicker, DatesRangeValue } from '@mantine/dates'
 import { useMediaQuery } from '@mantine/hooks'
-import FullCalendar from '@fullcalendar/react'
-import UserMenu from '@/components/user/user-menu'
-import useStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { IoMenu } from 'react-icons/io5'
 import ThemeSwitch from '../../buttons/theme-switch'
 import CalendarCheckbox from '../../calendar/calendar-checkbox'
 
@@ -21,7 +21,7 @@ const NavbarContent: React.FC<NavbarContentProps> = ({
 	onOpenModal,
 	calendarRef,
 }) => {
-	const { user } = useStore()
+	const { user } = useUserStore()
 	const { isMobile } = useResponsive()
 	const isSmallMobile = useMediaQuery('(max-width: 420px)')
 	const [value, setValue] = useState<DatesRangeValue>([new Date(), new Date()])

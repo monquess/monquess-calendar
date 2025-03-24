@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import apiClient from '@/helpers/axios'
 import { countryConst } from '@/helpers/country-code-const'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
@@ -13,11 +12,12 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
+import React, { useState } from 'react'
 
-import { Twemoji } from 'react-emoji-render'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { Twemoji } from 'react-emoji-render'
 
 interface createCalendarFormProps {
 	onClose: () => void
@@ -59,7 +59,7 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 				setLoading(true)
 
 				const { data } = await apiClient.post<ICalendar>('/calendars', values)
-				addCalendar(data.id)
+				addCalendar(data)
 
 				showNotification(
 					'Holidays calendar created',

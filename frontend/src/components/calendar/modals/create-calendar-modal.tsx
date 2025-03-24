@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import CreateCalendarHolidaysForm from '../forms/create-holidays-calendar'
 import CreateCalendarDefaultForm from '../forms/create-shared-calendar'
 import classes from './modal.module.css'
-import useCalendarStore from '@/helpers/store/calendar-store'
 
 interface createCalendarModalProps {
 	opened: boolean
