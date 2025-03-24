@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { AxiosError } from 'axios'
-import apiClient from '@/helpers/api/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { showNotification } from '@/helpers/show-notification'
 import useStore, { User } from '@/helpers/store/user-store'
 import { updateUserSchema } from '@/helpers/validations/update-user-schema'
@@ -43,7 +42,7 @@ const UpdateUserModal: React.FC<updateUserModalProps> = React.memo(
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Account update error', error.message, 'red')
 				}
 			} finally {

@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { IoImageOutline } from 'react-icons/io5'
 import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { AxiosError } from 'axios'
-import apiClient from '@/helpers/api/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { showNotification } from '@/helpers/show-notification'
 import useStore, { User } from '@/helpers/store/user-store'
 import { avatarSchema } from '@/helpers/validations/avatar-schema'
@@ -55,7 +54,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 				updateUser(data)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Avatar upload error', error.message, 'red')
 				}
 			} finally {

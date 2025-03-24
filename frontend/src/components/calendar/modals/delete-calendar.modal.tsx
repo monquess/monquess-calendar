@@ -20,7 +20,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 		const { isMobile } = useResponsive()
 		const { deleteCalendar } = useCalendarStore()
 		const { user } = useUserStore()
-		const [role, setRole] = useState<string>()
+		const [role, setRole] = useState<MemberRole>()
 		const [loading, setLoading] = useState(false)
 
 		useEffect(() => {
@@ -58,6 +58,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 				setLoading(false)
 			}
 		}
+
 		return (
 			<Modal
 				opened={opened}

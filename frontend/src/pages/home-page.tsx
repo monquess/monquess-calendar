@@ -14,6 +14,7 @@ import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import '@/pages/style.css'
+import EventPopover from '@/components/event/event-popover'
 
 const HomePage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -41,12 +42,12 @@ const HomePage: React.FC = React.memo(() => {
 		const { currentStart, currentEnd } = calendarRef.current.getApi().view
 
 		const fetchEvents = async () => {
-			const calendarIds = Object.entries(calendars)
-				.filter(([_, value]) => value.visible)
-				.map(([key]) => key)
+			const visibleCalendars = Object.entries(calendars).filter(
+				([_, value]) => value.visible
+			)
 
 			const response = await Promise.all(
-				calendarIds.map((id) =>
+				visibleCalendars.map(([id]) =>
 					apiClient.get<IEvent[]>(`/calendars/${id}/events`, {
 						params: {
 							startDate: currentStart.toISOString(),
@@ -67,6 +68,10 @@ const HomePage: React.FC = React.memo(() => {
 						end: event.endDate,
 						backgroundColor: event.color,
 						borderColor: event.color,
+						extendedProps: {
+							members: event.members,
+							description: event.description,
+						},
 					}))
 			)
 		}
@@ -126,6 +131,7 @@ const HomePage: React.FC = React.memo(() => {
 				}}
 				calendarRef={calendarRef}
 			/>
+			<EventPopover calendarRef={calendarRef} />
 		</React.Fragment>
 	)
 })

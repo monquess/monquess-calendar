@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Flex, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { AxiosError } from 'axios'
-import apiClient from '@/helpers/api/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { showNotification } from '@/helpers/show-notification'
 import useStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
@@ -37,7 +36,7 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = React.memo(
 				)
 				navigate('/login')
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Account deletion error', error.message, 'red')
 				}
 			} finally {

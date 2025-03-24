@@ -54,7 +54,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 		const defaultCalendar = Object.values(calendars).find(
 			(c) => c.isPersonal && c.users.find((u) => u.role === 'OWNER')
 		) as ICalendar
-		const [calendarId, setCalendarId] = useState<string>(
+		const [calendarId, setCalendarId] = useState<string | null>(
 			defaultCalendar.id.toString()
 		)
 
@@ -129,6 +129,10 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					end: event.endDate ?? undefined,
 					backgroundColor: event.color,
 					borderColor: event.color,
+					extendedProps: {
+						members: event.members,
+						description: event.description,
+					},
 				})
 				showNotification(
 					'Event created',
