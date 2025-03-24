@@ -1,6 +1,6 @@
 import apiClient from '@/helpers/axios'
 import { countryConst } from '@/helpers/country-code-const'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import { HolidayCalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import {
 	Button,
 	ColorInput,
@@ -8,7 +8,6 @@ import {
 	Select,
 	SelectProps,
 	Stack,
-	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
@@ -47,11 +46,10 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 		const form = useForm({
 			mode: 'uncontrolled',
 			initialValues: {
-				name: '',
 				description: '',
 				color: '',
 			},
-			validate: zodResolver(CalendarCreateSchema),
+			validate: zodResolver(HolidayCalendarCreateSchema),
 		})
 
 		const handleSubmit = async (values: typeof form.values) => {
@@ -63,7 +61,7 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 
 				showNotification(
 					'Holidays calendar created',
-					`Calendar "${values.name}" has been successfully created.`,
+					`Holiday calendar has been successfully created.`,
 					'green'
 				)
 				onClose()
@@ -83,11 +81,6 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 		return (
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack pos="relative">
-					<TextInput
-						label="Name"
-						key={form.key('name')}
-						{...form.getInputProps('name')}
-					></TextInput>
 					<Select
 						label="Select country"
 						value={value}

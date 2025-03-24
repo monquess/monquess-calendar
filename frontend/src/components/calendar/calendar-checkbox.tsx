@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react'
-import { IoInformationCircleOutline } from 'react-icons/io5'
+import apiClient from '@/helpers/axios'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
+import useCalendarStore from '@/helpers/store/calendar-store'
+import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Box,
 	Checkbox,
 	Divider,
 	Flex,
 	HoverCard,
+	ScrollArea,
 	Stack,
 	Text,
 } from '@mantine/core'
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useEffect } from 'react'
+import { IoInformationCircleOutline } from 'react-icons/io5'
 import CalendarMenu from './calendar-menu'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
@@ -81,35 +82,72 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 
 			<Divider />
 			<Text fw={500}>Other calendars</Text>
-			{Object.values(calendars)
-				.filter((calendar) => !calendar.isPersonal)
-				.map((calendar) => (
-					<Flex key={calendar.id} justify="space-between">
-						<Checkbox
-							label={calendar.name}
-							checked={calendars[calendar.id].visible ?? true}
-							onChange={() => toggleCalendar(calendar.id)}
-							color={calendar.color}
-						/>
-						<Flex justify="center">
-							{(calendar.description?.length ?? 0) > 0 && (
-								<HoverCard>
-									<HoverCard.Target>
-										<IoInformationCircleOutline size={20} />
-									</HoverCard.Target>
-									<HoverCard.Dropdown>
-										<Text size={isMobile ? 'xs' : 'md'}>
-											{calendar.description}
-										</Text>
-									</HoverCard.Dropdown>
-								</HoverCard>
-							)}
-							<Box ml="xs">
-								<CalendarMenu calendar={calendar} />
-							</Box>
+			<ScrollArea
+				h={isMobile ? 'auto' : '300px'}
+				scrollbarSize={8}
+				type="auto"
+				offsetScrollbars
+			>
+				{Object.values(calendars)
+					.filter((calendar) => !calendar.isPersonal)
+					.map((calendar) => (
+						<Flex key={calendar.id} justify="space-between" pb="xs">
+							<Checkbox
+								label={calendar.name}
+								checked={calendars[calendar.id].visible ?? true}
+								onChange={() => toggleCalendar(calendar.id)}
+								color={calendar.color}
+							/>
+
+							<Flex justify="center">
+								{(calendar.description?.length ?? 0) > 0 && (
+									<HoverCard>
+										<HoverCard.Target>
+											<IoInformationCircleOutline size={20} />
+										</HoverCard.Target>
+										<HoverCard.Dropdown>
+											<Text size={isMobile ? 'xs' : 'md'}>
+												{calendar.description}
+											</Text>
+										</HoverCard.Dropdown>
+									</HoverCard>
+								)}
+								<Box ml="xs">
+									<CalendarMenu calendar={calendar} />
+								</Box>
+							</Flex>
 						</Flex>
-					</Flex>
-				))}
+					))}
+				{Object.values(calendars)
+					.filter((calendar) => !calendar.isPersonal)
+					.map((calendar) => (
+						<Flex key={calendar.id} justify="space-between" pb="xs">
+							<Checkbox
+								label={calendar.name}
+								checked={calendars[calendar.id].visible ?? true}
+								onChange={() => toggleCalendar(calendar.id)}
+								color={calendar.color}
+							/>
+							<Flex justify="center">
+								{(calendar.description?.length ?? 0) > 0 && (
+									<HoverCard>
+										<HoverCard.Target>
+											<IoInformationCircleOutline size={20} />
+										</HoverCard.Target>
+										<HoverCard.Dropdown>
+											<Text size={isMobile ? 'xs' : 'md'}>
+												{calendar.description}
+											</Text>
+										</HoverCard.Dropdown>
+									</HoverCard>
+								)}
+								<Box ml="xs">
+									<CalendarMenu calendar={calendar} />
+								</Box>
+							</Flex>
+						</Flex>
+					))}
+			</ScrollArea>
 		</Stack>
 	)
 })

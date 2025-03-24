@@ -51,6 +51,7 @@ apiClient.interceptors.response.use(
 			} catch {
 				useUserStore.getState().logout()
 				useCalendarStore.getState().setCalendars([])
+				window.location.href = '/login'
 			}
 		}
 

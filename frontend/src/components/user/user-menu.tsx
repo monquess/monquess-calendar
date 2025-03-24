@@ -1,11 +1,12 @@
+import useCalendarStore from '@/helpers/store/calendar-store'
+import useUserStore from '@/helpers/store/user-store'
+import { Avatar, Menu } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 import { GoTrash, GoUpload } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
-import { Avatar, Menu } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
-import useStore from '@/helpers/store/user-store'
+import { useNavigate } from 'react-router-dom'
 import DeleteAccountModal from './modals/delete-account-modal'
 import UpdateUserModal from './modals/update-user-modal'
 import UploadAvatarModal from './modals/upload-avatar-modal'
@@ -16,7 +17,8 @@ interface Props {
 
 const UserMenu: React.FC<Props> = React.memo(({ size }) => {
 	const isSmallMobile = useMediaQuery('(max-width: 420px)')
-	const { user, logout } = useStore()
+	const { user, logout } = useUserStore()
+	const { setCalendars } = useCalendarStore()
 	const navigate = useNavigate()
 	const [deleteModal, setDeleteModal] = useState(false)
 	const [updateModal, setUpdateModal] = useState(false)
@@ -24,6 +26,7 @@ const UserMenu: React.FC<Props> = React.memo(({ size }) => {
 
 	const handleLogout = () => {
 		logout()
+		setCalendars([])
 		navigate('/login')
 	}
 
