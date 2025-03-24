@@ -1,7 +1,4 @@
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useEffect } from 'react'
 import {
 	Box,
 	Checkbox,
@@ -12,8 +9,12 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
-import React, { useEffect } from 'react'
 import { IoInformationCircleOutline } from 'react-icons/io5'
+import { apiClient } from '@/helpers/api/axios'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
+import useCalendarStore from '@/helpers/store/calendar-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import CalendarMenu from './calendar-menu'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
@@ -29,7 +30,6 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			)
 
 			if (newCalendars.length > 0) {
-				console.table(newCalendars)
 				setCalendars([
 					...Object.entries(calendars).map(([_, value]) => value),
 					...newCalendars,

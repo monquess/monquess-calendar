@@ -17,8 +17,7 @@ import { IoCalendar } from 'react-icons/io5'
 import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
 import FullCalendar from '@fullcalendar/react'
 import { DateSelectArg } from '@fullcalendar/core'
-import { AxiosError } from 'axios'
-import apiClient from '@/helpers/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { useResponsive } from '@/hooks/use-responsive'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { showNotification } from '@/helpers/show-notification'
@@ -138,7 +137,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Event creating error', error.message, 'red')
 				}
 			} finally {

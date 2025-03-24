@@ -1,14 +1,13 @@
-import apiClient from '@/helpers/axios'
+import React, { useEffect, useState } from 'react'
+import { Button, Flex, Modal, Stack, Text } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import useUserStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Button, Flex, Modal, Stack, Text } from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { AxiosError } from 'axios'
-import React, { useEffect, useState } from 'react'
 
 interface DeleteCalendarModalProps {
 	opened: boolean
@@ -52,7 +51,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Calendar deletion error', error.message, 'red')
 				}
 			} finally {

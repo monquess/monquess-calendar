@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Modal, MultiSelect, Stack } from '@mantine/core'
-import { AxiosError } from 'axios'
 import { debounce } from 'lodash'
-import apiClient from '@/helpers/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import { User } from '@/helpers/store/user-store'
@@ -22,6 +21,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 		const [selectedUser, setSelectedUser] = useState<string[]>([])
 		const [loading, setLoading] = useState(false)
 
+		// TODO remove useCallback
 		const fetchUsers = useCallback(
 			debounce(async (query: string) => {
 				if (!query.trim()) {
@@ -69,7 +69,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Member invitation error', error.message, 'red')
 				}
 			} finally {

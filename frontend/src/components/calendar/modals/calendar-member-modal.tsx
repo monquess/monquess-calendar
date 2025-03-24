@@ -1,9 +1,9 @@
-import apiClient from '@/helpers/axios'
+import React, { useEffect, useState } from 'react'
+import { Avatar, Card, Modal, ScrollArea, Stack, Text } from '@mantine/core'
+import { apiClient } from '@/helpers/api/axios'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { User } from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
-import { Avatar, Card, Modal, ScrollArea, Stack, Text } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
 
 interface CalendarMemberModalProps {
 	opened: boolean
@@ -18,16 +18,12 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 
 		useEffect(() => {
 			const fetchUsers = async () => {
-				try {
-					const responses = await Promise.all(
-						calendar.users.map((user) =>
-							apiClient.get<User>(`/users/${user.userId}`)
-						)
+				const responses = await Promise.all(
+					calendar.users.map((user) =>
+						apiClient.get<User>(`/users/${user.userId}`)
 					)
-					setUsers(responses.map((res) => res.data))
-				} catch (error) {
-					console.error('Error fetching users:', error)
-				}
+				)
+				setUsers(responses.map((res) => res.data))
 			}
 
 			fetchUsers()

@@ -8,8 +8,8 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 
 import Navbar from '@/components/general/navbar/navbar'
 import CreateEventModal from '@/components/event/modals/create-event-modal'
-import apiClient from '@/helpers/axios'
-import { IEvent } from '@/helpers/interface/event-interface'
+import { apiClient } from '@/helpers/api/axios'
+import { IEvent } from '@/helpers/interface/event.interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
@@ -55,6 +55,7 @@ const HomePage: React.FC = React.memo(() => {
 					})
 				)
 			)
+
 			setEvents(
 				response
 					.flatMap((events) => events.data)

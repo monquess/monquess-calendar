@@ -1,12 +1,11 @@
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import React, { useState } from 'react'
+import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import { apiClient, ApiError } from '@/helpers/api/axios'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
-import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { AxiosError } from 'axios'
-import React, { useState } from 'react'
 
 interface CreateSharedCalendarFormProps {
 	onClose: () => void
@@ -42,7 +41,7 @@ const CreateSharedCalendarForm: React.FC<CreateSharedCalendarFormProps> =
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification(
 						'Holidays calendar creation error',
 						error.response.data.message,

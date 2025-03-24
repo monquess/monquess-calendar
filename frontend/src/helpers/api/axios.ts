@@ -1,9 +1,10 @@
+import axios, { AxiosError } from 'axios'
 import { config } from '@/config/config'
-import axios from 'axios'
-import useCalendarStore from './store/calendar-store'
-import useUserStore from './store/user-store'
 
-const apiClient = axios.create({
+import useCalendarStore from '../store/calendar-store'
+import useUserStore from '../store/user-store'
+
+export const apiClient = axios.create({
 	baseURL: config.API_BASE_URL,
 	withCredentials: true,
 	headers: {
@@ -11,6 +12,8 @@ const apiClient = axios.create({
 		'Accept-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
 	},
 })
+
+export const ApiError = AxiosError
 
 apiClient.interceptors.request.use(
 	(config) => {
@@ -58,5 +61,3 @@ apiClient.interceptors.response.use(
 		return Promise.reject(error)
 	}
 )
-
-export default apiClient

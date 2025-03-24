@@ -8,8 +8,7 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { AxiosError } from 'axios'
-import apiClient from '@/helpers/axios'
+import { apiClient, ApiError } from '@/helpers/api/axios'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
@@ -54,7 +53,7 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification('Calendar update error', error.message, 'red')
 				}
 			} finally {

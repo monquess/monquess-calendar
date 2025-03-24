@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useUserStore from './store/user-store'
+import useUserStore from '../../helpers/store/user-store'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	const { user } = useUserStore()
@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 		return null
 	}
 
-	return <>{children}</>
+	return children
 }
 
 export default ProtectedRoute

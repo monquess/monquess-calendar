@@ -1,6 +1,4 @@
-import apiClient from '@/helpers/axios'
-import { CountryCodes } from '@/helpers/country-codes'
-import { HolidayCalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import React, { useState } from 'react'
 import {
 	Button,
 	ColorInput,
@@ -10,14 +8,14 @@ import {
 	Stack,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { AxiosError } from 'axios'
-import React, { useState } from 'react'
+import { Twemoji } from 'react-emoji-render'
 
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { apiClient, ApiError } from '@/helpers/api/axios'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import { Twemoji } from 'react-emoji-render'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
+import { CountryCodes } from '@/helpers/country-codes'
+import { HolidayCalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 
 interface CreateHolidaysCalendarFormProps {
 	onClose: () => void
@@ -68,7 +66,7 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 				)
 				onClose()
 			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
+				if (error instanceof ApiError && error.response) {
 					showNotification(
 						'Holidays calendar creation error',
 						error.response.data.message,
