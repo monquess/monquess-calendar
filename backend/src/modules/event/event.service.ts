@@ -54,11 +54,18 @@ export class EventService {
 				calendarId,
 				type: type,
 				startDate: {
-					gte: fromZonedTime(startDate, currentUser.timezone),
+					gte: this.convertToUTC(startDate, currentUser.timezone),
 				},
-				endDate: {
-					lte: fromZonedTime(endDate, currentUser.timezone),
-				},
+				OR: [
+					{
+						endDate: {
+							lte: this.convertToUTC(endDate, currentUser.timezone),
+						},
+					},
+					{
+						endDate: null,
+					},
+				],
 				members: {
 					some: {
 						userId: currentUser.id,
@@ -99,16 +106,10 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		dto.startDate = fromZonedTime(
-			dto.startDate,
-			currentUser.timezone
-		).toISOString();
+		dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
 
 		if (dto.endDate) {
-			dto.endDate = fromZonedTime(
-				dto.startDate,
-				currentUser.timezone
-			).toISOString();
+			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
 		}
 
 		const result = await this.prisma.event.create({
@@ -153,16 +154,10 @@ export class EventService {
 		}
 
 		if (dto.startDate) {
-			dto.startDate = fromZonedTime(
-				dto.startDate,
-				currentUser.timezone
-			).toISOString();
+			dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
 		}
 		if (dto.endDate) {
-			dto.endDate = fromZonedTime(
-				dto.endDate,
-				currentUser.timezone
-			).toISOString();
+			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
 		}
 
 		const result = await this.prisma.event.update({
@@ -303,6 +298,10 @@ export class EventService {
 				},
 			},
 		});
+	}
+
+	private convertToUTC(date: Date | string, timezone: string): string {
+		return fromZonedTime(toZonedTime(date, 'UTC'), timezone).toISOString();
 	}
 
 	private convertEventDatesToTimezone(
