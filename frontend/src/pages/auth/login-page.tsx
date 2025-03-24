@@ -1,12 +1,20 @@
-import React from 'react'
-import { Box, Paper, Title } from '@mantine/core'
 import LoginForm from '@/components/auth/login-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
+import useUserStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
+import { Box, Paper, Title } from '@mantine/core'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const LoginPage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
+	const navigate = useNavigate()
+	const { user } = useUserStore()
+
+	useEffect(() => {
+		if (user) navigate('/')
+	})
 
 	return (
 		<Box h="100vh">

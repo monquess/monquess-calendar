@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
 import apiClient from '@/helpers/axios'
 import { CountryCodes } from '@/helpers/country-codes'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import { HolidayCalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import {
 	Button,
 	ColorInput,
@@ -9,14 +8,15 @@ import {
 	Select,
 	SelectProps,
 	Stack,
-	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
+import React, { useState } from 'react'
 
-import { Twemoji } from 'react-emoji-render'
+import { ICalendar } from '@/helpers/interface/calendar-interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
+import { Twemoji } from 'react-emoji-render'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 
 interface CreateHolidaysCalendarFormProps {
@@ -47,11 +47,10 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 		const form = useForm({
 			mode: 'uncontrolled',
 			initialValues: {
-				name: '',
 				description: '',
 				color: '',
 			},
-			validate: zodResolver(CalendarCreateSchema),
+			validate: zodResolver(HolidayCalendarCreateSchema),
 		})
 
 		const handleSubmit = async (values: typeof form.values) => {
@@ -60,10 +59,11 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 
 				const { data } = await apiClient.post<ICalendar>('/calendars', values)
 				addCalendar(data)
+				addCalendar(data)
 
 				showNotification(
 					'Holidays calendar created',
-					`Calendar "${values.name}" has been successfully created.`,
+					`Holiday calendar has been successfully created.`,
 					'green'
 				)
 				onClose()
@@ -83,12 +83,6 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 		return (
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack pos="relative">
-					<TextInput
-						data-autofocus
-						label="Name"
-						key={form.key('name')}
-						{...form.getInputProps('name')}
-					></TextInput>
 					<Select
 						label="Select country"
 						value={value}

@@ -1,6 +1,7 @@
 import { config } from '@/config/config'
 import axios from 'axios'
-import useStore from './store/user-store'
+import useCalendarStore from './store/calendar-store'
+import useUserStore from './store/user-store'
 
 const apiClient = axios.create({
 	baseURL: config.API_BASE_URL,
@@ -13,7 +14,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
 	(config) => {
-		const accessToken = useStore.getState().accessToken
+		const accessToken = useUserStore.getState().accessToken
 
 		if (accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`
@@ -43,12 +44,14 @@ apiClient.interceptors.response.use(
 				)
 				const { accessToken } = response.data
 
-				useStore.getState().updateToken(accessToken)
+				useUserStore.getState().updateToken(accessToken)
 				originalRequest.headers.Authorization = `Bearer ${accessToken}`
 
 				return axios(originalRequest)
 			} catch {
-				useStore.getState().logout()
+				useUserStore.getState().logout()
+				useCalendarStore.getState().setCalendars([])
+				window.location.href = '/login'
 			}
 		}
 

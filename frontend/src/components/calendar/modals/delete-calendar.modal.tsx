@@ -3,7 +3,7 @@ import { MemberRole } from '@/helpers/enum/member-role.enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import useStore from '@/helpers/store/user-store'
+import useUserStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Button, Flex, Modal, Stack, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
@@ -20,7 +20,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { isMobile } = useResponsive()
 		const { deleteCalendar } = useCalendarStore()
-		const { user } = useStore()
+		const { user } = useUserStore()
 		const [role, setRole] = useState<string>()
 		const [loading, setLoading] = useState(false)
 

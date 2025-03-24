@@ -1,11 +1,6 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaGoogle } from 'react-icons/fa'
-import ReCAPTCHA from 'react-google-recaptcha'
-import { useForm, zodResolver } from '@mantine/form'
-import axios, { AxiosError } from 'axios'
 import { config } from '@/config/config'
-import useStore from '@/helpers/store/user-store'
+import { showNotification } from '@/helpers/show-notification'
+import useUserStore from '@/helpers/store/user-store'
 import { schemaLogin } from '@/helpers/validations/login-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 import {
@@ -17,8 +12,13 @@ import {
 	Text,
 	TextInput,
 } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import axios, { AxiosError } from 'axios'
+import React, { useState } from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { FaGoogle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
-import { showNotification } from '@/helpers/show-notification'
 
 const LoginForm: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -63,7 +63,9 @@ const LoginForm: React.FC = React.memo(() => {
 						},
 					}
 				)
-				useStore.getState().login(response.data.user, response.data.accessToken)
+				useUserStore
+					.getState()
+					.login(response.data.user, response.data.accessToken)
 				form.reset()
 				navigate('/')
 				showNotification(
