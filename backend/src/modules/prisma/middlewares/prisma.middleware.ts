@@ -1,6 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { InvitationStatus, Prisma, Role, User } from '@prisma/client';
+import {
+	CalendarType,
+	InvitationStatus,
+	Prisma,
+	Role,
+	User,
+} from '@prisma/client';
 import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
 
 @Injectable()
@@ -23,7 +29,7 @@ export class PrismaMiddleware {
 				data: {
 					name: user.username,
 					color: DEFAULT_CALENDAR_COLOR,
-					isPersonal: true,
+					type: CalendarType.PERSONAL,
 					users: {
 						create: {
 							userId: user.id,

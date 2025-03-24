@@ -1,6 +1,6 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { InvitationStatus, Role, User } from '@prisma/client';
+import { CalendarType, InvitationStatus, Role, User } from '@prisma/client';
 import {
 	CreateCalendarDto,
 	UpdateCalendarDto,
@@ -10,6 +10,10 @@ import {
 } from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
+import {
+	CountryCode,
+	COUNTRIES,
+} from '@common/constants/country-codes.constant';
 import { NotificationService } from '@modules/notification/notification.service';
 import { CalendarInvitationNotification } from '@modules/notification/notifications/calendar-invitation.notification';
 import { UserService } from '@modules/user/user.service';
@@ -38,6 +42,7 @@ export class CalendarService {
 					},
 				},
 			},
+			orderBy: { createdAt: 'asc' },
 		});
 	}
 
@@ -65,6 +70,12 @@ export class CalendarService {
 		currentUser: User,
 		createCalendarDto: CreateCalendarDto
 	): Promise<CalendarEntity> {
+		if (createCalendarDto.type === CalendarType.HOLIDAYS) {
+			createCalendarDto.name =
+				COUNTRIES[createCalendarDto.region as CountryCode].name;
+			createCalendarDto.description = undefined;
+		}
+
 		return this.prisma.calendar.create({
 			data: {
 				...createCalendarDto,
@@ -125,6 +136,10 @@ export class CalendarService {
 		updateCalendarDto: UpdateCalendarDto
 	): Promise<CalendarEntity> {
 		const calendar = await this.findById(id, currentUser);
+
+		if (calendar.type === CalendarType.HOLIDAYS) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
 
 		const membership = calendar.users?.find(
 			(user) => user.userId === currentUser.id
@@ -201,7 +216,10 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (calendar.isPersonal || membership?.role !== Role.OWNER) {
+		if (
+			calendar.type === CalendarType.PERSONAL ||
+			membership?.role !== Role.OWNER
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 
@@ -222,7 +240,10 @@ export class CalendarService {
 			(user) => user.userId === targetUserId
 		);
 
-		if (calendar.isPersonal && targetUserMembership?.role === Role.OWNER) {
+		if (
+			calendar.type === CalendarType.PERSONAL &&
+			targetUserMembership?.role === Role.OWNER
+		) {
 			// can't delete your personal calenar
 			throw new ForbiddenException('Access denied');
 		}

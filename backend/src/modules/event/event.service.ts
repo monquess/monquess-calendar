@@ -1,5 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { InvitationStatus, Role } from '@prisma/client';
+import { Injectable, ForbiddenException } from '@nestjs/common';
+import {
+	CalendarType,
+	EventType,
+	InvitationStatus,
+	Role,
+} from '@prisma/client';
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { CalendarService } from '@modules/calendar/calendar.service';
 import { EventEntity } from './entities/event.entity';
@@ -14,12 +19,24 @@ import {
 } from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+import { firstValueFrom, map } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
+import { CalendarEntity } from '@modules/calendar/entities/calendar.entity';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
+import {
+	CountryCode,
+	COUNTRIES,
+} from '../../common/constants/country-codes.constant';
+import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
 
 @Injectable()
 export class EventService {
 	constructor(
 		private readonly prisma: PrismaService,
-		private readonly calendarService: CalendarService
+		private readonly calendarService: CalendarService,
+		private readonly configService: ConfigService<EnvironmentVariables, true>,
+		private readonly httpService: HttpService
 	) {}
 
 	async findById(id: number, currentUser: CurrentUser): Promise<EventEntity> {
@@ -49,6 +66,15 @@ export class EventService {
 		{ startDate, endDate, type }: FilteringOptionsDto,
 		currentUser: CurrentUser
 	): Promise<EventEntity[]> {
+		const calendar = await this.calendarService.findById(
+			calendarId,
+			currentUser
+		);
+
+		if (calendar.type === CalendarType.HOLIDAYS) {
+			return this.getGoogleEvents(calendar, startDate, endDate);
+		}
+
 		const events = await this.prisma.event.findMany({
 			where: {
 				calendarId,
@@ -95,6 +121,11 @@ export class EventService {
 			calendarId,
 			currentUser
 		);
+
+		if (calendar.type === CalendarType.HOLIDAYS) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
+
 		const membership = calendar.users?.find(
 			(user) => user.userId === currentUser.id
 		);
@@ -142,7 +173,12 @@ export class EventService {
 		currentUser: CurrentUser
 	): Promise<EventEntity> {
 		const event = await this.findById(id, currentUser);
-		const membership = event.members.find(
+
+		if (event.type === EventType.HOLIDAY) {
+			throw new ForbiddenException('Holidays calendar is not editable');
+		}
+
+		const membership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
@@ -179,7 +215,7 @@ export class EventService {
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
 		const event = await this.findById(id, currentUser);
-		const membership = event.members.find(
+		const membership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
@@ -313,5 +349,40 @@ export class EventService {
 			startDate: toZonedTime(event.startDate, timezone),
 			endDate: event.endDate ? toZonedTime(event.endDate, timezone) : null,
 		};
+	}
+
+	private async getGoogleEvents(
+		calendar: CalendarEntity,
+		timeMin: Date | string,
+		timeMax: Date | string
+	): Promise<EventEntity[]> {
+		const region = encodeURIComponent(
+			COUNTRIES[calendar.region as CountryCode].region
+		);
+		const url = `https://www.googleapis.com/calendar/v3/calendars/${region}/events`;
+
+		return firstValueFrom(
+			this.httpService
+				.get<GoogleHolidayResponse>(url, {
+					params: {
+						key: this.configService.get<string>('GOOGLE_CALENDAR_API_KEY'),
+						timeMin,
+						timeMax,
+					},
+				})
+				.pipe(
+					map(({ data }) => {
+						return data.items.map((item) => ({
+							id: 1,
+							name: item.summary,
+							description: null,
+							color: calendar.color,
+							type: EventType.HOLIDAY,
+							startDate: new Date(item.start.date),
+							endDate: new Date(item.end.date),
+						}));
+					})
+				)
+		);
 	}
 }

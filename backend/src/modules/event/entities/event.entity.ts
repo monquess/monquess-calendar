@@ -48,7 +48,7 @@ export class EventEntity {
 	})
 	endDate: Date | null;
 
-	members: EventMemberEntity[];
+	members?: EventMemberEntity[];
 
 	constructor(partial: Partial<EventEntity>) {
 		Object.assign(this, partial);

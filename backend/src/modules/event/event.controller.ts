@@ -29,6 +29,7 @@ import {
 	UpdateEventDto,
 } from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: EventEntity })
@@ -37,6 +38,7 @@ export class EventController {
 	constructor(private readonly eventService: EventService) {}
 
 	@ApiEventFindById()
+	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Get(':id')
 	async findById(
@@ -47,6 +49,7 @@ export class EventController {
 	}
 
 	@ApiEventUpdate()
+	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id')
 	async update(

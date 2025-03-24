@@ -41,6 +41,7 @@ import { EventService } from '@modules/event/event.service';
 import { CreateEventDto } from '@modules/event/dto/create-event.dto';
 import { EventEntity } from '@modules/event/entities/event.entity';
 import { FilteringOptionsDto } from '@modules/event/dto/filtering-option.dto';
+import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })
@@ -76,6 +77,7 @@ export class CalendarController {
 	}
 
 	@ApiCalendarFindEvents()
+	@UseInterceptors(UserLocationInterceptor)
 	@Get(':id/events')
 	findEvents(
 		@Param('id', ParseIntPipe) id: number,
@@ -90,6 +92,7 @@ export class CalendarController {
 	}
 
 	@ApiCalendarEventCreate()
+	@UseInterceptors(UserLocationInterceptor)
 	@Post(':id/events')
 	createEvent(
 		@Param('id', ParseIntPipe) id: number,

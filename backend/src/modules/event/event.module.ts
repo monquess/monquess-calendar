@@ -3,9 +3,10 @@ import { EventService } from './event.service';
 import { EventController } from './event.controller';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { CalendarModule } from '@modules/calendar/calendar.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-	imports: [PrismaModule, forwardRef(() => CalendarModule)],
+	imports: [PrismaModule, forwardRef(() => CalendarModule), HttpModule],
 	providers: [EventService],
 	controllers: [EventController],
 	exports: [EventService],

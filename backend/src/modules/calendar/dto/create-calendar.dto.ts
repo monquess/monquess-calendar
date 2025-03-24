@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsHexColor, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+	IsEnum,
+	IsHexColor,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	Validate,
+} from 'class-validator';
+import { AllowedTypes } from '../constants/calendar.constants';
+import { RegionValidator } from '../validators/region.validator';
 
 export class CreateCalendarDto {
 	@ApiProperty({
@@ -26,4 +35,22 @@ export class CreateCalendarDto {
 	})
 	@IsHexColor()
 	color: string;
+
+	@ApiProperty({
+		type: String,
+		enum: AllowedTypes,
+		required: false,
+		default: AllowedTypes.SHARED,
+		example: AllowedTypes.HOLIDAYS,
+	})
+	@IsEnum(AllowedTypes)
+	type?: AllowedTypes;
+
+	@ApiProperty({
+		type: String,
+		required: false,
+		example: 'US',
+	})
+	@Validate(RegionValidator)
+	region?: string;
 }

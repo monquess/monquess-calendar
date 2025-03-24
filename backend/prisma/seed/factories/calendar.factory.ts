@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Calendar, User } from '@prisma/client';
+import { Calendar, CalendarType, User } from '@prisma/client';
 import Factory from './abstract.factory';
 
 class CalendarFactory extends Factory<Calendar> {
@@ -17,7 +17,7 @@ class CalendarFactory extends Factory<Calendar> {
 
 			this._data.push({
 				name: user.username,
-				isPersonal: true,
+				type: CalendarType.PERSONAL,
 				color: faker.color.rgb(),
 			} as Calendar);
 		}

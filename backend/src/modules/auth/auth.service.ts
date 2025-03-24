@@ -17,10 +17,11 @@ import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { UserService } from '@modules/user/user.service';
 import { UserEntity } from '@modules/user/entities/user.entity';
 import { MailService } from '@modules/mail/mail.service';
-import * as crypto from 'crypto';
-import * as bcrypt from 'bcryptjs';
 import { TOKEN_PREFIXES } from './constants/token-prefixes.constant';
 import { COOKIE_NAMES } from './constants/cookie-names.constant';
+import { CountryCode } from '@common/constants/country-codes.constant';
+import * as crypto from 'crypto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -33,8 +34,8 @@ export class AuthService {
 		private readonly mailService: MailService
 	) {}
 
-	async register(dto: RegisterDto): Promise<void> {
-		const { email } = await this.userService.create(dto);
+	async register(dto: RegisterDto, country: CountryCode): Promise<void> {
+		const { email } = await this.userService.create(dto, country);
 		await this.sendVerificationEmail(email);
 	}
 
