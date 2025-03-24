@@ -1,6 +1,9 @@
+import { EventType } from '../enum/event-type.enum'
+import { MemberRole } from '../enum/member-role.enum'
+
 export interface IEventMember {
 	userId: number
-	role: string
+	role: MemberRole
 	status: string
 	createdAt: Date
 }
@@ -10,7 +13,7 @@ export interface IEvent {
 	name: string
 	description: string | null
 	color: string
-	type: string
+	type: EventType
 	startDate: string
 	endDate: string | null
 

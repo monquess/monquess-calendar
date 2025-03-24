@@ -1,4 +1,4 @@
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { ActionIcon, Menu } from '@mantine/core'
 import React, { useState } from 'react'
 import { FcInvite } from 'react-icons/fc'

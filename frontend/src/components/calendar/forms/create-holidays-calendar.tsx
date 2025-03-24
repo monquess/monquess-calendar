@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import apiClient from '@/helpers/axios'
-import { countryConst } from '@/helpers/country-code-const'
+import { CountryCodes } from '@/helpers/country-codes'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import {
 	Button,
@@ -17,9 +17,9 @@ import { AxiosError } from 'axios'
 import { Twemoji } from 'react-emoji-render'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 
-interface createCalendarFormProps {
+interface CreateHolidaysCalendarFormProps {
 	onClose: () => void
 }
 
@@ -38,7 +38,7 @@ const renderSelectOption: SelectProps['renderOption'] = ({ option }) => (
 	</Group>
 )
 
-const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
+const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 	React.memo(({ onClose }) => {
 		const { addCalendar } = useCalendarStore()
 		const [value, setValue] = useState<string | null>('')
@@ -59,7 +59,7 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 				setLoading(true)
 
 				const { data } = await apiClient.post<ICalendar>('/calendars', values)
-				addCalendar(data.id)
+				addCalendar(data)
 
 				showNotification(
 					'Holidays calendar created',
@@ -84,6 +84,7 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack pos="relative">
 					<TextInput
+						data-autofocus
 						label="Name"
 						key={form.key('name')}
 						{...form.getInputProps('name')}
@@ -92,10 +93,13 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 						label="Select country"
 						value={value}
 						onChange={setValue}
-						data={Object.entries(countryConst).map(([code, name]) => ({
+						data={Object.entries(CountryCodes).map(([code, name]) => ({
 							value: code,
 							label: name,
 						}))}
+						leftSection={
+							value ? <Twemoji svg text={getFlagEmoji(value)} /> : null
+						}
 						renderOption={renderSelectOption}
 						styles={{ dropdown: { zIndex: 1100 } }}
 						placeholder="Start writing name..."
@@ -118,4 +122,4 @@ const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
 		)
 	})
 
-export default CreateCalendarHolidaysForm
+export default CreateHolidaysCalendarForm

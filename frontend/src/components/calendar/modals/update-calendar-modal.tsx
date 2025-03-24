@@ -10,7 +10,7 @@ import {
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
 import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
 import { useResponsive } from '@/hooks/use-responsive'
@@ -45,8 +45,6 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 					`/calendars/${calendar.id}`,
 					values
 				)
-
-				console.log(data)
 
 				updateCalendar(data)
 				showNotification(

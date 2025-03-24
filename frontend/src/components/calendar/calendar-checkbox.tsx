@@ -10,7 +10,7 @@ import {
 	Text,
 } from '@mantine/core'
 import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 import CalendarMenu from './calendar-menu'
@@ -19,13 +19,9 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
 	const { calendars, toggleCalendar, setCalendars } = useCalendarStore()
 
-	// const [calendars, setCalendarsArray] = useState<ICalendar[]>([])
-
-	// TODO existingCalendarIds logic fix
 	useEffect(() => {
 		const fetchCalendars = async () => {
 			const { data } = await apiClient.get<ICalendar[]>('/calendars')
-			console.table(data)
 
 			const newCalendars = data.filter(
 				({ id }) => !Object.keys(calendars).includes(id.toString())
@@ -38,8 +34,6 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 					...newCalendars,
 				])
 			}
-
-			// setCalendarsArray(data)
 		}
 
 		fetchCalendars()

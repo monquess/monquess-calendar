@@ -1,5 +1,6 @@
 import React from 'react'
-import { IoMoonOutline, IoSunnyOutline } from 'react-icons/io5'
+import { HiSun } from 'react-icons/hi'
+import { MdDarkMode } from 'react-icons/md'
 import { Box, Switch, useMantineColorScheme } from '@mantine/core'
 
 const ThemeSwitch: React.FC = () => {
@@ -13,13 +14,13 @@ const ThemeSwitch: React.FC = () => {
 				onChange={() => toggleColorScheme()}
 				size="lg"
 				color="dark.4"
-				onLabel={<IoSunnyOutline size={20} />}
-				offLabel={<IoMoonOutline size={20} />}
+				onLabel={<HiSun size={20} />}
+				offLabel={<MdDarkMode size={20} />}
 				thumbIcon={
 					isDark ? (
-						<IoMoonOutline size={20} color="black" />
+						<MdDarkMode size={20} color="black" />
 					) : (
-						<IoSunnyOutline size={20} color="black" />
+						<HiSun size={20} color="black" />
 					)
 				}
 			/>

@@ -6,14 +6,14 @@ import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 
-interface createCalendarFormProps {
+interface CreateSharedCalendarFormProps {
 	onClose: () => void
 }
 
-const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
-	({ onClose }) => {
+const CreateSharedCalendarForm: React.FC<CreateSharedCalendarFormProps> =
+	React.memo(({ onClose }) => {
 		const { addCalendar } = useCalendarStore()
 		const [loading, setLoading] = useState(false)
 
@@ -59,6 +59,7 @@ const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack pos="relative">
 					<TextInput
+						data-autofocus
 						label="Name"
 						key={form.key('name')}
 						{...form.getInputProps('name')}
@@ -82,7 +83,6 @@ const CreateCalendarDefaultForm: React.FC<createCalendarFormProps> = React.memo(
 				</Stack>
 			</form>
 		)
-	}
-)
+	})
 
-export default CreateCalendarDefaultForm
+export default CreateSharedCalendarForm

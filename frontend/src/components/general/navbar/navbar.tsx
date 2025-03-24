@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { IoMenu } from 'react-icons/io5'
 import { Box, Drawer, Flex } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -21,13 +21,11 @@ const Navbar: React.FC<NavbarProps> = React.memo(
 		const [openNavbar, setNavbarOpen] = useState(!isMobile)
 		const [opened, { open, close }] = useDisclosure(false)
 
-		useEffect(() => {
-			setNavbarOpen(!isMobile)
-		}, [isMobile])
-
 		const handleClick = () => {
 			setNavbarOpen((prev) => !prev)
-			if (isMobile) open()
+			if (isMobile) {
+				open()
+			}
 			onToggle()
 		}
 
@@ -52,17 +50,6 @@ const Navbar: React.FC<NavbarProps> = React.memo(
 					</Flex>
 				)}
 				{isMobile ? (
-					// <Drawer
-					// 	opened={opened}
-					// 	onClose={handleCloseClick}
-					// 	title="Monquees Calendar"
-					// 	size="auto"
-					// >
-					// 	<NavbarContent
-					// 		onClickMenu={handleClick}
-					// 		onOpenModal={() => setCreateModalOpen(true)}
-					// 	/>
-					// </Drawer>
 					<Drawer.Root opened={opened} onClose={handleCloseClick} size="auto">
 						<Drawer.Overlay />
 						<Drawer.Content>

@@ -1,5 +1,6 @@
 import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { MemberRole } from '@/helpers/enum/member-role.enum'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import useStore from '@/helpers/store/user-store'
@@ -37,7 +38,7 @@ const DeleteCalendarModal: React.FC<DeleteCalendarModalProps> = React.memo(
 		const handleSubmit = async () => {
 			try {
 				setLoading(true)
-				if (role === 'OWNER') {
+				if (role === MemberRole.OWNER) {
 					await apiClient.delete(`/calendars/${calendar.id}`)
 				} else {
 					await apiClient.delete(`/calendars/${calendar.id}/users/${user?.id}`)

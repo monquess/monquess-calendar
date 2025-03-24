@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Flex, Stack } from '@mantine/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import { DateSelectArg } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
 import Navbar from '@/components/general/navbar/navbar'
+import CreateEventModal from '@/components/event/modals/create-event-modal'
 import apiClient from '@/helpers/axios'
 import { IEvent } from '@/helpers/interface/event-interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
@@ -19,6 +21,7 @@ const HomePage: React.FC = React.memo(() => {
 	const calendarRef = useRef<FullCalendar | null>(null)
 	const [isNavbarOpen, setIsNavbarOpen] = useState(!isMobile)
 	const [events, setEvents] = useState<IEvent[]>([])
+	const [createEventModalOpened, setCreateEventModalOpened] = useState(false)
 
 	const updateCalendarSize = () => {
 		if (calendarRef.current) {
@@ -28,11 +31,8 @@ const HomePage: React.FC = React.memo(() => {
 
 	useEffect(() => {
 		setIsNavbarOpen(!isMobile)
-	}, [isMobile])
-
-	useEffect(() => {
 		updateCalendarSize()
-	}, [isNavbarOpen])
+	}, [isMobile])
 
 	useEffect(() => {
 		if (!calendarRef.current) {
@@ -73,46 +73,59 @@ const HomePage: React.FC = React.memo(() => {
 	}, [calendars])
 
 	return (
-		<Flex
-			h="100vh"
-			direction={isNavbarOpen ? (isMobile ? 'column' : 'row') : 'column'}
-		>
-			<Navbar
-				calendarRef={calendarRef}
-				onToggle={() => setIsNavbarOpen((prev) => !prev)}
-			/>
-			<Stack
-				flex={1}
-				p="xl"
-				pt={!isNavbarOpen ? '0' : isMobile ? '0' : 'xl'}
-				pl={isNavbarOpen ? (!isMobile ? '0' : 'xl') : 'xl'}
-				style={{ borderRadius: '25%' }}
+		<React.Fragment>
+			<Flex
+				h="100vh"
+				direction={isNavbarOpen ? (isMobile ? 'column' : 'row') : 'column'}
 			>
-				<FullCalendar
-					ref={calendarRef}
-					firstDay={1}
-					plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-					headerToolbar={{
-						left: 'today prev,next',
-						center: 'title',
-						right: 'dayGridMonth,timeGridWeek,timeGridDay',
-					}}
-					initialView="dayGridMonth"
-					editable={true}
-					selectable={true}
-					selectMirror={true}
-					dayMaxEvents={true}
-					height="100%"
-					themeSystem="bootstrap5"
-					events={events}
-					eventTimeFormat={{
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-					}}
+				<Navbar
+					calendarRef={calendarRef}
+					onToggle={() => setIsNavbarOpen((prev) => !prev)}
 				/>
-			</Stack>
-		</Flex>
+				<Stack
+					flex={1}
+					p="xl"
+					pt={!isNavbarOpen ? '0' : isMobile ? '0' : 'xl'}
+					pl={isNavbarOpen ? (!isMobile ? '0' : 'xl') : 'xl'}
+					style={{ borderRadius: '25%' }}
+				>
+					<FullCalendar
+						ref={calendarRef}
+						firstDay={1}
+						plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+						headerToolbar={{
+							left: 'today prev,next',
+							center: 'title',
+							right: 'dayGridMonth,timeGridWeek,timeGridDay',
+						}}
+						initialView="dayGridMonth"
+						editable={true}
+						selectable={true}
+						selectMirror={true}
+						dayMaxEvents={true}
+						height="100%"
+						themeSystem="bootstrap5"
+						events={events}
+						eventTimeFormat={{
+							hour: '2-digit',
+							minute: '2-digit',
+							hour12: false,
+						}}
+						select={(info: DateSelectArg) => {
+							setCreateEventModalOpened(true)
+							info.view.calendar.unselect()
+						}}
+					/>
+				</Stack>
+			</Flex>
+			<CreateEventModal
+				opened={createEventModalOpened}
+				onClose={() => {
+					setCreateEventModalOpened(false)
+				}}
+				calendarRef={calendarRef}
+			/>
+		</React.Fragment>
 	)
 })
 

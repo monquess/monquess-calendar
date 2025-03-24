@@ -1,17 +1,16 @@
 import { useResponsive } from '@/hooks/use-responsive'
 import { FloatingIndicator, Modal, Stack, Tabs, Text } from '@mantine/core'
 import React, { useState } from 'react'
-import CreateCalendarHolidaysForm from '../forms/create-holidays-calendar'
-import CreateCalendarDefaultForm from '../forms/create-shared-calendar'
+import CreateHolidaysCalendarForm from '../forms/create-holidays-calendar'
+import CreateSharedCalendarForm from '../forms/create-shared-calendar'
 import classes from './modal.module.css'
-import useCalendarStore from '@/helpers/store/calendar-store'
 
-interface createCalendarModalProps {
+interface CreateCalendarModalProps {
 	opened: boolean
 	onClose: () => void
 }
 
-const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
+const CreateCalendarModal: React.FC<CreateCalendarModalProps> = React.memo(
 	({ opened, onClose }) => {
 		const { isMobile } = useResponsive()
 
@@ -70,10 +69,10 @@ const CreateCalendarModal: React.FC<createCalendarModalProps> = React.memo(
 							/>
 						</Tabs.List>
 						<Tabs.Panel value="1">
-							<CreateCalendarDefaultForm onClose={onClose} />
+							<CreateSharedCalendarForm onClose={onClose} />
 						</Tabs.Panel>
 						<Tabs.Panel value="2">
-							<CreateCalendarHolidaysForm onClose={onClose} />
+							<CreateHolidaysCalendarForm onClose={onClose} />
 						</Tabs.Panel>
 					</Tabs>
 				</Stack>

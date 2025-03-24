@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { IoImageOutline } from 'react-icons/io5'
 import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { AxiosError } from 'axios'
@@ -58,9 +59,11 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 					showNotification('Avatar upload error', error.message, 'red')
 				}
 			} finally {
+				form.reset()
 				setLoading(false)
 			}
 		}
+
 		return (
 			<Modal
 				opened={opened}
@@ -78,8 +81,9 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = React.memo(
 							best.
 						</Text>
 						<FileInput
-							label="Select new avatar"
-							placeholder="Upload files"
+							label="Select new profile picture"
+							placeholder="Upload image"
+							leftSection={<IoImageOutline />}
 							accept="image/png,image/jpeg,image/jpg,image/webp"
 							clearable
 							key={form.key('file')}

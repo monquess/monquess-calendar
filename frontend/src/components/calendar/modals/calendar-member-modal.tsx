@@ -1,4 +1,4 @@
-import { ICalendar } from '@/helpers/interface/calendar-interface'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { useResponsive } from '@/hooks/use-responsive'
 import { Flex, Modal, ScrollArea, Text } from '@mantine/core'
 import React from 'react'

@@ -31,7 +31,7 @@ const useStore = create<UserState>()(
 			updateUser: (user: User) => set({ user }),
 		}),
 		{
-			name: 'zustand-storage',
+			name: 'zustand-user-storage',
 			storage: createJSONStorage(() => localStorage),
 		}
 	)

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ICalendar } from '../interface/calendar-interface'
+import { ICalendar } from '../interface/calendar.interface'
 
 type CalendarVisibilityState = {
 	calendars: Record<number, ICalendar & { visible: boolean }>
@@ -73,7 +73,7 @@ const useCalendarStore = create<CalendarVisibilityState>()(
 				}),
 		}),
 		{
-			name: 'calendar-visibility-storage',
+			name: 'zustand-calendars-storage',
 			storage: createJSONStorage(() => localStorage),
 		}
 	)
