@@ -11,6 +11,12 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+
+import { Provider, User } from '@prisma/client';
+import { Response } from 'express';
+
 import { AuthService } from './auth.service';
 import {
 	ApiAuthForgotPassword,
@@ -22,9 +28,6 @@ import {
 	ApiAuthSendVerification,
 	ApiAuthVerifyEmail,
 } from './decorators/api-auth.decorator';
-import { Provider, User } from '@prisma/client';
-import { Response } from 'express';
-import { UserEntity } from '@modules/user/entities/user.entity';
 import {
 	AuthResponseDto,
 	RegisterDto,
@@ -38,12 +41,12 @@ import {
 	RecaptchaGuard,
 	GoogleAuthGuard,
 } from './guards';
-import { ConfigService } from '@nestjs/config';
+
+import { UserEntity } from '@modules/user/entities/user.entity';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { Public } from '@common/decorators/public.decorator';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
-import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Authorization')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -64,7 +67,6 @@ export class AuthController {
 		@Body() dto: RegisterDto,
 		@CurrentUser() { country }: CurrentUser
 	): Promise<void> {
-		console.log(country);
 		return this.authService.register(dto, country);
 	}
 
@@ -90,10 +92,11 @@ export class AuthController {
 	@ApiExcludeEndpoint()
 	@Public()
 	@UseGuards(GoogleAuthGuard)
+	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Get('google/callback')
 	async googleAuthCallback(
-		@CurrentUser() user: User,
+		@CurrentUser() user: CurrentUser,
 		@Res({ passthrough: true }) res: Response
 	): Promise<void> {
 		await this.authService.socialLogin(user, Provider.GOOGLE, res);

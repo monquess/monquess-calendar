@@ -12,8 +12,8 @@ import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { CalendarType, InvitationStatus, Role } from '@prisma/client';
 import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
 import {
-	CountryCode,
 	COUNTRIES,
+	CountryCode,
 } from '@common/constants/country-codes.constant';
 
 @Injectable()
@@ -57,13 +57,15 @@ export class UserService {
 		});
 	}
 
-	async create(createUserDto: CreateUserDto, country: CountryCode) {
+	async create(dto: CreateUserDto, country: CountryCode) {
 		const salt = await bcrypt.genSalt();
+		const hash = dto.password ? await bcrypt.hash(dto.password, salt) : null;
+
 		return this.prisma.user.create({
 			data: {
-				...createUserDto,
+				...dto,
 				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH'),
-				password: await bcrypt.hash(createUserDto.password, salt),
+				password: hash,
 				calendarMemberships: {
 					create: {
 						calendar: {

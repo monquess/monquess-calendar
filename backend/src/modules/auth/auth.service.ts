@@ -6,22 +6,27 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '@modules/prisma/prisma.service';
+
+import * as crypto from 'crypto';
+import * as bcrypt from 'bcryptjs';
+import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
+
 import { Prisma, Provider, User } from '@prisma/client';
-import { AuthResponseDto } from './dto/auth-response.dto';
-import { RegisterDto } from './dto/register.dto';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { PrismaService } from '@modules/prisma/prisma.service';
 import { RedisService } from '@modules/redis/redis.service';
-import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { UserService } from '@modules/user/user.service';
 import { UserEntity } from '@modules/user/entities/user.entity';
 import { MailService } from '@modules/mail/mail.service';
+import { AuthResponseDto, RegisterDto } from './dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { TOKEN_PREFIXES } from './constants/token-prefixes.constant';
 import { COOKIE_NAMES } from './constants/cookie-names.constant';
 import { CountryCode } from '@common/constants/country-codes.constant';
-import * as crypto from 'crypto';
-import * as bcrypt from 'bcryptjs';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
+
+import { CreateUserDto } from '@modules/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +63,7 @@ export class AuthService {
 	}
 
 	async socialLogin(
-		data: { email: string; username: string; avatar: string },
+		{ country, ...data }: CurrentUser,
 		provider: Provider,
 		res: Response
 	): Promise<AuthResponseDto> {
@@ -70,15 +75,17 @@ export class AuthService {
 				error instanceof Prisma.PrismaClientKnownRequestError &&
 				error.code === 'P2025'
 			) {
-				const user = await this.prisma.user.create({
-					data: {
-						...data,
-						provider,
-						verified: true,
-					},
-				});
+				const dto = { ...data, provider, verified: true };
+				const user = await this.userService.create(
+					plainToInstance(CreateUserDto, dto, {
+						excludeExtraneousValues: true,
+					}),
+					country
+				);
+
 				return this.login(user, res);
 			}
+
 			throw error;
 		}
 	}

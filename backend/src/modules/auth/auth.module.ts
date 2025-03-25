@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { RedisModule } from '@modules/redis/redis.module';
 import { UserModule } from '@modules/user/user.module';
-import { LocalStrategy } from './strategies/local.strategy';
-import { ConfigService } from '@nestjs/config';
-import { JwtAccessStrategy } from './strategies/jwt-access.strategy';
-import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
-import { HttpModule } from '@nestjs/axios';
-import { GoogleStrategy } from './strategies/google.strategy';
+
+import {
+	LocalStrategy,
+	JwtAccessStrategy,
+	JwtRefreshStrategy,
+	GoogleStrategy,
+} from './strategies';
+
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 
 @Module({
 	imports: [
