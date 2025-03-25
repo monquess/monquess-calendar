@@ -106,7 +106,7 @@ export class EventService {
 
 		if (dto.endDate) {
 			dto.endDate = fromZonedTime(
-				dto.startDate,
+				dto.endDate,
 				currentUser.timezone
 			).toISOString();
 		}
@@ -141,7 +141,7 @@ export class EventService {
 		currentUser: CurrentUser
 	): Promise<EventEntity> {
 		const event = await this.findById(id, currentUser);
-		const membership = event.members.find(
+		const membership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
@@ -184,7 +184,7 @@ export class EventService {
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
 		const event = await this.findById(id, currentUser);
-		const membership = event.members.find(
+		const membership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 

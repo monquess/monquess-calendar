@@ -2,6 +2,7 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
@@ -58,7 +59,7 @@ export class EventController {
 
 	@ApiEventRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch(':id')
+	@Delete(':id')
 	async delete(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser

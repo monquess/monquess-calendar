@@ -22,6 +22,12 @@ export class EventEntity {
 	description: string | null;
 
 	@ApiProperty({
+		type: Number,
+		example: 'Identifier of calendar',
+	})
+	calendarId: number;
+
+	@ApiProperty({
 		type: String,
 		example: '#FFDE59',
 	})
@@ -48,12 +54,12 @@ export class EventEntity {
 	})
 	endDate: Date | null;
 
-	members: EventMemberEntity[];
+	members?: EventMemberEntity[];
 
 	constructor(partial: Partial<EventEntity>) {
 		Object.assign(this, partial);
 
-		if (partial.members?.length) {
+		if (partial?.members?.length) {
 			this.members = partial.members.map((user) => new EventMemberEntity(user));
 		}
 	}
