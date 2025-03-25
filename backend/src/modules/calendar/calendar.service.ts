@@ -20,6 +20,7 @@ import {
 import { NotificationService } from '@modules/notification/notification.service';
 import { CalendarInvitationNotification } from '@modules/notification/notifications/calendar-invitation.notification';
 import { UserService } from '@modules/user/user.service';
+import { FilteringOptionsDto } from './dto/filtering-option.dto';
 
 @Injectable()
 export class CalendarService {
@@ -29,13 +30,16 @@ export class CalendarService {
 		private readonly userService: UserService
 	) {}
 
-	async findAll(user: User): Promise<CalendarEntity[]> {
+	async findAll(
+		{ status }: FilteringOptionsDto,
+		user: User
+	): Promise<CalendarEntity[]> {
 		return this.prisma.calendar.findMany({
 			where: {
 				users: {
 					some: {
 						userId: user.id,
-						status: InvitationStatus.ACCEPTED,
+						status,
 					},
 				},
 			},
@@ -50,7 +54,6 @@ export class CalendarService {
 				users: {
 					some: {
 						userId: user.id,
-						status: InvitationStatus.ACCEPTED,
 					},
 				},
 			},
@@ -93,7 +96,10 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (currentUserMembership?.role === Role.VIEWER) {
+		if (
+			currentUserMembership?.role === Role.VIEWER ||
+			currentUserMembership?.status !== InvitationStatus.ACCEPTED
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 
@@ -132,7 +138,10 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (membership?.role === Role.VIEWER) {
+		if (
+			membership?.role === Role.VIEWER ||
+			membership?.status !== InvitationStatus.ACCEPTED
+		) {
 			throw new ForbiddenException('Access denied');
 		}
 

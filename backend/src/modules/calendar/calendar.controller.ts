@@ -43,9 +43,10 @@ import { CalendarMemberEntity } from './entities/calendar-member.entity';
 import { EventService } from '@modules/event/event.service';
 import { CreateEventDto } from '@modules/event/dto/create-event.dto';
 import { EventEntity } from '@modules/event/entities/event.entity';
-import { FilteringOptionsDto } from '@modules/event/dto/filtering-option.dto';
+import { FilteringOptionsDto as EventFilteringOptionsDto } from '@modules/event/dto/filtering-option.dto';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { FilteringOptionsDto as CalendarFilteringOptionsDto } from './dto/filtering-option.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })
@@ -58,8 +59,11 @@ export class CalendarController {
 
 	@ApiCalendarFindAll()
 	@Get()
-	findAll(@CurrentUser() user: User): Promise<CalendarEntity[]> {
-		return this.calendarService.findAll(user);
+	findAll(
+		@Query() filteringOptions: CalendarFilteringOptionsDto,
+		@CurrentUser() user: User
+	): Promise<CalendarEntity[]> {
+		return this.calendarService.findAll(filteringOptions, user);
 	}
 
 	@ApiCalendarFindById()
@@ -85,7 +89,7 @@ export class CalendarController {
 	@Get(':id/events')
 	findEvents(
 		@Param('id', ParseIntPipe) id: number,
-		@Query() filteringOptions: FilteringOptionsDto,
+		@Query() filteringOptions: EventFilteringOptionsDto,
 		@CurrentUser() currentUser: CurrentUser
 	): Promise<EventEntity[]> {
 		return this.eventService.findByCalendarId(
