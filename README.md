@@ -28,7 +28,7 @@
 
 ---
 
-An advanced and elegant calendar application, built with NestJS and React
+An advanced and elegant calendar application, built with NestJS and React.
 
 ## Table of Contents
 
@@ -155,7 +155,7 @@ Once the client has started successfully, the apllication will be accessible at 
 If the server is running locally, you can view the documentation at http://localhost:3000/api/docs. This URL provides access to the API endpoints and methods directly from your server environment, allowing you to test and interact with the API in real-time.
 
 > [!NOTE]
-> The port in documentation url can be different if you specified other in environment variables.
+> The port shown in the documentation URL may vary depending on the value you specified in the environment variables.
 
 ## License
 
