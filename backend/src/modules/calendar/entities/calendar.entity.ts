@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CalendarMemberEntity } from './calendar-member.entity';
 import { CalendarType } from '@prisma/client';
+
+import { CalendarMemberEntity } from './calendar-member.entity';
 
 export class CalendarEntity {
 	@ApiProperty({

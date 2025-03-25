@@ -16,7 +16,7 @@ export class RegionValidator implements ValidatorConstraintInterface {
 			return !!region && Object.keys(COUNTRIES).includes(region);
 		}
 
-		return region !== undefined;
+		return region === undefined;
 	}
 
 	defaultMessage(args: ValidationArguments) {

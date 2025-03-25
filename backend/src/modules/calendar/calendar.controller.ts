@@ -1,4 +1,3 @@
-import { CurrentUser } from '@common/decorators/current-user.decorator';
 import {
 	Body,
 	ClassSerializerInterceptor,
@@ -16,10 +15,8 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+
 import { CalendarService } from './calendar.service';
-import { CreateCalendarDto } from './dto/create-calendar.dto';
-import { CalendarEntity } from './entities/calendar.entity';
-import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import {
 	ApiCalendarCreate,
 	ApiCalendarEventCreate,
@@ -33,15 +30,22 @@ import {
 	ApiCalendarRemove,
 	ApiCalendarUpdate,
 } from './decorators/api-calendar.decorator';
+import {
+	CreateCalendarDto,
+	UpdateCalendarDto,
+	UpdateCalendarMemberRoleDto,
+	CreateCalendarMemberDto,
+	UpdateCalendarMemberStatusDto,
+} from './dto/';
+import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
-import { UpdateCalendarMemberRoleDto } from './dto/update-calendar-member-role.dto';
-import { CreateCalendarMemberDto } from './dto/create-calendar-member.dto';
-import { UpdateCalendarMemberStatusDto } from './dto/update-calendar-member-status.dto';
+
 import { EventService } from '@modules/event/event.service';
 import { CreateEventDto } from '@modules/event/dto/create-event.dto';
 import { EventEntity } from '@modules/event/entities/event.entity';
 import { FilteringOptionsDto } from '@modules/event/dto/filtering-option.dto';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CalendarEntity })

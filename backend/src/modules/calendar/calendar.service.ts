@@ -1,6 +1,8 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
+
 import { CalendarType, InvitationStatus, Role, User } from '@prisma/client';
+
 import {
 	CreateCalendarDto,
 	UpdateCalendarDto,
@@ -10,6 +12,7 @@ import {
 } from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
+
 import {
 	CountryCode,
 	COUNTRIES,
@@ -32,13 +35,7 @@ export class CalendarService {
 				users: {
 					some: {
 						userId: user.id,
-					},
-				},
-			},
-			include: {
-				users: {
-					omit: {
-						calendarId: true,
+						status: InvitationStatus.ACCEPTED,
 					},
 				},
 			},
@@ -53,13 +50,7 @@ export class CalendarService {
 				users: {
 					some: {
 						userId: user.id,
-					},
-				},
-			},
-			include: {
-				users: {
-					omit: {
-						calendarId: true,
+						status: InvitationStatus.ACCEPTED,
 					},
 				},
 			},
@@ -68,17 +59,16 @@ export class CalendarService {
 
 	async create(
 		currentUser: User,
-		createCalendarDto: CreateCalendarDto
+		dto: CreateCalendarDto
 	): Promise<CalendarEntity> {
-		if (createCalendarDto.type === CalendarType.HOLIDAYS) {
-			createCalendarDto.name =
-				COUNTRIES[createCalendarDto.region as CountryCode].name;
-			createCalendarDto.description = undefined;
+		if (dto.type === CalendarType.HOLIDAYS) {
+			dto.name = COUNTRIES[dto.region as CountryCode].name;
+			dto.description = undefined;
 		}
 
 		return this.prisma.calendar.create({
 			data: {
-				...createCalendarDto,
+				...dto,
 				users: {
 					create: {
 						userId: currentUser.id,
@@ -103,10 +93,7 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (
-			currentUserMembership?.role === Role.VIEWER ||
-			currentUserMembership?.status !== InvitationStatus.ACCEPTED
-		) {
+		if (currentUserMembership?.role === Role.VIEWER) {
 			throw new ForbiddenException('Access denied');
 		}
 
@@ -145,10 +132,7 @@ export class CalendarService {
 			(user) => user.userId === currentUser.id
 		);
 
-		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
-		) {
+		if (membership?.role === Role.VIEWER) {
 			throw new ForbiddenException('Access denied');
 		}
 

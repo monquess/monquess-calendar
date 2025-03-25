@@ -1,12 +1,15 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+
 import {
+	Calendar,
 	CalendarType,
 	InvitationStatus,
 	Prisma,
 	Role,
 	User,
 } from '@prisma/client';
+
+import { PrismaService } from '../prisma.service';
 import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
 
 @Injectable()
@@ -42,5 +45,75 @@ export class PrismaMiddleware {
 		}
 
 		return result;
+	}
+
+	async includeMembersInCalendar(
+		params: Prisma.MiddlewareParams,
+		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
+	): Promise<Calendar> {
+		const actions = ['create', 'update', 'findMany', 'findUnique'];
+
+		if (
+			params.model === Prisma.ModelName.Calendar &&
+			actions.includes(params.action)
+		) {
+			const include = {
+				users: {
+					include: {
+						user: {
+							select: {
+								username: true,
+								email: true,
+								avatar: true,
+							},
+						},
+					},
+					omit: {
+						calendarId: true,
+					},
+				},
+			} as Prisma.CalendarInclude;
+
+			params.args = {
+				...params.args,
+				include,
+			} as Prisma.CalendarDefaultArgs;
+		}
+
+		return next(params);
+	}
+
+	async includeUserInCalendarMember(
+		params: Prisma.MiddlewareParams,
+		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
+	): Promise<Calendar> {
+		const actions = ['create', 'update', 'findMany', 'findUnique'];
+
+		if (
+			params.model === Prisma.ModelName.CalendarMember &&
+			actions.includes(params.action)
+		) {
+			const include = {
+				include: {
+					user: {
+						select: {
+							username: true,
+							email: true,
+							avatar: true,
+						},
+					},
+				},
+				omit: {
+					calendarId: true,
+				},
+			} as Prisma.CalendarMemberInclude;
+
+			params.args = {
+				...params.args,
+				include,
+			} as Prisma.CalendarMemberDefaultArgs;
+		}
+
+		return next(params);
 	}
 }
