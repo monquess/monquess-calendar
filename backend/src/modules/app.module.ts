@@ -1,26 +1,29 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
+import { JwtModule } from '@nestjs/jwt';
+import { BullModule } from '@nestjs/bullmq';
+
+import * as path from 'path';
+import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
+
+import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+import { CalendarModule } from './calendar/calendar.module';
+import { EventModule } from './event/event.module';
 import { S3Module } from './s3/s3.module';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from './auth/auth.module';
+import { NotificationModule } from './notification/notification.module';
+import { MailModule } from './mail/mail.module';
+import { MailOptions } from './mail/interfaces/mail-options.interface';
+
 import {
 	EnvironmentVariables,
 	validate,
 } from '@config/env/environment-variables.config';
-import { MailModule } from './mail/mail.module';
-import { MailOptions } from './mail/interfaces/mail-options.interface';
-import * as path from 'path';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { CalendarModule } from './calendar/calendar.module';
-import { EventModule } from './event/event.module';
-import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
-import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
 import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.interceptor';
-import { NotificationModule } from './notification/notification.module';
-import { BullModule } from '@nestjs/bullmq';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
 	imports: [

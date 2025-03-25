@@ -10,6 +10,7 @@ import {
 	ApiParam,
 	ApiQuery,
 } from '@nestjs/swagger';
+
 import { FileUploadDto } from '@modules/user/dto/file-upload.dto';
 import { UpdatePasswordDto } from '@modules/user/dto/update-password.dto';
 import { UpdateUserDto } from '@modules/user/dto/update-user.dto';

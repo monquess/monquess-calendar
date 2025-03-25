@@ -1,15 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '@modules/prisma/prisma.service';
-import { FilteringOptionsDto } from './dto/filtering-options.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcryptjs';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { S3Service } from '@modules/s3/s3.service';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from '@config/env/environment-variables.config';
+
+import * as bcrypt from 'bcryptjs';
 import { CalendarType, InvitationStatus, Role } from '@prisma/client';
+
+import {
+	FilteringOptionsDto,
+	CreateUserDto,
+	UpdateUserDto,
+	UpdatePasswordDto,
+} from './dto';
+import { UserEntity } from './entities/user.entity';
+
+import { S3Service } from '@modules/s3/s3.service';
+import { PrismaService } from '@modules/prisma/prisma.service';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
 import {
 	COUNTRIES,
@@ -38,6 +43,7 @@ export class UserService {
 					contains: email,
 					mode: 'insensitive',
 				},
+				verified: true,
 			},
 		});
 	}
@@ -60,11 +66,12 @@ export class UserService {
 	async create(dto: CreateUserDto, country: CountryCode) {
 		const salt = await bcrypt.genSalt();
 		const hash = dto.password ? await bcrypt.hash(dto.password, salt) : null;
+		const avatar = this.configService.get<string>('DEFAULT_AVATAR_PATH');
 
 		return this.prisma.user.create({
 			data: {
 				...dto,
-				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH'),
+				avatar,
 				password: hash,
 				calendarMemberships: {
 					create: {
