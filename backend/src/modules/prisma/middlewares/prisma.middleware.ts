@@ -51,7 +51,7 @@ export class PrismaMiddleware {
 		params: Prisma.MiddlewareParams,
 		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
 	): Promise<Calendar> {
-		const actions = ['create', 'update', 'findMany', 'findUnique'];
+		const actions = ['create', 'update', 'findMany', 'findFirstOrThrow'];
 
 		if (
 			params.model === Prisma.ModelName.Calendar &&
@@ -87,7 +87,7 @@ export class PrismaMiddleware {
 		params: Prisma.MiddlewareParams,
 		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
 	): Promise<Calendar> {
-		const actions = ['create', 'update', 'findMany', 'findUnique'];
+		const actions = ['create', 'update', 'findMany', 'findFirstOrThrow'];
 
 		if (
 			params.model === Prisma.ModelName.CalendarMember &&
