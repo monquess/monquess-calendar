@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Flex, Stack } from '@mantine/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { DateSelectArg } from '@fullcalendar/core'
+import {
+	DateSelectArg,
+	EventInput,
+	EventSourceFuncArg,
+} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
@@ -13,16 +17,59 @@ import { IEvent } from '@/helpers/interface/event.interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
-import '@/pages/style.css'
 import EventPopover from '@/components/event/event-popover'
+import { showNotification } from '@/helpers/show-notification'
+
+import '@/pages/style.css'
+
+const mapEvent = (event: IEvent): EventInput => {
+	return {
+		id: event.id.toString(),
+		title: event.name,
+		start: new Date(event.startDate),
+		end: event.endDate ? new Date(event.endDate) : undefined,
+		backgroundColor: event.color,
+		borderColor: event.color,
+		extendedProps: {
+			members: event.members,
+			calendarId: event.calendarId,
+			description: event.description,
+		},
+	}
+}
 
 const HomePage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
 	const { calendars } = useCalendarStore()
 	const calendarRef = useRef<FullCalendar | null>(null)
 	const [isNavbarOpen, setIsNavbarOpen] = useState(!isMobile)
-	const [events, setEvents] = useState<IEvent[]>([])
 	const [createEventModalOpened, setCreateEventModalOpened] = useState(false)
+
+	const fetchEvents = async (
+		info: EventSourceFuncArg,
+		successCallback: (eventInputs: EventInput[]) => void,
+		failureCallback: (error: Error) => void
+	) => {
+		const visibleCalendars = Object.entries(calendars).filter(
+			([_, value]) => value.visible
+		)
+
+		try {
+			const response = await Promise.all(
+				visibleCalendars.map(([id]) =>
+					apiClient.get<IEvent[]>(`/calendars/${id}/events`, {
+						params: {
+							startDate: info.start.toISOString(),
+							endDate: info.end.toISOString(),
+						},
+					})
+				)
+			)
+			successCallback(response.flatMap((r) => r.data).map(mapEvent))
+		} catch (error) {
+			failureCallback(error as Error)
+		}
+	}
 
 	const updateCalendarSize = () => {
 		if (calendarRef.current) {
@@ -34,49 +81,6 @@ const HomePage: React.FC = React.memo(() => {
 		setIsNavbarOpen(!isMobile)
 		updateCalendarSize()
 	}, [isMobile])
-
-	useEffect(() => {
-		if (!calendarRef.current) {
-			return
-		}
-		const { currentStart, currentEnd } = calendarRef.current.getApi().view
-
-		const fetchEvents = async () => {
-			const visibleCalendars = Object.entries(calendars).filter(
-				([_, value]) => value.visible
-			)
-
-			const response = await Promise.all(
-				visibleCalendars.map(([id]) =>
-					apiClient.get<IEvent[]>(`/calendars/${id}/events`, {
-						params: {
-							startDate: currentStart.toISOString(),
-							endDate: currentEnd.toISOString(),
-						},
-					})
-				)
-			)
-
-			setEvents(
-				response
-					.flatMap((events) => events.data)
-					.map((event) => ({
-						...event,
-						id: event.id.toString(),
-						title: event.name,
-						start: event.startDate,
-						end: event.endDate,
-						backgroundColor: event.color,
-						borderColor: event.color,
-						extendedProps: {
-							members: event.members,
-							description: event.description,
-						},
-					}))
-			)
-		}
-		fetchEvents()
-	}, [calendars])
 
 	return (
 		<React.Fragment>
@@ -111,7 +115,7 @@ const HomePage: React.FC = React.memo(() => {
 						dayMaxEvents={true}
 						height="100%"
 						themeSystem="bootstrap5"
-						events={events}
+						events={{ events: fetchEvents }}
 						eventTimeFormat={{
 							hour: '2-digit',
 							minute: '2-digit',
@@ -120,6 +124,17 @@ const HomePage: React.FC = React.memo(() => {
 						select={(info: DateSelectArg) => {
 							setCreateEventModalOpened(true)
 							info.view.calendar.unselect()
+						}}
+						eventDrop={async (info) => {
+							try {
+								await apiClient.patch(`events/${info.event.id}`, {
+									startDate: info.event.startStr,
+									endDate: info.event.end ? info.event.endStr : undefined,
+								})
+							} catch {
+								showNotification('Event', 'Error changing event time', 'red')
+								info.revert()
+							}
 						}}
 					/>
 				</Stack>

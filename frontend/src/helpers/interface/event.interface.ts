@@ -12,6 +12,7 @@ export interface IEvent {
 	id: string
 	name: string
 	description: string | null
+	calendarId: number
 	color: string
 	type: EventType
 	startDate: string

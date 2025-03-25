@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState, useCallback } from 'react'
+import { IoMdTime } from 'react-icons/io'
+import { IoCalendar } from 'react-icons/io5'
+import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
 import {
 	Modal,
 	Text,
@@ -12,20 +16,21 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { DateInput } from '@mantine/dates'
-import { IoMdTime } from 'react-icons/io'
-import { IoCalendar } from 'react-icons/io5'
-import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
+
 import FullCalendar from '@fullcalendar/react'
 import { DateSelectArg } from '@fullcalendar/core'
+
 import { apiClient, ApiError } from '@/helpers/api/axios'
-import { useResponsive } from '@/hooks/use-responsive'
-import useCalendarStore from '@/helpers/store/calendar-store'
 import { showNotification } from '@/helpers/show-notification'
 import { EventType } from '@/helpers/enum/event-type.enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { IEvent } from '@/helpers/interface/event.interface'
 import { createEventSchema } from '@/helpers/validations/create-event-schema'
+import { useResponsive } from '@/hooks/use-responsive'
+import useCalendarStore from '@/helpers/store/calendar-store'
+
 import RemindersBox from '../reminders-box'
+import { MemberRole } from '@/helpers/enum/member-role.enum'
 
 const reminderToDate = (
 	reminder: { value: number; mult: number },
@@ -46,17 +51,10 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 		const { isMobile } = useResponsive()
 		const { calendars } = useCalendarStore()
 		const [loading, setLoading] = useState(false)
-
 		const [reminders, setReminders] = useState<
 			{ value: number; mult: number }[]
 		>([])
-
-		const defaultCalendar = Object.values(calendars).find(
-			(c) => c.isPersonal && c.users.find((u) => u.role === 'OWNER')
-		) as ICalendar
-		const [calendarId, setCalendarId] = useState<string | null>(
-			defaultCalendar.id.toString()
-		)
+		const [calendarId, setCalendarId] = useState<string | null>(null)
 
 		const form = useForm({
 			mode: 'uncontrolled',
@@ -64,19 +62,22 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 				name: '',
 				description: '',
 				type: EventType.MEETING,
-				color: defaultCalendar.color,
 				startDate: new Date(),
 				endDate: new Date() as Date | null,
 			},
 			validate: zodResolver(createEventSchema),
 		})
 
-		useEffect(() => {
-			const calendar = calendarRef.current
-			const onSelect = (info: DateSelectArg) => {
+		const onSelect = useCallback(
+			(info: DateSelectArg) => {
 				form.setFieldValue('startDate', info.start)
 				form.setFieldValue('endDate', info.end)
-			}
+			},
+			[form]
+		)
+
+		useEffect(() => {
+			const calendar = calendarRef.current
 
 			if (calendar) {
 				calendar.getApi().on('select', onSelect)
@@ -87,21 +88,28 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					calendar.getApi().off('select', onSelect)
 				}
 			}
-		}, [calendarRef, form])
+		}, [calendarRef, form, onSelect])
+
+		useEffect(() => {
+			if (opened && Object.values(calendars).length > 0) {
+				const calendar = Object.values(calendars).find(
+					(c) =>
+						c.isPersonal && c.users.find((u) => u.role === MemberRole.OWNER)
+				) as ICalendar
+
+				if (calendar) {
+					setCalendarId(calendar.id.toString())
+					form.setFieldValue('color', calendar.color)
+				}
+			}
+		}, [opened, calendars])
 
 		useEffect(() => {
 			if (!opened) {
 				setReminders([])
 				form.reset()
 			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [opened])
-
-		useEffect(() => {
-			if (opened && Object.values(calendars).length > 0) {
-				setCalendarId(defaultCalendar.id.toString())
-			}
-		}, [opened, calendars, defaultCalendar.id])
 
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
@@ -121,19 +129,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					)
 				}
 
-				calendarRef.current?.getApi().addEvent({
-					...event,
-					id: event.id.toString(),
-					title: event.name,
-					start: event.startDate,
-					end: event.endDate ?? undefined,
-					backgroundColor: event.color,
-					borderColor: event.color,
-					extendedProps: {
-						members: event.members,
-						description: event.description,
-					},
-				})
+				calendarRef.current?.getApi().refetchEvents()
 				showNotification(
 					'Event created',
 					'Event has been successfully created.',
@@ -270,12 +266,9 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 							<Grid.Col span={6}>
 								<Select
 									value={calendarId}
-									onChange={(_, option) => {
-										form.setFieldValue(
-											'color',
-											calendars[Number(option.value)].color
-										)
-										setCalendarId(option.value)
+									onChange={(value) => {
+										form.setFieldValue('color', calendars[Number(value)].color)
+										setCalendarId(value)
 									}}
 									data={Object.entries(calendars)
 										.filter(([_, calendar]) => calendar.type !== 'HOLIDAYS')

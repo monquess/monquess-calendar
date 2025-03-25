@@ -31,7 +31,7 @@ const UpdateCalendarModal: React.FC<updateCalendarModalProps> = React.memo(
 			mode: 'uncontrolled',
 			initialValues: {
 				name: calendar.name,
-				description: calendar.description,
+				description: calendar.description ?? '',
 				color: calendar.color,
 			},
 			validate: zodResolver(CalendarCreateSchema),

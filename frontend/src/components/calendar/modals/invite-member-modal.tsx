@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Modal, MultiSelect, Stack } from '@mantine/core'
+
 import { debounce } from 'lodash'
+
 import { apiClient, ApiError } from '@/helpers/api/axios'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
@@ -44,20 +46,15 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 			event.preventDefault()
 			try {
 				setLoading(true)
-				const users = await Promise.all(
+				const response = await Promise.all(
 					selectedUser.map((user) =>
 						apiClient.get<User[]>('/users', { params: { email: user } })
 					)
 				)
-
-				const userIds = users
-					.map(({ data }) => {
-						return data.length > 0 ? data[0].id : null
-					})
-					.filter(Boolean)
+				const users = response.flatMap((res) => res.data)
 
 				await Promise.all(
-					userIds.map((id) =>
+					users.map(({ id }) =>
 						apiClient.post(`/calendars/${calendar.id}/users/${id}`)
 					)
 				)

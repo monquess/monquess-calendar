@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { IoMdClose } from 'react-icons/io'
-import { MdDelete } from 'react-icons/md'
+import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
 import { FiEdit } from 'react-icons/fi'
-import { ActionIcon, Group, Popover, Stack, Text } from '@mantine/core'
+import { IoCalendar } from 'react-icons/io5'
+import { ActionIcon, Grid, Group, Modal, Popover, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
 
 import { EventImpl } from '@fullcalendar/core/internal'
@@ -10,10 +11,13 @@ import FullCalendar from '@fullcalendar/react'
 import { EventClickArg } from '@fullcalendar/core/index.js'
 
 import { apiClient, ApiError } from '@/helpers/api/axios'
-import useUserStore from '@/helpers/store/user-store'
 import { IEventMember } from '@/helpers/interface/event.interface'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
 import { showNotification } from '@/helpers/show-notification'
+import useUserStore from '@/helpers/store/user-store'
+import useCalendarStore from '@/helpers/store/calendar-store'
+import { useClickOutside } from '@mantine/hooks'
+import { FaCircle } from 'react-icons/fa'
 
 interface EventPopoverProps {
 	calendarRef: React.RefObject<FullCalendar | null>
@@ -21,18 +25,40 @@ interface EventPopoverProps {
 
 const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 	const { user } = useUserStore()
-	const [target, setTarget] = useState<HTMLElement | null>(null)
+	const { calendars } = useCalendarStore()
 	const [selectedEvent, setSelectedEvent] = useState<EventImpl | null>(null)
-	const [open, setOpen] = useState(false)
+	const [opened, setOpened] = useState(false)
+	const ref = useClickOutside(() => setOpened(false))
 	const [role, setRole] = useState<MemberRole>()
+	const [modalOpened, setModalOpened] = useState(false)
+	const [position, setPosition] = useState<{ x: number; y: number }>({
+		x: 0,
+		y: 0,
+	})
 
 	const form = useForm({
 		mode: 'uncontrolled',
 	})
 
 	const onEventClick = (arg: EventClickArg) => {
-		setTarget(arg.el)
-		setOpen(true)
+		const rect = arg.el.getBoundingClientRect()
+		const popover = document.querySelector('.mantine-Popover-dropdown')
+
+		if (popover) {
+			if (rect.bottom + popover.clientHeight > window.innerHeight) {
+				setPosition({
+					x: rect.left,
+					y: rect.top - popover.clientHeight,
+				})
+			}
+		} else {
+			setPosition({
+				x: rect.left,
+				y: rect.bottom,
+			})
+		}
+
+		setOpened(true)
 		setSelectedEvent(arg.event)
 	}
 
@@ -63,7 +89,6 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 
 	const handleSubmit = async () => {
 		try {
-			// setLoading(true)
 			if (role === MemberRole.OWNER) {
 				await apiClient.delete(`/events/${selectedEvent?.id}`)
 			} else {
@@ -72,65 +97,113 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 				)
 			}
 
-			// deleteCalendar(calendar.id)
+			calendarRef.current?.getApi().refetchEvents()
 			showNotification(
 				'Event deletion',
 				'The event has been successfully deleted.',
 				'green'
 			)
-			// onClose()
 		} catch (error) {
 			if (error instanceof ApiError && error.response) {
 				showNotification('Event deletion error', error.message, 'red')
 			}
 		} finally {
-			// setLoading(false)
+			setOpened(false)
+			setSelectedEvent(null)
 		}
 	}
 
-	if (!target || !selectedEvent) {
+	if (!selectedEvent) {
 		return null
 	}
 
 	return (
-		<Popover
-			opened={open}
-			onClose={() => setOpen(false)}
-			position="bottom"
-			transitionProps={{
-				transition: 'slide-down',
-				duration: 200,
-				timingFunction: 'linear',
-			}}
-			styles={{
-				dropdown: {
-					position: 'absolute',
-					left: target.getBoundingClientRect().left,
-					top: target.getBoundingClientRect().bottom,
-				},
-			}}
-		>
-			<Popover.Dropdown>
-				<Stack>
-					<Group justify="flex-end">
-						<Group>
-							<ActionIcon variant="subtle">
-								<FiEdit />
-							</ActionIcon>
-							<form onSubmit={form.onSubmit(handleSubmit)}>
+		<React.Fragment>
+			<Popover
+				opened={opened}
+				onClose={() => setOpened(false)}
+				position="bottom"
+				width={300}
+				transitionProps={{
+					transition: 'slide-down',
+					duration: 200,
+					timingFunction: 'linear',
+				}}
+				styles={{
+					dropdown: {
+						position: 'absolute',
+						left: position.x,
+						top: position.y,
+					},
+				}}
+			>
+				<Popover.Dropdown ref={ref}>
+					<Grid>
+						<Grid.Col span={12}>
+							<Group justify="flex-end">
+								{role !== MemberRole.VIEWER ? (
+									<ActionIcon variant="subtle">
+										<FiEdit />
+									</ActionIcon>
+								) : null}
 								<ActionIcon variant="subtle" type="submit">
 									<MdDelete />
 								</ActionIcon>
-							</form>
-							<ActionIcon variant="subtle" onClick={() => setOpen(false)}>
-								<IoMdClose />
-							</ActionIcon>
-						</Group>
-					</Group>
-					<Text fw={500}>{selectedEvent.title}</Text>
-				</Stack>
-			</Popover.Dropdown>
-		</Popover>
+								<ActionIcon variant="subtle" onClick={() => setOpened(false)}>
+									<IoMdClose />
+								</ActionIcon>
+							</Group>
+						</Grid.Col>
+						<Grid.Col span={1}>
+							<FaCircle size={20} color={selectedEvent.backgroundColor} />
+						</Grid.Col>
+						<Grid.Col span={11}>
+							<Text size="xl" truncate="end">
+								{selectedEvent.title}
+							</Text>
+						</Grid.Col>
+						<Grid.Col span={12}>
+							<Group>
+								<Text size="lg">{selectedEvent.start?.toDateString()}</Text>
+								<Text size="lg">-</Text>
+								<Text size="lg">{selectedEvent.end?.toDateString()}</Text>
+							</Group>
+						</Grid.Col>
+						{selectedEvent.extendedProps.description ? (
+							<>
+								<Grid.Col span={1}>
+									<MdOutlineSubtitles size={20} />
+								</Grid.Col>
+								<Grid.Col span={11}>
+									<Text size="sm">
+										{selectedEvent.extendedProps.description}
+									</Text>
+								</Grid.Col>
+							</>
+						) : null}
+						<Grid.Col span={1}>
+							<IoCalendar size={20} />
+						</Grid.Col>
+						<Grid.Col span={11}>
+							<Text fw={500}>
+								{calendars[selectedEvent.extendedProps.calendarId].name}
+							</Text>
+						</Grid.Col>
+					</Grid>
+				</Popover.Dropdown>
+			</Popover>
+			<Modal
+				opened={modalOpened}
+				onClose={() => setModalOpened(false)}
+				title="Create event"
+				// size={isMobile ? 'sm' : 'md'}
+				centered
+				closeOnClickOutside={true}
+				zIndex={1000}
+			>
+				<form onSubmit={form.onSubmit(handleSubmit)}></form>
+			</Modal>
+		</React.Fragment>
 	)
 }
 

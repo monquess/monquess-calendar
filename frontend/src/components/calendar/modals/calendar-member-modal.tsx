@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, Card, Modal, ScrollArea, Stack, Text } from '@mantine/core'
 import { apiClient } from '@/helpers/api/axios'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { User } from '@/helpers/store/user-store'
+import useUserStore, { User } from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
+import { MemberRole } from '@/helpers/enum/member-role.enum'
 
 interface CalendarMemberModalProps {
 	opened: boolean
@@ -13,21 +14,33 @@ interface CalendarMemberModalProps {
 
 const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
+		const { user } = useUserStore()
 		const { isMobile } = useResponsive()
 		const [users, setUsers] = useState<User[]>([])
+		const [role, setRole] = useState<MemberRole>()
 
 		useEffect(() => {
 			const fetchUsers = async () => {
+				const { data } = await apiClient.get<ICalendar>(
+					`calendars/${calendar.id}`
+				)
 				const responses = await Promise.all(
-					calendar.users.map((user) =>
-						apiClient.get<User>(`/users/${user.userId}`)
-					)
+					data.users.map((user) => apiClient.get<User>(`/users/${user.userId}`))
 				)
 				setUsers(responses.map((res) => res.data))
 			}
 
 			fetchUsers()
-		}, [calendar.users])
+		}, [calendar.id])
+
+		useEffect(() => {
+			if (calendar) {
+				const u = calendar.users.find(({ userId }) => userId === user?.id)
+				if (u) {
+					setRole(u.role)
+				}
+			}
+		}, [calendar, user?.id])
 
 		return (
 			<Modal
@@ -39,6 +52,7 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 				closeOnClickOutside={false}
 				zIndex={1000}
 			>
+				<>{role}</>
 				<ScrollArea h="400px">
 					{users.map((user) => (
 						<Card
