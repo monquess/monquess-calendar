@@ -25,6 +25,7 @@ import {
 	ApiUserFindAll,
 	ApiUserFindById,
 	ApiUserRemove,
+	ApiUserSelf,
 	ApiUserUpdate,
 	ApiUserUpdateAvatar,
 	ApiUserUpdatePassword,
@@ -32,12 +33,19 @@ import {
 import { FilteringOptionsDto, UpdateUserDto, UpdatePasswordDto } from './dto';
 
 import { ImageTransformPipe } from '@modules/s3/pipes/image-transform.pipe';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
 @Controller('users')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
+
+	@ApiUserSelf()
+	@Get('self')
+	self(@CurrentUser() user: CurrentUser): UserEntity {
+		return user;
+	}
 
 	@ApiUserFindAll()
 	@Get()

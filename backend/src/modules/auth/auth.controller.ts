@@ -99,8 +99,14 @@ export class AuthController {
 		@CurrentUser() user: CurrentUser,
 		@Res({ passthrough: true }) res: Response
 	): Promise<void> {
-		await this.authService.socialLogin(user, Provider.GOOGLE, res);
-		return res.redirect(this.configService.get<string>('CLIENT_URL'));
+		const { accessToken } = await this.authService.socialLogin(
+			user,
+			Provider.GOOGLE,
+			res
+		);
+		const url = this.configService.get<string>('CLIENT_URL');
+
+		return res.redirect(`${url}/google-success?accessToken=${accessToken}`);
 	}
 
 	@ApiAuthLogout()
