@@ -6,9 +6,11 @@ import {
 	IsOptional,
 	IsString,
 	Validate,
+	ValidateIf,
 } from 'class-validator';
 import { AllowedTypes } from '../constants/calendar.constants';
 import { RegionValidator } from '../validators/region.validator';
+import { CalendarType } from '@prisma/client';
 
 export class CreateCalendarDto {
 	@ApiProperty({
@@ -17,6 +19,7 @@ export class CreateCalendarDto {
 	})
 	@IsNotEmpty()
 	@IsString()
+	@ValidateIf((obj: CreateCalendarDto) => obj.type !== CalendarType.HOLIDAYS)
 	name: string;
 
 	@ApiProperty({

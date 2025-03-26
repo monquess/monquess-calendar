@@ -10,7 +10,7 @@ import {
 } from '@prisma/client';
 
 import { PrismaService } from '../prisma.service';
-import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
+import { generateColor } from '@common/helpers/generate-color';
 
 @Injectable()
 export class PrismaMiddleware {
@@ -31,7 +31,7 @@ export class PrismaMiddleware {
 			await this.prisma.calendar.create({
 				data: {
 					name: user.username,
-					color: DEFAULT_CALENDAR_COLOR,
+					color: generateColor(user.username),
 					type: CalendarType.PERSONAL,
 					users: {
 						create: {
@@ -57,7 +57,7 @@ export class PrismaMiddleware {
 			params.model === Prisma.ModelName.Calendar &&
 			actions.includes(params.action)
 		) {
-			const include = {
+			const include: Prisma.CalendarInclude = {
 				users: {
 					include: {
 						user: {
@@ -72,7 +72,7 @@ export class PrismaMiddleware {
 						calendarId: true,
 					},
 				},
-			} as Prisma.CalendarInclude;
+			};
 
 			params.args = {
 				...params.args,
@@ -93,7 +93,8 @@ export class PrismaMiddleware {
 			params.model === Prisma.ModelName.CalendarMember &&
 			actions.includes(params.action)
 		) {
-			const include = {
+			params.args = {
+				...params.args,
 				include: {
 					user: {
 						select: {
@@ -106,11 +107,6 @@ export class PrismaMiddleware {
 				omit: {
 					calendarId: true,
 				},
-			} as Prisma.CalendarMemberInclude;
-
-			params.args = {
-				...params.args,
-				include,
 			} as Prisma.CalendarMemberDefaultArgs;
 		}
 
