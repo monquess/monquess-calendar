@@ -1,14 +1,15 @@
 import {
-	Controller,
 	Body,
 	ClassSerializerInterceptor,
+	Controller,
 	Get,
-	Patch,
 	Delete,
 	HttpCode,
 	HttpStatus,
 	Param,
 	ParseIntPipe,
+	Patch,
+	Post,
 	SerializeOptions,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -20,6 +21,8 @@ import {
 	ApiEventMemberUpdateStatus,
 	ApiEventRemove,
 	ApiEventUpdate,
+	ApiReminderCreate,
+	ApiReminderRemove,
 } from './decorators/api-event.decorator';
 import { EventEntity } from './entities/event.entity';
 import { EventMemberEntity } from './entities/event-member.entity';
@@ -30,13 +33,15 @@ import {
 } from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
+import { CreateReminderDto } from './dto/create-reminder.dto';
+import { ReminderEntity } from './entities/reminder.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: EventEntity })
 @Controller('events')
 export class EventController {
 	constructor(private readonly eventService: EventService) {}
 
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventFindById()
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
@@ -48,6 +53,7 @@ export class EventController {
 		return this.eventService.findById(id, user);
 	}
 
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventUpdate()
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
@@ -60,6 +66,7 @@ export class EventController {
 		return this.eventService.update(id, updateEventDto, user);
 	}
 
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete(':id')
@@ -70,6 +77,30 @@ export class EventController {
 		return this.eventService.remove(id, user);
 	}
 
+	@SerializeOptions({ type: ReminderEntity })
+	@ApiReminderCreate()
+	@Post(':id/reminder')
+	async createReminder(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() createReminderDto: CreateReminderDto,
+		@CurrentUser() user: CurrentUser
+	): Promise<ReminderEntity> {
+		return this.eventService.createReminder(id, createReminderDto, user);
+	}
+
+	@SerializeOptions({ type: ReminderEntity })
+	@ApiReminderRemove()
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Delete(':id/reminder/:reminderId')
+	async removeReminder(
+		@Param('id', ParseIntPipe) id: number,
+		@Param('reminderId', ParseIntPipe) reminderId: number,
+		@CurrentUser() user: CurrentUser
+	): Promise<void> {
+		return this.eventService.removeReminder(id, reminderId, user);
+	}
+
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventMemberUpdateStatus()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/status')
@@ -82,6 +113,7 @@ export class EventController {
 		return this.eventService.updateMemberStatus(id, userId, dto, user);
 	}
 
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventMemberUpdateRole()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/role')
@@ -94,6 +126,7 @@ export class EventController {
 		return this.eventService.updateMemberRole(id, userId, dto, user);
 	}
 
+	@SerializeOptions({ type: EventEntity })
 	@ApiEventMemberRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Patch(':id/members/:userId')

@@ -13,7 +13,6 @@ import { UserModule } from '@modules/user/user.module';
 		forwardRef(() => EventModule),
 		NotificationModule,
 		UserModule,
-		,
 		HttpModule,
 	],
 	controllers: [CalendarController],

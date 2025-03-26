@@ -16,6 +16,7 @@ model User {
   avatar              String
   provider            Provider         @default(LOCAL)
   calendarMemberships CalendarMember[]
+  reminders           Reminder[]
   EventMember         EventMember[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -64,6 +65,7 @@ model Event {
   startDate   DateTime      @map("start_date") @db.Timestamptz()
   endDate     DateTime?     @map("end_date") @db.Timestamptz()
   members     EventMember[]
+  reminders   Reminder[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -84,6 +86,18 @@ model EventMember {
 
   @@id([eventId, userId])
   @@map("event_members")
+}
+
+model Reminder {
+  id      Int      @id @default(autoincrement())
+  eventId Int      @map("event_id")
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  Int      @map("user_id")
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  time    DateTime
+
+  @@unique([eventId, userId, time])
+  @@map("reminders")
 }
 
 enum Role {

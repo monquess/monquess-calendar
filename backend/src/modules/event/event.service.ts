@@ -29,12 +29,17 @@ import {
 	COUNTRIES,
 } from '../../common/constants/country-codes.constant';
 import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
+import { CreateReminderDto } from './dto/create-reminder.dto';
+import { NotificationService } from '@modules/notification/notification.service';
+import { ReminderNotification } from '@modules/notification/notifications/reminder.notification';
+import { ReminderEntity } from './entities/reminder.entity';
 
 @Injectable()
 export class EventService {
 	constructor(
 		private readonly prisma: PrismaService,
 		private readonly calendarService: CalendarService,
+		private readonly notificationService: NotificationService,
 		private readonly configService: ConfigService<EnvironmentVariables, true>,
 		private readonly httpService: HttpService
 	) {}
@@ -228,6 +233,52 @@ export class EventService {
 				id,
 			},
 		});
+	}
+
+	async createReminder(
+		id: number,
+		{ time }: CreateReminderDto,
+		user: CurrentUser
+	): Promise<ReminderEntity> {
+		const event = await this.findById(id, user);
+
+		const reminder = await this.prisma.reminder.create({
+			data: {
+				eventId: id,
+				userId: user.id,
+				time: new Date(time),
+			},
+		});
+
+		await this.notificationService.send(
+			user,
+			new ReminderNotification({
+				reminderId: reminder.id,
+				username: user.username,
+				time: new Date(event.startDate).toLocaleString(),
+			}),
+			{
+				delay: new Date(time).getTime() - Date.now(),
+			}
+		);
+
+		return reminder;
+	}
+
+	async removeReminder(
+		id: number,
+		reminderId: number,
+		user: CurrentUser
+	): Promise<void> {
+		await this.prisma.reminder.delete({
+			where: {
+				id: reminderId,
+				eventId: id,
+				userId: user.id,
+			},
+		});
+
+		await this.notificationService.removeReminder(reminderId);
 	}
 
 	async createMember(
