@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { FaGoogle } from 'react-icons/fa'
+import { config } from '@/config/config'
+import { showNotification } from '@/helpers/show-notification'
+import { registerSchema } from '@/helpers/validations/register-schema'
+import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Button,
 	Divider,
@@ -11,14 +12,13 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import axios, { AxiosError } from 'axios'
-import { config } from '@/config/config'
-import { registerSchema } from '@/helpers/validations/register-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 import VerificationCodeModal from './modals/verify-code-modal'
-import { showNotification } from '@/helpers/show-notification'
 
 import ReCAPTCHA from 'react-google-recaptcha'
+import { FcGoogle } from 'react-icons/fc'
 
 const RegisterForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()
@@ -162,7 +162,7 @@ const RegisterForm: React.FC = React.memo(() => {
 						w="100%"
 					>
 						<Group gap={6} justify="center">
-							<FaGoogle />
+							<FcGoogle />
 							Google
 						</Group>
 					</Button>

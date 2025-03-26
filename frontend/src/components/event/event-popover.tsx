@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { IoMdClose } from 'react-icons/io'
-import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
+import { ActionIcon, Grid, Group, Popover, Text } from '@mantine/core'
+import React, { useEffect, useState } from 'react'
 import { FiEdit } from 'react-icons/fi'
+import { IoMdClose } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
-import { ActionIcon, Grid, Group, Modal, Popover, Text } from '@mantine/core'
-import { useForm } from '@mantine/form'
+import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
 
+import { EventClickArg } from '@fullcalendar/core/index.js'
 import { EventImpl } from '@fullcalendar/core/internal'
 import FullCalendar from '@fullcalendar/react'
-import { EventClickArg } from '@fullcalendar/core/index.js'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { IEventMember } from '@/helpers/interface/event.interface'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { showNotification } from '@/helpers/show-notification'
-import useUserStore from '@/helpers/store/user-store'
+import { IEventMember } from '@/helpers/interface/event.interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
+import useUserStore from '@/helpers/store/user-store'
 import { useClickOutside } from '@mantine/hooks'
 import { FaCircle } from 'react-icons/fa'
+import DeleteEventModal from './modals/delete-event-modal'
+import UpdateEventModal from './modals/update-event-modal'
 
 interface EventPopoverProps {
 	calendarRef: React.RefObject<FullCalendar | null>
@@ -30,15 +29,12 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 	const [opened, setOpened] = useState(false)
 	const ref = useClickOutside(() => setOpened(false))
 	const [role, setRole] = useState<MemberRole>()
-	const [modalOpened, setModalOpened] = useState(false)
 	const [position, setPosition] = useState<{ x: number; y: number }>({
 		x: 0,
 		y: 0,
 	})
-
-	const form = useForm({
-		mode: 'uncontrolled',
-	})
+	const [deleteModal, setDeleteModal] = useState(false)
+	const [updateModal, setUpdateModal] = useState(false)
 
 	const onEventClick = (arg: EventClickArg) => {
 		const rect = arg.el.getBoundingClientRect()
@@ -87,32 +83,6 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 		}
 	}, [calendarRef])
 
-	const handleSubmit = async () => {
-		try {
-			if (role === MemberRole.OWNER) {
-				await apiClient.delete(`/events/${selectedEvent?.id}`)
-			} else {
-				await apiClient.delete(
-					`/events/${selectedEvent?.id}/members/${user?.id}`
-				)
-			}
-
-			calendarRef.current?.getApi().refetchEvents()
-			showNotification(
-				'Event deletion',
-				'The event has been successfully deleted.',
-				'green'
-			)
-		} catch (error) {
-			if (error instanceof ApiError && error.response) {
-				showNotification('Event deletion error', error.message, 'red')
-			}
-		} finally {
-			setOpened(false)
-			setSelectedEvent(null)
-		}
-	}
-
 	if (!selectedEvent) {
 		return null
 	}
@@ -142,11 +112,18 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 						<Grid.Col span={12}>
 							<Group justify="flex-end">
 								{role !== MemberRole.VIEWER ? (
-									<ActionIcon variant="subtle">
+									<ActionIcon
+										variant="subtle"
+										onClick={() => setUpdateModal(true)}
+									>
 										<FiEdit />
 									</ActionIcon>
 								) : null}
-								<ActionIcon variant="subtle" type="submit">
+								<ActionIcon
+									variant="subtle"
+									type="submit"
+									onClick={() => setDeleteModal(true)}
+								>
 									<MdDelete />
 								</ActionIcon>
 								<ActionIcon variant="subtle" onClick={() => setOpened(false)}>
@@ -192,17 +169,21 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 					</Grid>
 				</Popover.Dropdown>
 			</Popover>
-			<Modal
-				opened={modalOpened}
-				onClose={() => setModalOpened(false)}
-				title="Create event"
-				// size={isMobile ? 'sm' : 'md'}
-				centered
-				closeOnClickOutside={true}
-				zIndex={1000}
-			>
-				<form onSubmit={form.onSubmit(handleSubmit)}></form>
-			</Modal>
+			<DeleteEventModal
+				opened={deleteModal}
+				onClose={() => {
+					setDeleteModal(false)
+				}}
+				event={selectedEvent}
+				role={role}
+				calendarRef={calendarRef}
+			/>
+			<UpdateEventModal
+				opened={updateModal}
+				onClose={() => setUpdateModal(false)}
+				event={selectedEvent}
+				calendarRef={calendarRef}
+			/>
 		</React.Fragment>
 	)
 }

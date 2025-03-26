@@ -16,7 +16,7 @@ import { useForm, zodResolver } from '@mantine/form'
 import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { FaGoogle } from 'react-icons/fa'
+import { FcGoogle } from 'react-icons/fc'
 import { useNavigate } from 'react-router-dom'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
@@ -121,7 +121,7 @@ const LoginForm: React.FC = React.memo(() => {
 						component="a"
 					>
 						<Group gap={6} justify="center">
-							<FaGoogle />
+							<FcGoogle />
 							Google
 						</Group>
 					</Button>
