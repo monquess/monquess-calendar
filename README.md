@@ -5,7 +5,7 @@
 	<img src="https://img.shields.io/github/languages/count/monquess/monquess-calendar?color=A33757" alt="repo-language-count">
 <p>
 
----
+<h1 align="center">monquess-calendar</h1>
 
 <div align="center">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff" />
@@ -24,11 +24,9 @@
   <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff" />
 </div>
 
-# 🗓️ monquess-calendar
+## Overview
 
----
-
-An advanced and elegant calendar application, built with NestJS and React.
+An advanced and elegant calendar application for creating and sharing events, built with NestJS and React.
 
 ## Table of Contents
 
@@ -46,7 +44,7 @@ An advanced and elegant calendar application, built with NestJS and React.
 
 ### Dependencies
 
-The project relies on the following technologies:
+Before starting, ensure the following dependencies are installed on your system:
 
 - [Node.js](https://nodejs.org/en) v18.8 or higher.
 - [PostgreSQL](https://www.postgresql.org) v9.6 or higher.
@@ -149,8 +147,6 @@ $ npm run dev
 Once the client has started successfully, the apllication will be accessible at http://localhost:4200 or on another port specified in the _.env_ file
 
 ## API documentation
-
-<!-- The complete API reference can be accessed on [SwaggerHub](https://app.swaggerhub.com/apis-docs/EGORKOVTUN8/bug-talk_api/1.0). -->
 
 If the server is running locally, you can view the documentation at http://localhost:3000/api/docs. This URL provides access to the API endpoints and methods directly from your server environment, allowing you to test and interact with the API in real-time.
 
