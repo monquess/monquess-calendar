@@ -1,36 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState, useCallback } from 'react'
+import {
+	Button,
+	ColorInput,
+	Divider,
+	Grid,
+	Modal,
+	Select,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core'
+import { DateInput } from '@mantine/dates'
+import { useForm, zodResolver } from '@mantine/form'
+import React, { useCallback, useEffect, useState } from 'react'
 import { IoMdTime } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
 import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
-import {
-	Modal,
-	Text,
-	Stack,
-	TextInput,
-	Select,
-	ColorInput,
-	Button,
-	Grid,
-	Divider,
-} from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { DateInput } from '@mantine/dates'
 
-import FullCalendar from '@fullcalendar/react'
 import { DateSelectArg } from '@fullcalendar/core'
+import FullCalendar from '@fullcalendar/react'
 
 import { apiClient, ApiError } from '@/helpers/api/axios'
-import { showNotification } from '@/helpers/show-notification'
-import { EventType, CalendarType, MemberRole } from '@/helpers/enum'
+import { CalendarType, EventType, MemberRole } from '@/helpers/enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { IEvent } from '@/helpers/interface/event.interface'
+import { showNotification } from '@/helpers/show-notification'
+import useCalendarStore from '@/helpers/store/calendar-store'
 import { createEventSchema } from '@/helpers/validations/create-event-schema'
 import { useResponsive } from '@/hooks/use-responsive'
-import useCalendarStore from '@/helpers/store/calendar-store'
 
 import RemindersBox from '../reminders-box'
-import { mapEvent } from '@/helpers/map-event'
 
 const reminderToDate = (
 	reminder: { value: number; mult: number },
@@ -64,6 +63,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 				type: EventType.MEETING,
 				startDate: new Date(),
 				endDate: new Date() as Date | null,
+				allDay: true,
 			},
 			validate: zodResolver(createEventSchema),
 		})
@@ -130,7 +130,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					)
 				}
 
-				calendarRef.current?.getApi().addEvent(mapEvent(event))
+				calendarRef.current?.getApi().refetchEvents()
 				showNotification(
 					'Event created',
 					'Event has been successfully created.',

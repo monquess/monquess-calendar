@@ -1,10 +1,15 @@
-import { EventType, MemberRole, InvitationStatus } from '../enum'
+import { EventType, InvitationStatus, MemberRole } from '../enum'
 
 export interface IEventMember {
 	userId: number
 	role: MemberRole
 	status: InvitationStatus
 	createdAt: Date
+	user: {
+		username: string
+		email: string
+		avatar: string
+	}
 }
 
 export interface IEvent {
@@ -16,6 +21,7 @@ export interface IEvent {
 	type: EventType
 	startDate: string
 	endDate: string | null
+	allDay: boolean
 
 	members: IEventMember[]
 }

@@ -1,6 +1,5 @@
 import { EventInput } from '@fullcalendar/core'
 import { IEvent } from './interface/event.interface'
-import { EventType } from './enum'
 
 export const mapEvent = (event: IEvent): EventInput => {
 	return {
@@ -10,7 +9,7 @@ export const mapEvent = (event: IEvent): EventInput => {
 		end: event.endDate ? new Date(event.endDate) : undefined,
 		backgroundColor: event.color,
 		borderColor: event.color,
-		allDay: event.type === EventType.HOLIDAY,
+		allDay: event.allDay,
 		extendedProps: {
 			calendarId: event.calendarId,
 			description: event.description,
