@@ -40,7 +40,7 @@ export class EventService {
 	) {}
 
 	async findById(id: number, currentUser: CurrentUser): Promise<EventEntity> {
-		const event = await this.prisma.event.findUniqueOrThrow({
+		return await this.prisma.event.findUniqueOrThrow({
 			where: {
 				id,
 				members: {
@@ -57,8 +57,6 @@ export class EventService {
 				},
 			},
 		});
-
-		return this.convertEventDatesToTimezone(event, currentUser.timezone);
 	}
 	async findByCalendarId(
 		calendarId: number,
@@ -74,19 +72,19 @@ export class EventService {
 			return this.getGoogleEvents(calendar, startDate, endDate);
 		}
 
-		const events = await this.prisma.event.findMany({
+		return await this.prisma.event.findMany({
 			where: {
 				calendarId,
 				type,
 				startDate: {
-					gte: this.convertToUTC(startDate, currentUser.timezone),
+					gte: startDate,
 				},
 				AND: [
 					{
 						OR: [
 							{
 								endDate: {
-									lte: this.convertToUTC(endDate, currentUser.timezone),
+									lte: endDate,
 								},
 							},
 							{
@@ -124,10 +122,6 @@ export class EventService {
 				},
 			},
 		});
-
-		return events.map((event) =>
-			this.convertEventDatesToTimezone(event, currentUser.timezone)
-		);
 	}
 
 	async create(
@@ -155,14 +149,10 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		if (dto.endDate) {
-			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
-		}
-
-		const result = await this.prisma.event.create({
+		return await this.prisma.event.create({
 			data: {
 				...dto,
-				startDate: this.convertToUTC(dto.startDate, currentUser.timezone),
+				startDate: dto.startDate,
 				calendarId,
 				members: {
 					create: {
@@ -180,8 +170,6 @@ export class EventService {
 				},
 			},
 		});
-
-		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async update(
@@ -206,14 +194,7 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		if (dto.startDate) {
-			dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
-		}
-		if (dto.endDate) {
-			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
-		}
-
-		const result = await this.prisma.event.update({
+		return await this.prisma.event.update({
 			where: {
 				id,
 			},
@@ -226,8 +207,6 @@ export class EventService {
 				},
 			},
 		});
-
-		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
@@ -377,12 +356,13 @@ export class EventService {
 			COUNTRIES[calendar.region as CountryCode].region
 		);
 		const url = `https://www.googleapis.com/calendar/v3/calendars/${region}/events`;
+		const key = this.configService.get<string>('GOOGLE_CALENDAR_API_KEY');
 
 		return firstValueFrom(
 			this.httpService
 				.get<GoogleHolidayResponse>(url, {
 					params: {
-						key: this.configService.get<string>('GOOGLE_CALENDAR_API_KEY'),
+						key,
 						timeMin,
 						timeMax,
 					},
