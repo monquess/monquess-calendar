@@ -106,14 +106,15 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 										{capitalize(user.status)}
 									</Text>
 								</Group>
-								{role === MemberRole.OWNER &&
-								user.userId !== currentUser?.id ? (
-									<EditRoleSelect user={user} calendar={calendar} />
-								) : (
-									<Text size="sm" c="dimmed">
-										{capitalize(user.role)}
-									</Text>
-								)}
+								{user.status !== InvitationStatus.DECLINED &&
+									(role === MemberRole.OWNER &&
+									user.userId !== currentUser?.id ? (
+										<EditRoleSelect user={user} calendar={calendar} />
+									) : (
+										<Text size="sm" c="dimmed">
+											{capitalize(user.role)}
+										</Text>
+									))}
 							</Group>
 						</Card>
 					))}

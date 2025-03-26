@@ -22,7 +22,7 @@ import { DateSelectArg } from '@fullcalendar/core'
 
 import { apiClient, ApiError } from '@/helpers/api/axios'
 import { showNotification } from '@/helpers/show-notification'
-import { EventType } from '@/helpers/enum/event-type.enum'
+import { EventType, CalendarType, MemberRole } from '@/helpers/enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { IEvent } from '@/helpers/interface/event.interface'
 import { createEventSchema } from '@/helpers/validations/create-event-schema'
@@ -30,7 +30,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 import useCalendarStore from '@/helpers/store/calendar-store'
 
 import RemindersBox from '../reminders-box'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
+import { mapEvent } from '@/helpers/map-event'
 
 const reminderToDate = (
 	reminder: { value: number; mult: number },
@@ -88,13 +88,14 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					calendar.getApi().off('select', onSelect)
 				}
 			}
-		}, [calendarRef, form, onSelect])
+		}, [onSelect])
 
 		useEffect(() => {
 			if (opened && Object.values(calendars).length > 0) {
 				const calendar = Object.values(calendars).find(
 					(c) =>
-						c.isPersonal && c.users.find((u) => u.role === MemberRole.OWNER)
+						c.type === CalendarType.PERSONAL &&
+						c.users.find((u) => u.role === MemberRole.OWNER)
 				) as ICalendar
 
 				if (calendar) {
@@ -129,7 +130,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = React.memo(
 					)
 				}
 
-				calendarRef.current?.getApi().refetchEvents()
+				calendarRef.current?.getApi().addEvent(mapEvent(event))
 				showNotification(
 					'Event created',
 					'Event has been successfully created.',

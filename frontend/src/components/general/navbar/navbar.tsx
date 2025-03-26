@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarProps> = React.memo(
 		}
 
 		return (
-			<>
+			<React.Fragment>
 				{(isMobile || !openNavbar) && (
 					<Flex pt="md" pl="md" justify="space-between">
 						<IoMenu onClick={handleClick} size={28} />
@@ -82,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = React.memo(
 					opened={openCreateModal}
 					onClose={() => setCreateModalOpen(false)}
 				/>
-			</>
+			</React.Fragment>
 		)
 	}
 )

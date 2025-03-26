@@ -5,12 +5,12 @@ export interface IUserMember {
 	calendarId: number
 	role: MemberRole
 	status: InvitationStatus
-	createdAt: string
 	user: {
 		username: string
 		email: string
 		avatar: string
 	}
+	createdAt: string
 }
 
 export interface ICalendar {

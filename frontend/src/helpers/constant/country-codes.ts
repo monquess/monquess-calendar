@@ -229,4 +229,4 @@ export const CountryCodes = {
 	ZA: 'South Africa',
 	ZM: 'Zambia',
 	ZW: 'Zimbabwe',
-}
+} as const

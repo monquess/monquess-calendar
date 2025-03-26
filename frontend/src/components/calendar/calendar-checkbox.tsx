@@ -17,6 +17,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 
 import CalendarMenu from './calendar-menu'
 import { CalendarType } from '@/helpers/enum/calendar-type.enum'
+import { InvitationStatus } from '@/helpers/enum'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -24,7 +25,11 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 
 	useEffect(() => {
 		const fetchCalendars = async () => {
-			const { data } = await apiClient.get<ICalendar[]>('/calendars')
+			const { data } = await apiClient.get<ICalendar[]>('/calendars', {
+				params: {
+					status: InvitationStatus.ACCEPTED,
+				},
+			})
 
 			const newCalendars = data.filter(
 				({ id }) => !Object.keys(calendars).includes(id.toString())
@@ -84,7 +89,7 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 						<Flex key={calendar.id} justify="space-between" pb="xs">
 							<Checkbox
 								label={calendar.name}
-								checked={calendars[calendar.id].visible ?? true}
+								checked={calendars[calendar.id].visible}
 								onChange={() => toggleCalendar(calendar.id)}
 								color={calendar.color}
 							/>

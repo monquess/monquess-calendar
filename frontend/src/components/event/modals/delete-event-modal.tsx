@@ -29,7 +29,7 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = React.memo(
 					await apiClient.delete(`/events/${event?.id}/members/${user?.id}`)
 				}
 
-				calendarRef.current?.getApi().refetchEvents()
+				calendarRef.current?.getApi().getEventById(event.id)?.remove()
 				showNotification(
 					'Event deletion',
 					'The event has been successfully deleted.',

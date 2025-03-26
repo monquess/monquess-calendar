@@ -1,8 +1,12 @@
-import { ActionIcon, Grid, Group, Popover, Text } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
+import { ActionIcon, Grid, Group, Popover, Text } from '@mantine/core'
+import useUserStore from '@/helpers/store/user-store'
+import { useClickOutside } from '@mantine/hooks'
+
 import { FiEdit } from 'react-icons/fi'
 import { IoMdClose } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
+import { FaCircle } from 'react-icons/fa'
 import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
 
 import { EventClickArg } from '@fullcalendar/core/index.js'
@@ -12,9 +16,7 @@ import FullCalendar from '@fullcalendar/react'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
 import { IEventMember } from '@/helpers/interface/event.interface'
 import useCalendarStore from '@/helpers/store/calendar-store'
-import useUserStore from '@/helpers/store/user-store'
-import { useClickOutside } from '@mantine/hooks'
-import { FaCircle } from 'react-icons/fa'
+
 import DeleteEventModal from './modals/delete-event-modal'
 import UpdateEventModal from './modals/update-event-modal'
 
@@ -36,31 +38,6 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 	const [deleteModal, setDeleteModal] = useState(false)
 	const [updateModal, setUpdateModal] = useState(false)
 
-	const onEventClick = (arg: EventClickArg) => {
-		const rect = arg.el.getBoundingClientRect()
-		const popover = document.querySelector('.mantine-Popover-dropdown')
-
-		if (popover) {
-			if (rect.bottom + popover.clientHeight > window.innerHeight) {
-				setPosition({
-					x: rect.left,
-					y: rect.top - popover.clientHeight,
-				})
-			}
-		} else {
-			setPosition({
-				x: rect.left,
-				y: rect.bottom,
-			})
-		}
-
-		setOpened(true)
-		setSelectedEvent(arg.event)
-
-		console.log(calendars[arg.event.extendedProps.calendarId])
-		console.log(arg.event)
-	}
-
 	useEffect(() => {
 		if (selectedEvent) {
 			const member = selectedEvent.extendedProps.members.find(
@@ -73,6 +50,27 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 	}, [selectedEvent, user])
 
 	useEffect(() => {
+		const onEventClick = (arg: EventClickArg) => {
+			const rect = arg.el.getBoundingClientRect()
+			const popover = document.querySelector('.mantine-Popover-dropdown')
+
+			if (popover) {
+				if (rect.bottom + popover.clientHeight > window.innerHeight) {
+					setPosition({
+						x: rect.left,
+						y: rect.top - popover.clientHeight,
+					})
+				}
+			} else {
+				setPosition({
+					x: rect.left,
+					y: rect.bottom,
+				})
+			}
+
+			setOpened(true)
+			setSelectedEvent(arg.event)
+		}
 		const calendar = calendarRef.current
 
 		if (calendar) {
@@ -84,7 +82,7 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 				calendar.getApi().off('eventClick', onEventClick)
 			}
 		}
-	}, [calendarRef])
+	}, [calendarRef, calendars])
 
 	if (!selectedEvent) {
 		return null

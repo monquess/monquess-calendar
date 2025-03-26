@@ -1,3 +1,6 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { Flex, Stack } from '@mantine/core'
+
 import {
 	DateSelectArg,
 	EventInput,
@@ -7,39 +10,20 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { Flex, Stack } from '@mantine/core'
-import React, { useEffect, useRef, useState } from 'react'
 
-import CreateEventModal from '@/components/event/modals/create-event-modal'
-import Navbar from '@/components/general/navbar/navbar'
 import { apiClient } from '@/helpers/api/axios'
 import { IEvent } from '@/helpers/interface/event.interface'
 import { EventType } from '@/helpers/enum/event-type.enum'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
-
-import EventPopover from '@/components/event/event-popover'
 import { showNotification } from '@/helpers/show-notification'
+import { mapEvent } from '@/helpers/map-event'
+
+import CreateEventModal from '@/components/event/modals/create-event-modal'
+import Navbar from '@/components/general/navbar/navbar'
+import EventPopover from '@/components/event/event-popover'
 
 import '@/pages/style.css'
-
-const mapEvent = (event: IEvent): EventInput => {
-	return {
-		id: event.id.toString(),
-		title: event.name,
-		start: new Date(event.startDate),
-		end: event.endDate ? new Date(event.endDate) : undefined,
-		backgroundColor: event.color,
-		borderColor: event.color,
-		extendedProps: {
-			calendarId: event.calendarId,
-			description: event.description,
-			type: event.type,
-			type: event.type,
-			members: event.members,
-		},
-	}
-}
 
 const HomePage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -58,7 +42,7 @@ const HomePage: React.FC = React.memo(() => {
 		)
 
 		try {
-			const response = await Promise.all(
+			const responses = await Promise.all(
 				visibleCalendars.map(([id]) =>
 					apiClient.get<IEvent[]>(`/calendars/${id}/events`, {
 						params: {
@@ -68,7 +52,7 @@ const HomePage: React.FC = React.memo(() => {
 					})
 				)
 			)
-			successCallback(response.flatMap((r) => r.data).map(mapEvent))
+			successCallback(responses.flatMap((r) => r.data).map(mapEvent))
 		} catch (error) {
 			failureCallback(error as Error)
 		}
@@ -97,7 +81,7 @@ const HomePage: React.FC = React.memo(() => {
 				/>
 				<Stack
 					flex={1}
-					p="xl"
+					p="xs"
 					pt={!isNavbarOpen ? '0' : isMobile ? '0' : 'xl'}
 					pl={isNavbarOpen ? (!isMobile ? '0' : 'xl') : 'xl'}
 					style={{ borderRadius: '25%' }}
@@ -119,6 +103,7 @@ const HomePage: React.FC = React.memo(() => {
 						height="100%"
 						themeSystem="bootstrap5"
 						events={{ events: fetchEvents }}
+						lazyFetching
 						eventTimeFormat={{
 							hour: '2-digit',
 							minute: '2-digit',

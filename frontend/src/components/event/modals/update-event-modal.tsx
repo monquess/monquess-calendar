@@ -26,6 +26,8 @@ import { createEventSchema } from '@/helpers/validations/create-event-schema'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import FullCalendar from '@fullcalendar/react'
+import { capitalize } from 'lodash'
+import { mapEvent } from '@/helpers/map-event'
 
 interface UpdateEventModalProps {
 	opened: boolean
@@ -55,9 +57,13 @@ const UpdateEventModal: React.FC<UpdateEventModalProps> = React.memo(
 		const handleSubmit = async (values: typeof form.values) => {
 			try {
 				setLoading(true)
-				await apiClient.patch<IEvent>(`/events/${event.id}`, values)
+				const { data } = await apiClient.patch<IEvent>(
+					`/events/${event.id}`,
+					values
+				)
 
-				calendarRef.current?.getApi().refetchEvents()
+				calendarRef.current?.getApi().getEventById(event.id)?.remove()
+				calendarRef.current?.getApi().addEvent(mapEvent(data))
 				showNotification(
 					'Event update',
 					'Event has been successfully updated.',
@@ -156,10 +162,12 @@ const UpdateEventModal: React.FC<UpdateEventModalProps> = React.memo(
 							<Grid.Col span={12}>
 								<Select
 									label="Event type"
-									data={Object.entries(EventType).map(([value, label]) => ({
-										value,
-										label: label.charAt(0) + label.slice(1).toLowerCase(),
-									}))}
+									data={Object.entries(EventType)
+										.filter(([value]) => value !== EventType.HOLIDAY)
+										.map(([value, label]) => ({
+											value,
+											label: capitalize(label),
+										}))}
 									key={form.key('type')}
 									{...form.getInputProps('type')}
 									checkIconPosition="right"

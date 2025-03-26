@@ -23,7 +23,6 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 		const [selectedUser, setSelectedUser] = useState<string[]>([])
 		const [loading, setLoading] = useState(false)
 
-		// TODO remove useCallback
 		const fetchUsers = useCallback(
 			debounce(async (query: string) => {
 				if (!query.trim()) {
@@ -87,6 +86,7 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = React.memo(
 				<form onSubmit={handleSubmit}>
 					<Stack pos="relative">
 						<MultiSelect
+							data-autofocus
 							label="Select users"
 							placeholder="Start writing username..."
 							searchable
