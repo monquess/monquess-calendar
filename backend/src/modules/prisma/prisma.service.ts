@@ -19,12 +19,22 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 			) as Prisma.Middleware
 		);
 		this.$use(
-			this.prismaMiddleware.includeMembersInCalendar.bind(
+			this.prismaMiddleware.includeUserInCalendar.bind(
 				this.prismaMiddleware
 			) as Prisma.Middleware
 		);
 		this.$use(
 			this.prismaMiddleware.includeUserInCalendarMember.bind(
+				this.prismaMiddleware
+			) as Prisma.Middleware
+		);
+		this.$use(
+			this.prismaMiddleware.includeUserInEvent.bind(
+				this.prismaMiddleware
+			) as Prisma.Middleware
+		);
+		this.$use(
+			this.prismaMiddleware.includeUserInEventMember.bind(
 				this.prismaMiddleware
 			) as Prisma.Middleware
 		);

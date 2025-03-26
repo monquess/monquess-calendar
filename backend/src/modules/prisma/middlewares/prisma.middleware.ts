@@ -47,7 +47,7 @@ export class PrismaMiddleware {
 		return result;
 	}
 
-	async includeMembersInCalendar(
+	async includeUserInCalendar(
 		params: Prisma.MiddlewareParams,
 		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
 	): Promise<Calendar> {
@@ -87,7 +87,7 @@ export class PrismaMiddleware {
 		params: Prisma.MiddlewareParams,
 		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
 	): Promise<Calendar> {
-		const actions = ['create', 'update', 'findMany', 'findFirstOrThrow'];
+		const actions = ['create', 'update'];
 
 		if (
 			params.model === Prisma.ModelName.CalendarMember &&
@@ -108,6 +108,66 @@ export class PrismaMiddleware {
 					calendarId: true,
 				},
 			} as Prisma.CalendarMemberDefaultArgs;
+		}
+
+		return next(params);
+	}
+
+	async includeUserInEvent(
+		params: Prisma.MiddlewareParams,
+		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
+	): Promise<Calendar> {
+		const actions = ['create', 'update', 'findMany', 'findFirstOrThrow'];
+
+		if (
+			params.model === Prisma.ModelName.Event &&
+			actions.includes(params.action)
+		) {
+			params.args = {
+				...params.args,
+				include: {
+					members: {
+						select: {
+							username: true,
+							email: true,
+							avatar: true,
+						},
+						omit: {
+							eventId: true,
+						},
+					},
+				},
+			} as Prisma.EventDefaultArgs;
+		}
+
+		return next(params);
+	}
+
+	async includeUserInEventMember(
+		params: Prisma.MiddlewareParams,
+		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
+	): Promise<Calendar> {
+		const actions = ['create', 'update'];
+
+		if (
+			params.model === Prisma.ModelName.EventMember &&
+			actions.includes(params.action)
+		) {
+			params.args = {
+				...params.args,
+				include: {
+					members: {
+						select: {
+							username: true,
+							email: true,
+							avatar: true,
+						},
+					},
+				},
+				omit: {
+					eventId: true,
+				},
+			} as Prisma.EventMemberDefaultArgs;
 		}
 
 		return next(params);

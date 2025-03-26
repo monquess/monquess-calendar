@@ -11,10 +11,12 @@ import {
 	ParseIntPipe,
 	SerializeOptions,
 	UseInterceptors,
+	Post,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
 	ApiEventFindById,
+	ApiEventMemberCreate,
 	ApiEventMemberRemove,
 	ApiEventMemberUpdateRole,
 	ApiEventMemberUpdateStatus,
@@ -27,6 +29,7 @@ import {
 	UpdateEventMemberRoleDto,
 	UpdateEventMemberStatusDto,
 	UpdateEventDto,
+	CreateEventMemberDto,
 } from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
@@ -70,6 +73,18 @@ export class EventController {
 		return this.eventService.remove(id, user);
 	}
 
+	@ApiEventMemberCreate()
+	@HttpCode(HttpStatus.OK)
+	@Post(':id/members/:userId')
+	async createMemberStatus(
+		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
+		@Body() dto: CreateEventMemberDto,
+		@CurrentUser() user: CurrentUser
+	): Promise<EventMemberEntity> {
+		return this.eventService.createMember(id, userId, dto, user);
+	}
+
 	@ApiEventMemberUpdateStatus()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/status')
@@ -96,7 +111,7 @@ export class EventController {
 
 	@ApiEventMemberRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch(':id/members/:userId')
+	@Delete(':id/members/:userId')
 	async removeMember(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,

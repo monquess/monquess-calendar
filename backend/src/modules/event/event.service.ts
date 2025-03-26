@@ -49,13 +49,6 @@ export class EventService {
 					},
 				},
 			},
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
 	}
 	async findByCalendarId(
@@ -114,13 +107,6 @@ export class EventService {
 					},
 				],
 			},
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
 	}
 
@@ -162,13 +148,6 @@ export class EventService {
 					},
 				},
 			},
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
 	}
 
@@ -199,13 +178,6 @@ export class EventService {
 				id,
 			},
 			data: dto,
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
 	}
 
