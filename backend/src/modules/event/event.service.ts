@@ -60,7 +60,6 @@ export class EventService {
 
 		return this.convertEventDatesToTimezone(event, currentUser.timezone);
 	}
-
 	async findByCalendarId(
 		calendarId: number,
 		{ startDate, endDate, type }: FilteringOptionsDto,
@@ -78,25 +77,44 @@ export class EventService {
 		const events = await this.prisma.event.findMany({
 			where: {
 				calendarId,
-				type: type,
+				type,
 				startDate: {
 					gte: this.convertToUTC(startDate, currentUser.timezone),
 				},
-				OR: [
+				AND: [
 					{
-						endDate: {
-							lte: this.convertToUTC(endDate, currentUser.timezone),
-						},
+						OR: [
+							{
+								endDate: {
+									lte: this.convertToUTC(endDate, currentUser.timezone),
+								},
+							},
+							{
+								endDate: null,
+							},
+						],
 					},
 					{
-						endDate: null,
+						OR: [
+							{
+								calendar: {
+									users: {
+										some: {
+											userId: currentUser.id,
+										},
+									},
+								},
+							},
+							{
+								members: {
+									some: {
+										userId: currentUser.id,
+									},
+								},
+							},
+						],
 					},
 				],
-				members: {
-					some: {
-						userId: currentUser.id,
-					},
-				},
 			},
 			include: {
 				members: {
@@ -107,9 +125,9 @@ export class EventService {
 			},
 		});
 
-		return events.map((event) => {
-			return this.convertEventDatesToTimezone(event, currentUser.timezone);
-		});
+		return events.map((event) =>
+			this.convertEventDatesToTimezone(event, currentUser.timezone)
+		);
 	}
 
 	async create(
@@ -137,8 +155,6 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
-
 		if (dto.endDate) {
 			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
 		}
@@ -146,6 +162,7 @@ export class EventService {
 		const result = await this.prisma.event.create({
 			data: {
 				...dto,
+				startDate: this.convertToUTC(dto.startDate, currentUser.timezone),
 				calendarId,
 				members: {
 					create: {

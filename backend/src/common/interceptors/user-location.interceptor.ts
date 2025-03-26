@@ -1,11 +1,14 @@
 import { HttpService } from '@nestjs/axios';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
 	CallHandler,
 	ExecutionContext,
+	Inject,
 	Injectable,
 	NestInterceptor,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
 import { Request } from 'express';
 import { firstValueFrom, map, Observable } from 'rxjs';
 
@@ -13,7 +16,8 @@ import { firstValueFrom, map, Observable } from 'rxjs';
 export class UserLocationInterceptor implements NestInterceptor {
 	constructor(
 		private readonly httpService: HttpService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		@Inject(CACHE_MANAGER) private readonly cache: Cache
 	) {}
 
 	async intercept(
@@ -21,28 +25,47 @@ export class UserLocationInterceptor implements NestInterceptor {
 		next: CallHandler
 	): Promise<Observable<any>> {
 		const request = context.switchToHttp().getRequest<Request>();
+		const user = request.user as User;
 
-		const ip = await this.getClientIP(request);
-		const location = await firstValueFrom(
-			this.httpService
-				.get<{
-					status: 'success' | 'fail';
-					countryCode: string;
-					timezone: string;
-				}>(`http://ip-api.com/json/${ip}`, {
-					params: {
-						fields: ['status', 'countryCode', 'timezone'],
-					},
-				})
-				.pipe(map((response) => response.data))
-		);
+		const cacheKey = `location:${user.id}`;
+		const location = await this.cache.get<{
+			countryCode: string;
+			timezone: string;
+		}>(cacheKey);
 
-		if (location.status === 'success') {
+		if (location) {
 			request.user = {
 				...request.user,
 				country: location.countryCode,
 				timezone: location.timezone,
 			};
+		} else {
+			const ip = await this.getClientIP(request);
+			const response = await firstValueFrom(
+				this.httpService
+					.get<{
+						status: 'success' | 'fail';
+						countryCode: string;
+						timezone: string;
+					}>(`http://ip-api.com/json/${ip}`, {
+						params: {
+							fields: 'status,countryCode,timezone',
+						},
+					})
+					.pipe(map((response) => response.data))
+			);
+
+			if (response.status === 'success') {
+				const payload = {
+					countryCode: response.countryCode,
+					timezone: response.timezone,
+				};
+				await this.cache.set(cacheKey, payload, 900000);
+				request.user = {
+					...request.user,
+					...payload,
+				};
+			}
 		}
 
 		return next.handle();
