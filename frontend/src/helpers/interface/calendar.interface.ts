@@ -1,11 +1,10 @@
-import { CalendarType } from '../enum/calendar-type.enum'
-import { MemberRole } from '../enum/member-role.enum'
+import { CalendarType, MemberRole, InvitationStatus } from '../enum'
 
 export interface IUserMember {
 	userId: number
 	calendarId: number
 	role: MemberRole
-	status: string
+	status: InvitationStatus
 	createdAt: string
 	user: {
 		username: string
@@ -18,7 +17,6 @@ export interface ICalendar {
 	id: number
 	name: string
 	description?: string
-	isPersonal: boolean
 	type: CalendarType
 	color: string
 	createdAt: string

@@ -1,15 +1,17 @@
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { ActionIcon, Menu } from '@mantine/core'
 import React, { useState } from 'react'
 import { FcInvite } from 'react-icons/fc'
 import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
 import { HiOutlineDotsHorizontal } from 'react-icons/hi'
 import { IoMdPeople } from 'react-icons/io'
+import { ActionIcon, Menu } from '@mantine/core'
+
 import CalendarMemberModal from './modals/calendar-member-modal'
 import DeleteCalendarModal from './modals/delete-calendar.modal'
 import InviteMemberModal from './modals/invite-member-modal'
 import UpdateCalendarModal from './modals/update-calendar-modal'
+import { CalendarType } from '@/helpers/enum/calendar-type.enum'
+import { ICalendar } from '@/helpers/interface/calendar.interface'
 
 interface CalendarMenuProps {
 	calendar: ICalendar
@@ -30,24 +32,28 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 					</ActionIcon>
 				</Menu.Target>
 				<Menu.Dropdown>
-					<Menu.Item
-						leftSection={<GrUpdate size={14} />}
-						onClick={() => setUpdateModal(true)}
-					>
-						Update info
-					</Menu.Item>
-					<Menu.Item
-						leftSection={<FcInvite size={14} />}
-						onClick={() => setInviteModal(true)}
-					>
-						Invite member
-					</Menu.Item>
-					<Menu.Item
-						leftSection={<IoMdPeople size={14} />}
-						onClick={() => setMembersModal(true)}
-					>
-						Members
-					</Menu.Item>
+					{calendar.type !== CalendarType.HOLIDAYS && (
+						<>
+							<Menu.Item
+								leftSection={<GrUpdate size={14} />}
+								onClick={() => setUpdateModal(true)}
+							>
+								Update info
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<FcInvite size={14} />}
+								onClick={() => setInviteModal(true)}
+							>
+								Invite member
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<IoMdPeople size={14} />}
+								onClick={() => setMembersModal(true)}
+							>
+								Members
+							</Menu.Item>
+						</>
+					)}
 					<Menu.Divider />
 					<Menu.Item
 						color="red"

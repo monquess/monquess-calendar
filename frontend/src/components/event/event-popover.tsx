@@ -60,6 +60,9 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 
 		setOpened(true)
 		setSelectedEvent(arg.event)
+
+		console.log(calendars[arg.event.extendedProps.calendarId])
+		console.log(arg.event)
 	}
 
 	useEffect(() => {

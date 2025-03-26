@@ -1,20 +1,27 @@
-import { apiClient } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
-import useUserStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useEffect, useState } from 'react'
 import {
 	Avatar,
 	Box,
 	Card,
 	Divider,
 	Flex,
+	Group,
 	Modal,
 	ScrollArea,
 	Text,
 } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
-import EditRolePopover from '../edit-role-popover'
+import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
+
+import { capitalize } from 'lodash'
+
+import { apiClient } from '@/helpers/api/axios'
+import { MemberRole } from '@/helpers/enum/member-role.enum'
+import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
+import { InvitationStatus } from '@/helpers/enum'
+import useUserStore from '@/helpers/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
+import EditRoleSelect from '../edit-role-select'
 
 interface CalendarMemberModalProps {
 	opened: boolean
@@ -22,9 +29,15 @@ interface CalendarMemberModalProps {
 	calendar: ICalendar
 }
 
+const StatusIcons = {
+	[InvitationStatus.INVITED]: <FcClock />,
+	[InvitationStatus.ACCEPTED]: <FcOk />,
+	[InvitationStatus.DECLINED]: <FcCancel />,
+} as const
+
 const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
-		const { user } = useUserStore()
+		const { user: currentUser } = useUserStore()
 		const { isMobile } = useResponsive()
 		const [users, setUsers] = useState<IUserMember[]>([])
 		const [role, setRole] = useState<MemberRole>()
@@ -42,12 +55,14 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 
 		useEffect(() => {
 			if (calendar) {
-				const u = calendar.users.find(({ userId }) => userId === user?.id)
-				if (u) {
-					setRole(u.role)
+				const user = calendar.users.find(
+					({ userId }) => userId === currentUser?.id
+				)
+				if (user) {
+					setRole(user.role)
 				}
 			}
-		}, [calendar, user?.id])
+		}, [calendar, currentUser?.id])
 
 		return (
 			<Modal
@@ -83,24 +98,23 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 									</Text>
 								</Box>
 							</Flex>
-							<Divider />
-							<Box pt="xs">
-								<Text size="sm" mb="5px">
-									Status: {user.status.toLocaleLowerCase()}
-								</Text>
-								<Flex gap="xs" align="center">
-									{user.role !== MemberRole.OWNER && (
-										<>
-											<Text size="sm" c="dimmed">
-												Role: {user.role.toLocaleLowerCase()}
-											</Text>
-											{role === MemberRole.OWNER && (
-												<EditRolePopover user={user} calendar={calendar} />
-											)}
-										</>
-									)}
-								</Flex>
-							</Box>
+							<Divider my={'xs'} />
+							<Group justify="space-between" align="center">
+								<Group align="center" gap="xs">
+									<Box>{StatusIcons[user.status]}</Box>
+									<Text size="sm" mb="5px">
+										{capitalize(user.status)}
+									</Text>
+								</Group>
+								{role === MemberRole.OWNER &&
+								user.userId !== currentUser?.id ? (
+									<EditRoleSelect user={user} calendar={calendar} />
+								) : (
+									<Text size="sm" c="dimmed">
+										{capitalize(user.role)}
+									</Text>
+								)}
+							</Group>
 						</Card>
 					))}
 				</ScrollArea>

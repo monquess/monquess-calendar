@@ -14,6 +14,7 @@ import Navbar from '@/components/general/navbar/navbar'
 import CreateEventModal from '@/components/event/modals/create-event-modal'
 import { apiClient } from '@/helpers/api/axios'
 import { IEvent } from '@/helpers/interface/event.interface'
+import { EventType } from '@/helpers/enum/event-type.enum'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
@@ -31,9 +32,10 @@ const mapEvent = (event: IEvent): EventInput => {
 		backgroundColor: event.color,
 		borderColor: event.color,
 		extendedProps: {
-			members: event.members,
 			calendarId: event.calendarId,
 			description: event.description,
+			type: event.type,
+			members: event.members,
 		},
 	}
 }
@@ -125,15 +127,19 @@ const HomePage: React.FC = React.memo(() => {
 							setCreateEventModalOpened(true)
 							info.view.calendar.unselect()
 						}}
-						eventDrop={async (info) => {
-							try {
-								await apiClient.patch(`events/${info.event.id}`, {
-									startDate: info.event.startStr,
-									endDate: info.event.end ? info.event.endStr : undefined,
-								})
-							} catch {
-								showNotification('Event', 'Error changing event time', 'red')
-								info.revert()
+						eventDrop={async ({ event, revert }) => {
+							if (event.extendedProps.type === EventType.HOLIDAY) {
+								revert()
+							} else {
+								try {
+									await apiClient.patch(`events/${event.id}`, {
+										startDate: event.startStr,
+										endDate: event.end ? event.endStr : undefined,
+									})
+								} catch {
+									showNotification('Event', 'Error changing event time', 'red')
+									revert()
+								}
 							}
 						}}
 					/>

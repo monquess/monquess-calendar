@@ -40,7 +40,7 @@ const renderSelectOption: SelectProps['renderOption'] = ({ option }) => (
 const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 	React.memo(({ onClose }) => {
 		const { addCalendar } = useCalendarStore()
-		const [value, setValue] = useState<string | null>('')
+		const [region, setRegion] = useState<string | null>('')
 		const [loading, setLoading] = useState(false)
 
 		const form = useForm({
@@ -48,6 +48,7 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 			initialValues: {
 				description: '',
 				color: '',
+				region: '',
 				type: CalendarType.HOLIDAYS,
 			},
 			validate: zodResolver(HolidayCalendarCreateSchema),
@@ -57,10 +58,12 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 			try {
 				setLoading(true)
 
-				const { data } = await apiClient.post<ICalendar>('/calendars', values)
-				addCalendar(data)
-				addCalendar(data)
+				const { data } = await apiClient.post<ICalendar>('/calendars', {
+					...values,
+					region,
+				})
 
+				addCalendar(data)
 				showNotification(
 					'Holidays calendar created',
 					`Holiday calendar has been successfully created.`,
@@ -85,14 +88,14 @@ const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> =
 				<Stack pos="relative">
 					<Select
 						label="Select country"
-						value={value}
-						onChange={setValue}
+						value={region}
+						onChange={setRegion}
 						data={Object.entries(CountryCodes).map(([code, name]) => ({
 							value: code,
 							label: name,
 						}))}
 						leftSection={
-							value ? <Twemoji svg text={getFlagEmoji(value)} /> : null
+							region ? <Twemoji svg text={getFlagEmoji(region)} /> : null
 						}
 						renderOption={renderSelectOption}
 						styles={{ dropdown: { zIndex: 1100 } }}

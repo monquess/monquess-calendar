@@ -1,10 +1,9 @@
-import { EventType } from '../enum/event-type.enum'
-import { MemberRole } from '../enum/member-role.enum'
+import { EventType, MemberRole, InvitationStatus } from '../enum'
 
 export interface IEventMember {
 	userId: number
 	role: MemberRole
-	status: string
+	status: InvitationStatus
 	createdAt: Date
 }
 

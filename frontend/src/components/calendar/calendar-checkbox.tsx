@@ -16,6 +16,7 @@ import useCalendarStore from '@/helpers/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import CalendarMenu from './calendar-menu'
+import { CalendarType } from '@/helpers/enum/calendar-type.enum'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()
@@ -45,7 +46,7 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			<Divider />
 			<Text fw={500}>My calendars</Text>
 			{Object.values(calendars)
-				.filter((calendar) => calendar.isPersonal)
+				.filter((calendar) => calendar.type === CalendarType.PERSONAL)
 				.map((calendar) => (
 					<Flex key={calendar.id} justify="space-between">
 						<Checkbox
@@ -78,7 +79,7 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			<Text fw={500}>Other calendars</Text>
 			<ScrollArea mah="300px" scrollbarSize={8} type="auto" offsetScrollbars>
 				{Object.values(calendars)
-					.filter((calendar) => !calendar.isPersonal)
+					.filter((calendar) => calendar.type !== CalendarType.PERSONAL)
 					.map((calendar) => (
 						<Flex key={calendar.id} justify="space-between" pb="xs">
 							<Checkbox
