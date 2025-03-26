@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
 import { apiClient, ApiError } from '@/helpers/api/axios'
+import { CalendarType } from '@/helpers/enum/calendar-type.enum'
 import { ICalendar } from '@/helpers/interface/calendar.interface'
 import { showNotification } from '@/helpers/show-notification'
 import useCalendarStore from '@/helpers/store/calendar-store'
 import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+import React, { useState } from 'react'
 
 interface CreateSharedCalendarFormProps {
 	onClose: () => void
@@ -22,6 +23,7 @@ const CreateSharedCalendarForm: React.FC<CreateSharedCalendarFormProps> =
 				name: '',
 				description: '',
 				color: '',
+				type: CalendarType.SHARED,
 			},
 			validate: zodResolver(CalendarCreateSchema),
 		})
@@ -31,7 +33,6 @@ const CreateSharedCalendarForm: React.FC<CreateSharedCalendarFormProps> =
 				setLoading(true)
 
 				const { data } = await apiClient.post<ICalendar>('/calendars', values)
-				console.log(data)
 				addCalendar(data)
 
 				showNotification(

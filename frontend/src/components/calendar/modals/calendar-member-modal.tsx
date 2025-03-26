@@ -1,10 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { Avatar, Card, Modal, ScrollArea, Stack, Text } from '@mantine/core'
 import { apiClient } from '@/helpers/api/axios'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import useUserStore, { User } from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
+import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
+import useUserStore from '@/helpers/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+import {
+	Avatar,
+	Box,
+	Card,
+	Divider,
+	Flex,
+	Modal,
+	ScrollArea,
+	Text,
+} from '@mantine/core'
+import React, { useEffect, useState } from 'react'
+import EditRolePopover from '../edit-role-popover'
 
 interface CalendarMemberModalProps {
 	opened: boolean
@@ -16,7 +26,7 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { user } = useUserStore()
 		const { isMobile } = useResponsive()
-		const [users, setUsers] = useState<User[]>([])
+		const [users, setUsers] = useState<IUserMember[]>([])
 		const [role, setRole] = useState<MemberRole>()
 
 		useEffect(() => {
@@ -24,10 +34,7 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 				const { data } = await apiClient.get<ICalendar>(
 					`calendars/${calendar.id}`
 				)
-				const responses = await Promise.all(
-					data.users.map((user) => apiClient.get<User>(`/users/${user.userId}`))
-				)
-				setUsers(responses.map((res) => res.data))
+				setUsers(data.users)
 			}
 
 			fetchUsers()
@@ -52,29 +59,48 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 				closeOnClickOutside={false}
 				zIndex={1000}
 			>
-				<>{role}</>
 				<ScrollArea h="400px">
 					{users.map((user) => (
 						<Card
-							key={user.id}
+							key={user.userId}
 							shadow="sm"
-							padding="lg"
+							padding="sm"
 							mb="10px"
 							radius="md"
 							w={isMobile ? '340px' : '400px'}
 						>
-							<Stack>
+							<Flex align="center" gap="md">
 								<Avatar
-									src={user.avatar}
-									alt={user.username}
-									size={40}
+									src={user.user.avatar}
+									alt={user.user.username}
+									size="md"
 									radius="xl"
 								/>
-								<Text w={500}>{user.username}</Text>
-							</Stack>
-							<Text size="sm" c="dimmed">
-								{user.email}
-							</Text>
+								<Box>
+									<Text>{user.user.username}</Text>
+									<Text size="sm" c="dimmed">
+										{user.user.email}
+									</Text>
+								</Box>
+							</Flex>
+							<Divider />
+							<Box pt="xs">
+								<Text size="sm" mb="5px">
+									Status: {user.status.toLocaleLowerCase()}
+								</Text>
+								<Flex gap="xs" align="center">
+									{user.role !== MemberRole.OWNER && (
+										<>
+											<Text size="sm" c="dimmed">
+												Role: {user.role.toLocaleLowerCase()}
+											</Text>
+											{role === MemberRole.OWNER && (
+												<EditRolePopover user={user} calendar={calendar} />
+											)}
+										</>
+									)}
+								</Flex>
+							</Box>
 						</Card>
 					))}
 				</ScrollArea>

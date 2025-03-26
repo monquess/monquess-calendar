@@ -7,6 +7,11 @@ export interface IUserMember {
 	role: MemberRole
 	status: string
 	createdAt: string
+	user: {
+		username: string
+		email: string
+		avatar: string
+	}
 }
 
 export interface ICalendar {
