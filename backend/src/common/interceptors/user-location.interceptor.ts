@@ -12,6 +12,21 @@ import { User } from '@prisma/client';
 import { Request } from 'express';
 import { firstValueFrom, map, Observable } from 'rxjs';
 
+interface IpResponse {
+	ip: string;
+}
+
+interface LocationResponse {
+	status: 'success' | 'fail';
+	countryCode: string;
+	timezone: string;
+}
+
+interface LocationCache {
+	country: string;
+	timezone: string;
+}
+
 @Injectable()
 export class UserLocationInterceptor implements NestInterceptor {
 	constructor(
@@ -27,27 +42,20 @@ export class UserLocationInterceptor implements NestInterceptor {
 		const request = context.switchToHttp().getRequest<Request>();
 		const user = request.user as User;
 
-		const cacheKey = `location:${user.id}`;
-		const location = await this.cache.get<{
-			countryCode: string;
-			timezone: string;
-		}>(cacheKey);
+		const cacheKey = user ? `location:${user.id}` : '';
+		const location = await this.cache.get<LocationCache>(cacheKey);
 
 		if (location) {
 			request.user = {
 				...request.user,
-				country: location.countryCode,
+				country: location.country,
 				timezone: location.timezone,
 			};
 		} else {
 			const ip = await this.getClientIP(request);
 			const response = await firstValueFrom(
 				this.httpService
-					.get<{
-						status: 'success' | 'fail';
-						countryCode: string;
-						timezone: string;
-					}>(`http://ip-api.com/json/${ip}`, {
+					.get<LocationResponse>(`http://ip-api.com/json/${ip}`, {
 						params: {
 							fields: 'status,countryCode,timezone',
 						},
@@ -57,10 +65,14 @@ export class UserLocationInterceptor implements NestInterceptor {
 
 			if (response.status === 'success') {
 				const payload = {
-					countryCode: response.countryCode,
+					country: response.countryCode,
 					timezone: response.timezone,
 				};
-				await this.cache.set(cacheKey, payload, 900000);
+
+				if (user) {
+					await this.cache.set(cacheKey, payload, 900000);
+				}
+
 				request.user = {
 					...request.user,
 					...payload,
@@ -73,10 +85,9 @@ export class UserLocationInterceptor implements NestInterceptor {
 
 	async getClientIP(request: Request) {
 		if (this.configService.get<string>('NODE_ENV') === 'development') {
+			const url = `https://api.ipify.org?format=json`;
 			return firstValueFrom(
-				this.httpService
-					.get<{ ip: string }>(`https://api.ipify.org?format=json`)
-					.pipe(map((response) => response.data.ip))
+				this.httpService.get<IpResponse>(url).pipe(map((res) => res.data.ip))
 			);
 		}
 		const forwarded = request.headers['x-forwarded-for'] as string;
