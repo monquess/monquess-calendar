@@ -65,7 +65,7 @@ export class CalendarService {
 		dto: CreateCalendarDto
 	): Promise<CalendarEntity> {
 		if (dto.type === CalendarType.HOLIDAYS) {
-			dto.name = COUNTRIES[dto.region as CountryCode].name;
+			dto.name = `Holidays of ${COUNTRIES[dto.region as CountryCode].name}`;
 			dto.description = undefined;
 		}
 

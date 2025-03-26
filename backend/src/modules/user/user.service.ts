@@ -15,11 +15,11 @@ import { UserEntity } from './entities/user.entity';
 import { S3Service } from '@modules/s3/s3.service';
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { EnvironmentVariables } from '@config/env/environment-variables.config';
-import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
 import {
 	COUNTRIES,
 	CountryCode,
 } from '@common/constants/country-codes.constant';
+import { generateColor } from '@common/helpers/generate-color';
 
 @Injectable()
 export class UserService {
@@ -79,7 +79,7 @@ export class UserService {
 							create: {
 								name: `Holidays of ${COUNTRIES[country].name}`,
 								type: CalendarType.HOLIDAYS,
-								color: DEFAULT_CALENDAR_COLOR,
+								color: generateColor(COUNTRIES[country].name),
 								region: country,
 							},
 						},
