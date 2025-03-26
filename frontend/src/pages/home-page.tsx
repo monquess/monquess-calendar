@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Flex, Stack } from '@mantine/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
 import {
 	DateSelectArg,
 	EventInput,
 	EventSourceFuncArg,
 } from '@fullcalendar/core'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import { Flex, Stack } from '@mantine/core'
+import React, { useEffect, useRef, useState } from 'react'
 
-import Navbar from '@/components/general/navbar/navbar'
 import CreateEventModal from '@/components/event/modals/create-event-modal'
+import Navbar from '@/components/general/navbar/navbar'
 import { apiClient } from '@/helpers/api/axios'
 import { IEvent } from '@/helpers/interface/event.interface'
 import { EventType } from '@/helpers/enum/event-type.enum'
@@ -34,6 +34,7 @@ const mapEvent = (event: IEvent): EventInput => {
 		extendedProps: {
 			calendarId: event.calendarId,
 			description: event.description,
+			type: event.type,
 			type: event.type,
 			members: event.members,
 		},
