@@ -9,8 +9,8 @@ import {
 	User,
 } from '@prisma/client';
 
-import { PrismaService } from '../prisma.service';
 import { generateColor } from '@common/helpers/generate-color';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class PrismaMiddleware {
@@ -127,10 +127,14 @@ export class PrismaMiddleware {
 				...params.args,
 				include: {
 					members: {
-						select: {
-							username: true,
-							email: true,
-							avatar: true,
+						include: {
+							user: {
+								select: {
+									username: true,
+									email: true,
+									avatar: true,
+								},
+							},
 						},
 						omit: {
 							eventId: true,
