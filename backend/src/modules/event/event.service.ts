@@ -374,6 +374,7 @@ export class EventService {
 					map(({ data }) => {
 						return data.items.map((item) => ({
 							id: 1,
+							calendarId: calendar.id,
 							name: item.summary,
 							description: null,
 							color: calendar.color,

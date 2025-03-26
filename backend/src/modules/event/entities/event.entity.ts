@@ -10,6 +10,12 @@ export class EventEntity {
 	id: number;
 
 	@ApiProperty({
+		type: Number,
+		example: 1,
+	})
+	calendarId: number;
+
+	@ApiProperty({
 		type: String,
 		example: 'Onboarding meeting',
 	})
@@ -26,6 +32,12 @@ export class EventEntity {
 		example: '#FFDE59',
 	})
 	color: string;
+
+	@ApiProperty({
+		type: Boolean,
+		example: true,
+	})
+	allDay?: boolean | null;
 
 	@ApiProperty({
 		type: String,

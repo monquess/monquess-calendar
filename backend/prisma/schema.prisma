@@ -58,6 +58,7 @@ model Event {
   name        String        @db.VarChar(30)
   description String?       @db.VarChar(255)
   color       String        @db.VarChar(7)
+  allDay      Boolean?      @map("all_day")
   calendarId  Int           @map("calendar_id")
   calendar    Calendar      @relation(fields: [calendarId], references: [id], onDelete: Cascade)
   type        EventType

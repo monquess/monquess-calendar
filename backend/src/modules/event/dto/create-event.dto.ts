@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EventType } from '@prisma/client';
 import {
+	IsBoolean,
 	IsEnum,
 	IsHexColor,
 	IsISO8601,
@@ -37,6 +38,14 @@ export class CreateEventDto {
 	})
 	@IsHexColor()
 	color: string;
+
+	@ApiProperty({
+		type: Boolean,
+		example: true,
+	})
+	@IsOptional()
+	@IsBoolean()
+	allDay?: boolean;
 
 	@ApiProperty({
 		type: String,
