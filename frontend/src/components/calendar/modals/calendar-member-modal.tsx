@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import {
 	Avatar,
 	Box,
@@ -10,17 +9,19 @@ import {
 	ScrollArea,
 	Text,
 } from '@mantine/core'
+import React, { useEffect, useState } from 'react'
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
 import { capitalize } from 'lodash'
 
 import { apiClient } from '@/helpers/api/axios'
+import { InvitationStatus } from '@/helpers/enum'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
 import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
-import { InvitationStatus } from '@/helpers/enum'
 import useUserStore from '@/helpers/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
+import CalendarMemberDelete from '../calendar-member-delete'
 import EditRoleSelect from '../edit-role-select'
 
 interface CalendarMemberModalProps {
@@ -84,19 +85,26 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 							radius="md"
 							w={isMobile ? '340px' : '400px'}
 						>
-							<Flex align="center" gap="md">
-								<Avatar
-									src={user.user.avatar}
-									alt={user.user.username}
-									size="md"
-									radius="xl"
-								/>
-								<Box>
-									<Text>{user.user.username}</Text>
-									<Text size="sm" c="dimmed">
-										{user.user.email}
-									</Text>
-								</Box>
+							<Flex justify="space-between">
+								<Flex align="center" gap="md">
+									<Avatar
+										src={user.user.avatar}
+										alt={user.user.username}
+										size="md"
+										radius="xl"
+									/>
+									<Box>
+										<Text>{user.user.username}</Text>
+										<Text size="sm" c="dimmed">
+											{user.user.email}
+										</Text>
+									</Box>
+								</Flex>
+								{user.status !== InvitationStatus.INVITED &&
+									role === MemberRole.OWNER &&
+									user.userId !== currentUser?.id && (
+										<CalendarMemberDelete user={user} calendar={calendar} />
+									)}
 							</Flex>
 							<Divider my={'xs'} />
 							<Group justify="space-between" align="center">

@@ -1,6 +1,6 @@
-import { Route, Routes } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
+import { Route, Routes } from 'react-router-dom'
 
 import ProtectedRoute from './components/general/protected-route'
 
@@ -20,7 +20,7 @@ import GoogleAuthSuccessPage from './pages/auth/google-success-page'
 function App() {
 	return (
 		<MantineProvider defaultColorScheme="auto" theme={theme}>
-			<Notifications />
+			<Notifications zIndex={5000} />
 			<Routes>
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/login" element={<LoginPage />} />

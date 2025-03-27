@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import { useResponsive } from '@/hooks/use-responsive'
 import { EventImpl } from '@fullcalendar/core/internal'
 import { FloatingIndicator, Stack, Tabs } from '@mantine/core'
-import EventMemberList from '../event-member-list'
 import InviteEventMembersForm from '../forms/invite-member-form'
+import EventMemberList from '../member/event-member-list'
 import classes from './modal.module.css'
 
 interface EventMemberModalProps {

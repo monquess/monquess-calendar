@@ -5,22 +5,24 @@ import { capitalize } from 'lodash'
 
 import { apiClient, ApiError } from '@/helpers/api/axios'
 import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
+import { IUserMember } from '@/helpers/interface/calendar.interface'
+import { IEventMember } from '@/helpers/interface/event.interface'
 import { showNotification } from '@/helpers/show-notification'
+import { EventImpl } from '@fullcalendar/core/internal'
 
-interface EditRolePopoverProps {
-	user: IUserMember
-	calendar: ICalendar
+interface EditEventRoleSelectProps {
+	user: IEventMember
+	event: EventImpl
 }
 
-const EditRoleSelect: React.FC<EditRolePopoverProps> = React.memo(
-	({ user, calendar }) => {
+const EditEventRoleSelect: React.FC<EditEventRoleSelectProps> = React.memo(
+	({ user, event }) => {
 		const [role, setRole] = useState<MemberRole>(user.role)
 
 		const onChange = async (value: string | null) => {
 			try {
 				const { data } = await apiClient.patch<IUserMember>(
-					`calendars/${calendar.id}/users/${user.userId}/role`,
+					`events/${event.id}/members/${user.userId}/role`,
 					{
 						role: value?.toLocaleUpperCase(),
 					}
@@ -56,4 +58,4 @@ const EditRoleSelect: React.FC<EditRolePopoverProps> = React.memo(
 	}
 )
 
-export default EditRoleSelect
+export default EditEventRoleSelect

@@ -18,6 +18,7 @@ import { FaCircle } from 'react-icons/fa'
 import { FiEdit } from 'react-icons/fi'
 import { IoMdClose } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
+import { LuUsers } from 'react-icons/lu'
 import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
 import EventMemberModal from './modals/event-member-modal'
 
@@ -140,7 +141,7 @@ const EventPopover: React.FC<EventPopoverProps> = ({ calendarRef }) => {
 									variant="subtle"
 									onClick={() => setMemberModal(true)}
 								>
-									<MdDelete />
+									<LuUsers />
 								</ActionIcon>
 							</Group>
 							<ActionIcon variant="subtle" onClick={() => setOpened(false)}>

@@ -19,6 +19,8 @@ import React, { useEffect, useState } from 'react'
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
 import { capitalize } from 'lodash'
+import EventMemberDelete from './event-member-delete'
+import EditEventRoleSelect from './event-member-role-select'
 
 interface EventMemberListProps {
 	event: EventImpl
@@ -40,13 +42,11 @@ const EventMemberList: React.FC<EventMemberListProps> = React.memo(
 		useEffect(() => {
 			const fetchUsers = async () => {
 				const { data } = await apiClient.get<IEvent>(`events/${event.id}`)
-				console.log(data)
 				setUsers(data.members)
 			}
 
 			fetchUsers()
-			console.log(users)
-		}, [event.id, users])
+		}, [event.id])
 
 		useEffect(() => {
 			if (event) {
@@ -69,19 +69,26 @@ const EventMemberList: React.FC<EventMemberListProps> = React.memo(
 						radius="md"
 						w={isMobile ? '340px' : '400px'}
 					>
-						<Flex align="center" gap="md">
-							<Avatar
-								src={user.user.avatar}
-								alt={user.user.username}
-								size="md"
-								radius="xl"
-							/>
-							<Box>
-								<Text>{user.user.username}</Text>
-								<Text size="sm" c="dimmed">
-									{user.user.email}
-								</Text>
-							</Box>
+						<Flex justify="space-between">
+							<Flex align="center" gap="md">
+								<Avatar
+									src={user.user.avatar}
+									alt={user.user.username}
+									size="md"
+									radius="xl"
+								/>
+								<Box>
+									<Text>{user.user.username}</Text>
+									<Text size="sm" c="dimmed">
+										{user.user.email}
+									</Text>
+								</Box>
+							</Flex>
+							{user.status !== InvitationStatus.INVITED &&
+								role === MemberRole.OWNER &&
+								user.userId !== currentUser?.id && (
+									<EventMemberDelete user={user} event={event} />
+								)}
 						</Flex>
 						<Divider my={'xs'} />
 						<Group justify="space-between" align="center">
@@ -91,15 +98,15 @@ const EventMemberList: React.FC<EventMemberListProps> = React.memo(
 									{capitalize(user.status)}
 								</Text>
 							</Group>
-							{/* {user.status !== InvitationStatus.DECLINED &&
+							{user.status !== InvitationStatus.DECLINED &&
 								(role === MemberRole.OWNER &&
 								user.userId !== currentUser?.id ? (
-									<EditRoleSelect user={user} calendar={calendar} />
+									<EditEventRoleSelect user={user} event={event} />
 								) : (
 									<Text size="sm" c="dimmed">
 										{capitalize(user.role)}
 									</Text>
-								))} */}
+								))}
 						</Group>
 					</Card>
 				))}
