@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { FloatingIndicator, Modal, Stack, Tabs, Text } from '@mantine/core'
 import { useResponsive } from '@/hooks/use-responsive'
+import { FloatingIndicator, Modal, Stack, Tabs, Text } from '@mantine/core'
+import React, { useState } from 'react'
 import CreateHolidaysCalendarForm from '../forms/create-holidays-calendar'
 import CreateSharedCalendarForm from '../forms/create-shared-calendar'
 
-import classes from './modal.module.css'
+import classes from '@/helpers/styles/modal.module.css'
 
 interface CreateCalendarModalProps {
 	opened: boolean

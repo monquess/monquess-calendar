@@ -1,12 +1,12 @@
 import { Modal } from '@mantine/core'
 import React, { useState } from 'react'
 
+import classes from '@/helpers/styles/modal.module.css'
 import { useResponsive } from '@/hooks/use-responsive'
 import { EventImpl } from '@fullcalendar/core/internal'
 import { FloatingIndicator, Stack, Tabs } from '@mantine/core'
 import InviteEventMembersForm from '../forms/invite-member-form'
 import EventMemberList from '../member/event-member-list'
-import classes from './modal.module.css'
 
 interface EventMemberModalProps {
 	opened: boolean
