@@ -5,7 +5,7 @@ import { EventImpl } from '@fullcalendar/core/internal'
 import { debounce } from 'lodash'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import { User } from '@/shared/store/user-store'
 
 interface InviteEventMembersFormProps {

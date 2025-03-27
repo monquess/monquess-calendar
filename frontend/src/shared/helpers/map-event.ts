@@ -1,5 +1,5 @@
 import { EventInput } from '@fullcalendar/core'
-import { IEvent } from './interface/event.interface'
+import { IEvent } from '../interface/event.interface'
 
 export const mapEvent = (event: IEvent): EventInput => {
 	return {

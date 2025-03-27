@@ -4,7 +4,7 @@ import { Button, Flex, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useStore from '@/shared/store/user-store'
 
 import { useResponsive } from '@/hooks/use-responsive'

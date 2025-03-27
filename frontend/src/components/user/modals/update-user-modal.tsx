@@ -3,7 +3,7 @@ import { Button, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useStore, { User } from '@/shared/store/user-store'
 import { updateUserSchema } from '@/shared/validations'
 

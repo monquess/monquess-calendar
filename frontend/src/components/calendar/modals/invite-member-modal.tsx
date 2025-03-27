@@ -5,7 +5,7 @@ import { debounce } from 'lodash'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { ICalendar } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import { User } from '@/shared/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 

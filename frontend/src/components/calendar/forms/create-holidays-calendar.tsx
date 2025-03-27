@@ -15,7 +15,7 @@ import { apiClient, ApiError } from '@/shared/api/axios'
 import { CountryCodes } from '@/shared/constant/country-codes'
 import { CalendarType } from '@/shared/enum'
 import { ICalendar } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useCalendarStore from '@/shared/store/calendar-store'
 import { HolidayCalendarCreateSchema } from '@/shared/validations'
 

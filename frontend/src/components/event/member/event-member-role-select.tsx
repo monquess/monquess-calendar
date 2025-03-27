@@ -7,7 +7,7 @@ import { capitalize } from 'lodash'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { MemberRole } from '@/shared/enum'
 import { ICalendarMember, IEventMember } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 
 interface EditEventRoleSelectProps {
 	user: IEventMember

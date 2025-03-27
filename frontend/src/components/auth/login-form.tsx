@@ -17,7 +17,7 @@ import axios, { AxiosError } from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 import { config } from '@/config/config'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useUserStore from '@/shared/store/user-store'
 import { schemaLogin } from '@/shared/validations'
 import { useResponsive } from '@/hooks/use-responsive'

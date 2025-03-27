@@ -8,7 +8,7 @@ import { EventImpl } from '@fullcalendar/core/internal'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { IEventMember } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 
 interface EventMemberDeleteProps {
 	user: IEventMember

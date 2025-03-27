@@ -11,7 +11,7 @@ import { useForm, zodResolver } from '@mantine/form'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { ICalendar } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import { CalendarCreateSchema } from '@/shared/validations'
 import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'

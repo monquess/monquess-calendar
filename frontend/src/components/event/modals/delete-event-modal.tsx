@@ -6,7 +6,7 @@ import FullCalendar from '@fullcalendar/react'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { MemberRole } from '@/shared/enum'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useUserStore from '@/shared/store/user-store'
 
 import { useResponsive } from '@/hooks/use-responsive'

@@ -13,7 +13,7 @@ import useUserStore from '@/shared/store/user-store'
 import { ICalendar } from '@/shared/interface'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { InvitationStatus } from '@/shared/enum'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 
 import DeleteAccountModal from './modals/delete-account-modal'
 import UpdateUserModal from './modals/update-user-modal'

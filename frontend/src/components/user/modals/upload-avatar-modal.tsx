@@ -5,7 +5,7 @@ import { useForm, zodResolver } from '@mantine/form'
 import { IoImageOutline } from 'react-icons/io5'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useStore, { User } from '@/shared/store/user-store'
 import { avatarSchema } from '@/shared/validations'
 

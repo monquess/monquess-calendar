@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { LoadingOverlay } from '@mantine/core'
 
 import { apiClient } from '@/shared/api/axios'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import useUserStore, { User } from '@/shared/store/user-store'
 
 const GoogleAuthSuccessPage: React.FC = () => {

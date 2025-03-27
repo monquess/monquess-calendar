@@ -7,7 +7,7 @@ import axios, { AxiosError } from 'axios'
 
 import { config } from '@/config/config'
 import { emailSchema } from '@/shared/validations'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import ResetPasswordModal from './modals/reset-password-modal'

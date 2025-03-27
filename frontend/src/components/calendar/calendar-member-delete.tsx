@@ -6,7 +6,7 @@ import { MdDelete } from 'react-icons/md'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { ICalendar, ICalendarMember } from '@/shared/interface'
-import { showNotification } from '@/shared/show-notification'
+import { showNotification } from '@/shared/helpers/show-notification'
 
 interface CalendarMemberDeleteProps {
 	user: ICalendarMember
