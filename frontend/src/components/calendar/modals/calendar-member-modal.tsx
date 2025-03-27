@@ -10,15 +10,15 @@ import {
 	Text,
 } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
+
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
 import { capitalize } from 'lodash'
 
-import { apiClient } from '@/helpers/api/axios'
-import { InvitationStatus } from '@/helpers/enum'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
-import useUserStore from '@/helpers/store/user-store'
+import { apiClient } from '@/shared/api/axios'
+import { InvitationStatus, MemberRole } from '@/shared/enum'
+import { ICalendar, ICalendarMember } from '@/shared/interface'
+import useUserStore from '@/shared/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import CalendarMemberDelete from '../calendar-member-delete'
@@ -40,7 +40,7 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 	({ opened, onClose, calendar }) => {
 		const { user: currentUser } = useUserStore()
 		const { isMobile } = useResponsive()
-		const [users, setUsers] = useState<IUserMember[]>([])
+		const [users, setUsers] = useState<ICalendarMember[]>([])
 		const [role, setRole] = useState<MemberRole>()
 
 		useEffect(() => {

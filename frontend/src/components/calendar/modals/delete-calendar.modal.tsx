@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Flex, Modal, Stack, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import useUserStore from '@/helpers/store/user-store'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { MemberRole } from '@/shared/enum'
+import { ICalendar } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import useCalendarStore from '@/shared/store/calendar-store'
+import useUserStore from '@/shared/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 interface DeleteCalendarModalProps {

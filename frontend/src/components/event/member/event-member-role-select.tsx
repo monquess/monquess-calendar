@@ -1,14 +1,13 @@
-import { Select } from '@mantine/core'
 import React, { useState } from 'react'
+import { Select } from '@mantine/core'
 
+import { EventImpl } from '@fullcalendar/core/internal'
 import { capitalize } from 'lodash'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { IUserMember } from '@/helpers/interface/calendar.interface'
-import { IEventMember } from '@/helpers/interface/event.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { EventImpl } from '@fullcalendar/core/internal'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { MemberRole } from '@/shared/enum'
+import { ICalendarMember, IEventMember } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
 
 interface EditEventRoleSelectProps {
 	user: IEventMember
@@ -21,7 +20,7 @@ const EditEventRoleSelect: React.FC<EditEventRoleSelectProps> = React.memo(
 
 		const onChange = async (value: string | null) => {
 			try {
-				const { data } = await apiClient.patch<IUserMember>(
+				const { data } = await apiClient.patch<ICalendarMember>(
 					`events/${event.id}/members/${user.userId}/role`,
 					{
 						role: value?.toLocaleUpperCase(),

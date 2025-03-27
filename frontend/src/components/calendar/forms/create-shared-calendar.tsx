@@ -1,12 +1,13 @@
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { CalendarType } from '@/helpers/enum/calendar-type.enum'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+import React, { useState } from 'react'
 import { Button, ColorInput, Stack, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import React, { useState } from 'react'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { CalendarType } from '@/shared/enum'
+import { ICalendar } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import useCalendarStore from '@/shared/store/calendar-store'
+import { CalendarCreateSchema } from '@/shared/validations'
 
 interface CreateSharedCalendarFormProps {
 	onClose: () => void

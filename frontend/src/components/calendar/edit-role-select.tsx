@@ -1,15 +1,15 @@
-import { Select } from '@mantine/core'
 import React, { useState } from 'react'
+import { Select } from '@mantine/core'
 
 import { capitalize } from 'lodash'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { MemberRole } from '@/shared/enum'
+import { ICalendar, ICalendarMember } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
 
 interface EditRolePopoverProps {
-	user: IUserMember
+	user: ICalendarMember
 	calendar: ICalendar
 }
 
@@ -19,7 +19,7 @@ const EditRoleSelect: React.FC<EditRolePopoverProps> = React.memo(
 
 		const onChange = async (value: string | null) => {
 			try {
-				const { data } = await apiClient.patch<IUserMember>(
+				const { data } = await apiClient.patch<ICalendarMember>(
 					`calendars/${calendar.id}/users/${user.userId}/role`,
 					{
 						role: value?.toLocaleUpperCase(),

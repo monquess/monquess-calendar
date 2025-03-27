@@ -9,15 +9,16 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
+
 import { IoInformationCircleOutline } from 'react-icons/io5'
-import { apiClient } from '@/helpers/api/axios'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
+
+import { apiClient } from '@/shared/api/axios'
+import { ICalendar } from '@/shared/interface'
+import { CalendarType, InvitationStatus } from '@/shared/enum'
+import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import CalendarMenu from './calendar-menu'
-import { CalendarType } from '@/helpers/enum/calendar-type.enum'
-import { InvitationStatus } from '@/helpers/enum'
 
 const CalendarCheckbox: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

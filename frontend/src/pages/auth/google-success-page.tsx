@@ -1,9 +1,10 @@
-import { apiClient } from '@/helpers/api/axios'
-import { showNotification } from '@/helpers/show-notification'
-import useUserStore, { User } from '@/helpers/store/user-store'
-import { LoadingOverlay } from '@mantine/core'
 import React, { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { LoadingOverlay } from '@mantine/core'
+
+import { apiClient } from '@/shared/api/axios'
+import { showNotification } from '@/shared/show-notification'
+import useUserStore, { User } from '@/shared/store/user-store'
 
 const GoogleAuthSuccessPage: React.FC = () => {
 	const [searchParams] = useSearchParams()

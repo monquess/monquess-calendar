@@ -1,12 +1,15 @@
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { showNotification } from '@/helpers/show-notification'
-import useUserStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React from 'react'
+import { Button, Modal, Stack, Text } from '@mantine/core'
+
 import { EventImpl } from '@fullcalendar/core/internal'
 import FullCalendar from '@fullcalendar/react'
-import { Button, Modal, Stack, Text } from '@mantine/core'
-import React from 'react'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { MemberRole } from '@/shared/enum'
+import { showNotification } from '@/shared/show-notification'
+import useUserStore from '@/shared/store/user-store'
+
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface DeleteEventModalProps {
 	opened: boolean

@@ -1,5 +1,5 @@
-import { Flex, Stack } from '@mantine/core'
 import React, { useEffect, useRef, useState } from 'react'
+import { Flex, Stack } from '@mantine/core'
 
 import {
 	DateSelectArg,
@@ -11,19 +11,19 @@ import interactionPlugin from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-import { apiClient } from '@/helpers/api/axios'
-import { EventType } from '@/helpers/enum/event-type.enum'
-import { IEvent } from '@/helpers/interface/event.interface'
-import { mapEvent } from '@/helpers/map-event'
-import { showNotification } from '@/helpers/show-notification'
-import useCalendarStore from '@/helpers/store/calendar-store'
+import { apiClient } from '@/shared/api/axios'
+import { EventType } from '@/shared/enum'
+import { IEvent } from '@/shared/interface'
+import { mapEvent } from '@/shared/map-event'
+import { showNotification } from '@/shared/show-notification'
+import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import EventPopover from '@/components/event/event-popover'
 import CreateEventModal from '@/components/event/modals/create-event-modal'
 import Navbar from '@/components/general/navbar/navbar'
 
-import '@/helpers/styles/calendar.css'
+import '@/shared/styles/calendar.css'
 
 const HomePage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

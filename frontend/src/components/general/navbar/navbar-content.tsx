@@ -1,12 +1,16 @@
-import UserMenu from '@/components/user/user-menu'
-import useUserStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
-import FullCalendar from '@fullcalendar/react'
+import React, { useState } from 'react'
 import { Box, Button, Divider, Flex, Stack, Text } from '@mantine/core'
 import { DatePicker, DatesRangeValue } from '@mantine/dates'
 import { useMediaQuery } from '@mantine/hooks'
-import React, { useState } from 'react'
+
 import { IoMenu } from 'react-icons/io5'
+
+import FullCalendar from '@fullcalendar/react'
+
+import UserMenu from '@/components/user/user-menu'
+import useUserStore from '@/shared/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import ThemeSwitch from '../../buttons/theme-switch'
 import CalendarCheckbox from '../../calendar/calendar-checkbox'
 

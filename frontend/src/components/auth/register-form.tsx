@@ -1,7 +1,5 @@
-import { config } from '@/config/config'
-import { showNotification } from '@/helpers/show-notification'
-import { registerSchema } from '@/helpers/validations/register-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
 	Button,
 	Divider,
@@ -11,14 +9,19 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+
+import { FcGoogle } from 'react-icons/fc'
+
 import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import ReCAPTCHA from 'react-google-recaptcha'
+
+import { config } from '@/config/config'
+import { showNotification } from '@/shared/show-notification'
+import { registerSchema } from '@/shared/validations'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 import VerificationCodeModal from './modals/verify-code-modal'
-
-import ReCAPTCHA from 'react-google-recaptcha'
-import { FcGoogle } from 'react-icons/fc'
 
 const RegisterForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()

@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Flex, Modal, Stack, Text, TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { showNotification } from '@/helpers/show-notification'
-import useStore from '@/helpers/store/user-store'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { showNotification } from '@/shared/show-notification'
+import useStore from '@/shared/store/user-store'
+
 import { useResponsive } from '@/hooks/use-responsive'
 
 interface DeleteAccountModalProps {

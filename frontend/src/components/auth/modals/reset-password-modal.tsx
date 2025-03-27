@@ -11,9 +11,11 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
+
 import axios, { AxiosError } from 'axios'
+
 import { config } from '@/config/config'
-import { resetPasswordSchema } from '@/helpers/validations/reset-password-schema'
+import { resetPasswordSchema } from '@/shared/validations'
 import { useResponsive } from '@/hooks/use-responsive'
 
 interface ResetPasswordModalProps {

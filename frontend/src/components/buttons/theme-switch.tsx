@@ -1,7 +1,8 @@
 import React from 'react'
+import { Box, Switch, useMantineColorScheme } from '@mantine/core'
+
 import { HiSun } from 'react-icons/hi'
 import { MdDarkMode } from 'react-icons/md'
-import { Box, Switch, useMantineColorScheme } from '@mantine/core'
 
 const ThemeSwitch: React.FC = () => {
 	const { colorScheme, toggleColorScheme } = useMantineColorScheme()

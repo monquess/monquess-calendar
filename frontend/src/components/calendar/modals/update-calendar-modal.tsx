@@ -8,12 +8,13 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { ICalendar } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import { CalendarCreateSchema } from '@/shared/validations'
+import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
-import useCalendarStore from '@/helpers/store/calendar-store'
 
 interface updateCalendarModalProps {
 	opened: boolean

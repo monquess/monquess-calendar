@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import {
 	Button,
 	FloatingIndicator,
@@ -7,11 +8,11 @@ import {
 	Tabs,
 	Text,
 } from '@mantine/core'
-import React, { useState } from 'react'
 
-import { InvitationStatus } from '@/helpers/enum'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import classes from '@/helpers/styles/modal.module.css'
+import { InvitationStatus } from '@/shared/enum'
+import { ICalendar } from '@/shared/interface'
+
+import classes from '@/shared/styles/modal.module.css'
 
 interface InvitesModalProps {
 	opened: boolean

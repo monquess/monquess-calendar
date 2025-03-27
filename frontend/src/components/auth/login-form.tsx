@@ -1,8 +1,5 @@
-import { config } from '@/config/config'
-import { showNotification } from '@/helpers/show-notification'
-import useUserStore from '@/helpers/store/user-store'
-import { schemaLogin } from '@/helpers/validations/login-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
 	Button,
 	Divider,
@@ -13,11 +10,18 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import ReCAPTCHA from 'react-google-recaptcha'
+
 import { FcGoogle } from 'react-icons/fc'
-import { useNavigate } from 'react-router-dom'
+
+import axios, { AxiosError } from 'axios'
+import ReCAPTCHA from 'react-google-recaptcha'
+
+import { config } from '@/config/config'
+import { showNotification } from '@/shared/show-notification'
+import useUserStore from '@/shared/store/user-store'
+import { schemaLogin } from '@/shared/validations'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
 const LoginForm: React.FC = React.memo(() => {

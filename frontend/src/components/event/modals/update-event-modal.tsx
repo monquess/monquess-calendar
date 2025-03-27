@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import {
 	Button,
 	ColorInput,
@@ -11,23 +12,23 @@ import {
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
-import React, { useState } from 'react'
+
 import { FaPaintRoller } from 'react-icons/fa6'
 import { IoMdTime } from 'react-icons/io'
 import { MdOutlineSubtitles } from 'react-icons/md'
 
+import FullCalendar from '@fullcalendar/react'
 import { EventImpl } from '@fullcalendar/core/internal'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { EventType } from '@/helpers/enum/event-type.enum'
-import { IEvent } from '@/helpers/interface/event.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { createEventSchema } from '@/helpers/validations/create-event-schema'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { EventType } from '@/shared/enum'
+import { IEvent } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import { mapEvent } from '@/shared/map-event'
+import { createEventSchema } from '@/shared/validations'
 import { useResponsive } from '@/hooks/use-responsive'
 
-import FullCalendar from '@fullcalendar/react'
 import { capitalize } from 'lodash'
-import { mapEvent } from '@/helpers/map-event'
 
 interface UpdateEventModalProps {
 	opened: boolean

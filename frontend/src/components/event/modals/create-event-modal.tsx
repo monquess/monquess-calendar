@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback, useEffect, useState } from 'react'
 import {
 	Button,
 	ColorInput,
@@ -12,7 +13,7 @@ import {
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
-import React, { useCallback, useEffect, useState } from 'react'
+
 import { IoMdTime } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
 import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
@@ -20,13 +21,12 @@ import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
 import { DateSelectArg } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { CalendarType, EventType, MemberRole } from '@/helpers/enum'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { IEvent } from '@/helpers/interface/event.interface'
-import { showNotification } from '@/helpers/show-notification'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import { createEventSchema } from '@/helpers/validations/create-event-schema'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { CalendarType, EventType, MemberRole } from '@/shared/enum'
+import { ICalendar, IEvent } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import useCalendarStore from '@/shared/store/calendar-store'
+import { createEventSchema } from '@/shared/validations'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import RemindersBox from '../reminders-box'

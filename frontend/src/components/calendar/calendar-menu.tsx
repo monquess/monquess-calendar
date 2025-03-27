@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
+import { ActionIcon, Menu } from '@mantine/core'
+
 import { FcInvite } from 'react-icons/fc'
 import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
 import { HiOutlineDotsHorizontal } from 'react-icons/hi'
 import { IoMdPeople } from 'react-icons/io'
-import { ActionIcon, Menu } from '@mantine/core'
+
+import { CalendarType } from '@/shared/enum'
+import { ICalendar } from '@/shared/interface'
 
 import CalendarMemberModal from './modals/calendar-member-modal'
 import DeleteCalendarModal from './modals/delete-calendar.modal'
 import InviteMemberModal from './modals/invite-member-modal'
 import UpdateCalendarModal from './modals/update-calendar-modal'
-import { CalendarType } from '@/helpers/enum/calendar-type.enum'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
 
 interface CalendarMenuProps {
 	calendar: ICalendar

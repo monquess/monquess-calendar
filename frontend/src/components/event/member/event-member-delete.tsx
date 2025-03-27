@@ -1,11 +1,14 @@
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { IEventMember } from '@/helpers/interface/event.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { EventImpl } from '@fullcalendar/core/internal'
-import { ActionIcon, Box, Flex, Popover, Text } from '@mantine/core'
 import React, { useState } from 'react'
+import { ActionIcon, Box, Flex, Popover, Text } from '@mantine/core'
+
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
+
+import { EventImpl } from '@fullcalendar/core/internal'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { IEventMember } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
 
 interface EventMemberDeleteProps {
 	user: IEventMember

@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
-import { IoImageOutline } from 'react-icons/io5'
 import { Button, FileInput, Modal, Stack, Text } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { showNotification } from '@/helpers/show-notification'
-import useStore, { User } from '@/helpers/store/user-store'
-import { avatarSchema } from '@/helpers/validations/avatar-schema'
+
+import { IoImageOutline } from 'react-icons/io5'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { showNotification } from '@/shared/show-notification'
+import useStore, { User } from '@/shared/store/user-store'
+import { avatarSchema } from '@/shared/validations'
+
 import { useResponsive } from '@/hooks/use-responsive'
 
 interface UploadAvatarModalProps {

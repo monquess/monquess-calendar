@@ -1,13 +1,15 @@
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { ICalendar, IUserMember } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { ActionIcon, Box, Flex, Popover, Text } from '@mantine/core'
 import React, { useState } from 'react'
+import { ActionIcon, Box, Flex, Popover, Text } from '@mantine/core'
+
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { ICalendar, ICalendarMember } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+
 interface CalendarMemberDeleteProps {
-	user: IUserMember
+	user: ICalendarMember
 	calendar: ICalendar
 	onClose: () => void
 }

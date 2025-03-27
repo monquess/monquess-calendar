@@ -1,6 +1,6 @@
+import { Route, Routes } from 'react-router-dom'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
-import { Route, Routes } from 'react-router-dom'
 
 import ProtectedRoute from './components/general/protected-route'
 
@@ -8,6 +8,7 @@ import LoginPage from './pages/auth/login-page'
 import RegisterPage from './pages/auth/register-page'
 import ResetPasswordPage from './pages/auth/reset-password-page'
 import VerifyPage from './pages/auth/verify-account-page'
+import GoogleAuthSuccessPage from './pages/auth/google-success-page'
 import HomePage from './pages/home-page'
 import NotFound from './pages/not-found-page'
 
@@ -15,7 +16,6 @@ import { theme } from './theme'
 
 import '@mantine/dates/styles.css'
 import '@mantine/notifications/styles.css'
-import GoogleAuthSuccessPage from './pages/auth/google-success-page'
 
 function App() {
 	return (

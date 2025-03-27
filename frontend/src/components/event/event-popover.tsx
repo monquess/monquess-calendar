@@ -1,18 +1,6 @@
-import useUserStore from '@/helpers/store/user-store'
+import React, { useEffect, useState } from 'react'
 import { ActionIcon, Divider, Group, Popover, Stack, Text } from '@mantine/core'
 import { useClickOutside } from '@mantine/hooks'
-import React, { useEffect, useState } from 'react'
-
-import { EventClickArg } from '@fullcalendar/core/index.js'
-import { EventImpl } from '@fullcalendar/core/internal'
-import FullCalendar from '@fullcalendar/react'
-
-import { MemberRole } from '@/helpers/enum/member-role.enum'
-import { IEventMember } from '@/helpers/interface/event.interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
-
-import DeleteEventModal from './modals/delete-event-modal'
-import UpdateEventModal from './modals/update-event-modal'
 
 import { FaCircle } from 'react-icons/fa'
 import { FiEdit } from 'react-icons/fi'
@@ -20,6 +8,18 @@ import { IoMdClose } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
 import { LuUsers } from 'react-icons/lu'
 import { MdDelete, MdOutlineSubtitles } from 'react-icons/md'
+
+import { EventClickArg } from '@fullcalendar/core'
+import { EventImpl } from '@fullcalendar/core/internal'
+import FullCalendar from '@fullcalendar/react'
+
+import { MemberRole } from '@/shared/enum'
+import { IEventMember } from '@/shared/interface'
+import useCalendarStore from '@/shared/store/calendar-store'
+import useUserStore from '@/shared/store/user-store'
+
+import DeleteEventModal from './modals/delete-event-modal'
+import UpdateEventModal from './modals/update-event-modal'
 import EventMemberModal from './modals/event-member-modal'
 
 interface EventPopoverProps {

@@ -3,10 +3,10 @@ import { Button, Modal, MultiSelect, Stack } from '@mantine/core'
 
 import { debounce } from 'lodash'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { ICalendar } from '@/helpers/interface/calendar.interface'
-import { showNotification } from '@/helpers/show-notification'
-import { User } from '@/helpers/store/user-store'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { ICalendar } from '@/shared/interface'
+import { showNotification } from '@/shared/show-notification'
+import { User } from '@/shared/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
 interface InviteMemberModalProps {

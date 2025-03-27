@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, TextInput } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { useNavigate } from 'react-router-dom'
-import { config } from '@/config/config'
-import { emailSchema } from '@/helpers/validations/reset-password-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+
 import axios, { AxiosError } from 'axios'
+
+import { config } from '@/config/config'
+import { emailSchema } from '@/shared/validations'
+import { showNotification } from '@/shared/show-notification'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import ResetPasswordModal from './modals/reset-password-modal'
-import { showNotification } from '@/helpers/show-notification'
 
 const PasswordResetForm: React.FC = React.memo(() => {
 	const navigate = useNavigate()

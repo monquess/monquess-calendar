@@ -1,12 +1,12 @@
-import { Button, MultiSelect, Stack } from '@mantine/core'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Button, MultiSelect, Stack } from '@mantine/core'
 
+import { EventImpl } from '@fullcalendar/core/internal'
 import { debounce } from 'lodash'
 
-import { apiClient, ApiError } from '@/helpers/api/axios'
-import { showNotification } from '@/helpers/show-notification'
-import { User } from '@/helpers/store/user-store'
-import { EventImpl } from '@fullcalendar/core/internal'
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { showNotification } from '@/shared/show-notification'
+import { User } from '@/shared/store/user-store'
 
 interface InviteEventMembersFormProps {
 	onClose: () => void

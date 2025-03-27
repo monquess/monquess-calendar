@@ -1,11 +1,13 @@
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Box, Paper, Title } from '@mantine/core'
+
+import useUserStore from '@/shared/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import LoginForm from '@/components/auth/login-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
-import useUserStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
-import { Box, Paper, Title } from '@mantine/core'
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const LoginPage: React.FC = React.memo(() => {
 	const { isMobile } = useResponsive()

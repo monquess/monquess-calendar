@@ -1,10 +1,4 @@
-import { apiClient } from '@/helpers/api/axios'
-import { MemberRole } from '@/helpers/enum'
-import { InvitationStatus } from '@/helpers/enum/invitation-status.enum'
-import { IEvent, IEventMember } from '@/helpers/interface/event.interface'
-import useUserStore from '@/helpers/store/user-store'
-import { useResponsive } from '@/hooks/use-responsive'
-import { EventImpl } from '@fullcalendar/core/internal'
+import React, { useEffect, useState } from 'react'
 import {
 	Avatar,
 	Box,
@@ -15,10 +9,18 @@ import {
 	ScrollArea,
 	Text,
 } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
+
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
+import { EventImpl } from '@fullcalendar/core/internal'
 import { capitalize } from 'lodash'
+
+import { apiClient } from '@/shared/api/axios'
+import { MemberRole, InvitationStatus } from '@/shared/enum'
+import { IEvent, IEventMember } from '@/shared/interface'
+import useUserStore from '@/shared/store/user-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import EventMemberDelete from './event-member-delete'
 import EditEventRoleSelect from './event-member-role-select'
 
