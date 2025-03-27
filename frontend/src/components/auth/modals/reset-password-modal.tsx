@@ -152,4 +152,4 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 	)
 }
 
-export default ResetPasswordModal
+export default React.memo(ResetPasswordModal)

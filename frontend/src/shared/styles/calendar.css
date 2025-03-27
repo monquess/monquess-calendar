@@ -108,17 +108,14 @@
 
 .fc-scrollgrid {
 	border-radius: 12px;
-	overflow: hidden;
 }
 
 .fc-col-header {
 	border-radius: 12px 12px 0 0;
-	overflow: hidden;
 }
 
 .fc-daygrid-day {
 	border-radius: 8px;
-	overflow: hidden;
 }
 
 .fc-event {

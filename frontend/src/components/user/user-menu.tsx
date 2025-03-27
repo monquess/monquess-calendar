@@ -4,9 +4,10 @@ import { Avatar, Indicator, Menu } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 
 import { CiLogout } from 'react-icons/ci'
-import { GoTrash, GoUpload } from 'react-icons/go'
+import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
 import { FaUserPlus } from 'react-icons/fa'
+import { LuImagePlus } from 'react-icons/lu'
 
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
@@ -147,7 +148,7 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 						Invites
 					</Menu.Item>
 					<Menu.Item
-						leftSection={<GoUpload size={14} />}
+						leftSection={<LuImagePlus size={14} />}
 						onClick={() => openModal('avatar')}
 					>
 						Update avatar

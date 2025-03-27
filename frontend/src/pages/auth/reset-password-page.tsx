@@ -10,7 +10,7 @@ import Header from '@/components/general/header'
 
 import { useResponsive } from '@/hooks/use-responsive'
 
-const ResetPasswordPage: React.FC = React.memo(() => {
+const ResetPasswordPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 
@@ -54,6 +54,6 @@ const ResetPasswordPage: React.FC = React.memo(() => {
 			<Footer />
 		</Box>
 	)
-})
+}
 
-export default ResetPasswordPage
+export default React.memo(ResetPasswordPage)

@@ -23,7 +23,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 import VerificationCodeModal from './modals/verify-code-modal'
 
-const RegisterForm: React.FC = React.memo(() => {
+const RegisterForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -206,6 +206,6 @@ const RegisterForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default RegisterForm
+export default React.memo(RegisterForm)

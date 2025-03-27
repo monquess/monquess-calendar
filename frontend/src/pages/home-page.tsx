@@ -19,13 +19,13 @@ import { showNotification } from '@/shared/helpers/show-notification'
 import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
 
-import EventPopover from '@/components/event/event-popover'
+import EventModal from '@/components/event/modals/event-modal'
 import CreateEventModal from '@/components/event/modals/create-event-modal'
 import Navbar from '@/components/general/navbar/navbar'
 
 import '@/shared/styles/calendar.css'
 
-const HomePage: React.FC = React.memo(() => {
+const HomePage: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const { calendars } = useCalendarStore()
 	const calendarRef = useRef<FullCalendar | null>(null)
@@ -138,9 +138,9 @@ const HomePage: React.FC = React.memo(() => {
 				}}
 				calendarRef={calendarRef}
 			/>
-			<EventPopover calendarRef={calendarRef} />
+			<EventModal calendarRef={calendarRef} />
 		</React.Fragment>
 	)
-})
+}
 
-export default HomePage
+export default React.memo(HomePage)

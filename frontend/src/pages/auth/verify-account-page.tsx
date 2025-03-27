@@ -10,7 +10,7 @@ import Header from '@/components/general/header'
 
 import { useResponsive } from '@/hooks/use-responsive'
 
-const VerifyPage: React.FC = React.memo(() => {
+const VerifyPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 
@@ -54,6 +54,6 @@ const VerifyPage: React.FC = React.memo(() => {
 			<Footer />
 		</Box>
 	)
-})
+}
 
-export default VerifyPage
+export default React.memo(VerifyPage)

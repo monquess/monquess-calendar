@@ -39,4 +39,4 @@ const GoogleRecaptchaModal: React.FC<GoogleRecaptchaModalProps> = ({
 	)
 }
 
-export default GoogleRecaptchaModal
+export default React.memo(GoogleRecaptchaModal)

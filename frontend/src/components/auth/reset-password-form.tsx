@@ -12,7 +12,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 
 import ResetPasswordModal from './modals/reset-password-modal'
 
-const PasswordResetForm: React.FC = React.memo(() => {
+const PasswordResetForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -107,6 +107,6 @@ const PasswordResetForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default PasswordResetForm
+export default React.memo(PasswordResetForm)

@@ -9,7 +9,7 @@ import LoginForm from '@/components/auth/login-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
 
-const LoginPage: React.FC = React.memo(() => {
+const LoginPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 	const { user } = useUserStore()
@@ -51,6 +51,6 @@ const LoginPage: React.FC = React.memo(() => {
 			<Footer />
 		</Box>
 	)
-})
+}
 
-export default LoginPage
+export default React.memo(LoginPage)

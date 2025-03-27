@@ -19,52 +19,57 @@ interface DeleteEventModalProps {
 	calendarRef: React.RefObject<FullCalendar | null>
 }
 
-const DeleteEventModal: React.FC<DeleteEventModalProps> = React.memo(
-	({ event, opened, onClose, role, calendarRef }) => {
-		const { isMobile } = useResponsive()
-		const { user } = useUserStore()
+const DeleteEventModal: React.FC<DeleteEventModalProps> = ({
+	event,
+	opened,
+	onClose,
+	role,
+	calendarRef,
+}) => {
+	const { isMobile } = useResponsive()
+	const { user } = useUserStore()
 
-		const handleClick = async () => {
-			try {
-				if (role === MemberRole.OWNER) {
-					await apiClient.delete(`/events/${event?.id}`)
-				} else {
-					await apiClient.delete(`/events/${event?.id}/members/${user?.id}`)
-				}
-
-				calendarRef.current?.getApi().getEventById(event.id)?.remove()
-				showNotification(
-					'Event deletion',
-					'The event has been successfully deleted.',
-					'green'
-				)
-			} catch (error) {
-				if (error instanceof ApiError && error.response) {
-					showNotification('Event deletion error', error.message, 'red')
-				}
-			} finally {
-				onClose()
+	const handleClick = async () => {
+		try {
+			if (role === MemberRole.OWNER) {
+				await apiClient.delete(`/events/${event?.id}`)
+			} else {
+				await apiClient.delete(`/events/${event?.id}/members/${user?.id}`)
 			}
+
+			calendarRef.current?.getApi().getEventById(event.id)?.remove()
+			showNotification(
+				'Event deletion',
+				'The event has been successfully deleted.',
+				'green'
+			)
+		} catch (error) {
+			if (error instanceof ApiError && error.response) {
+				showNotification('Event deletion error', error.message, 'red')
+			}
+		} finally {
+			onClose()
 		}
-
-		return (
-			<Modal
-				opened={opened}
-				onClose={onClose}
-				title="Delete event"
-				size={isMobile ? 'sm' : 'md'}
-				centered
-				closeOnClickOutside={false}
-			>
-				<Stack pos="relative">
-					<Text>Are you sure to delete '{event.title}' event?</Text>
-					<Button variant="outline" onClick={handleClick}>
-						Delete event
-					</Button>
-				</Stack>
-			</Modal>
-		)
 	}
-)
 
-export default DeleteEventModal
+	return (
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title="Delete event"
+			size={isMobile ? 'sm' : 'md'}
+			centered
+			closeOnClickOutside={false}
+			zIndex={1100}
+		>
+			<Stack pos="relative">
+				<Text>Are you sure to delete '{event.title}' event?</Text>
+				<Button variant="outline" onClick={handleClick}>
+					Delete event
+				</Button>
+			</Stack>
+		</Modal>
+	)
+}
+
+export default React.memo(DeleteEventModal)

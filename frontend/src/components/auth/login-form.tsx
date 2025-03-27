@@ -24,7 +24,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
-const LoginForm: React.FC = React.memo(() => {
+const LoginForm: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState<boolean>(false)
@@ -171,6 +171,6 @@ const LoginForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default LoginForm
+export default React.memo(LoginForm)

@@ -7,7 +7,7 @@ import Header from '@/components/general/header'
 
 import { useResponsive } from '@/hooks/use-responsive'
 
-const RegisterPage: React.FC = React.memo(() => {
+const RegisterPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 
 	return (
@@ -46,6 +46,6 @@ const RegisterPage: React.FC = React.memo(() => {
 			<Footer />
 		</Paper>
 	)
-})
+}
 
-export default RegisterPage
+export default React.memo(RegisterPage)

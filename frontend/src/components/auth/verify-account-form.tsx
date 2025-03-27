@@ -12,7 +12,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 
 import VerificationCodeModal from './modals/verify-code-modal'
 
-const VerifyAccountForm: React.FC = React.memo(() => {
+const VerifyAccountForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -106,6 +106,6 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default VerifyAccountForm
+export default React.memo(VerifyAccountForm)

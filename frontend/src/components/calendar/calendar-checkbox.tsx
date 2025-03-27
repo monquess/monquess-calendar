@@ -20,7 +20,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 
 import CalendarMenu from './calendar-menu'
 
-const CalendarCheckbox: React.FC = React.memo(() => {
+const CalendarCheckbox: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const { calendars, toggleCalendar, setCalendars } = useCalendarStore()
 
@@ -117,6 +117,6 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 			</ScrollArea>
 		</Stack>
 	)
-})
+}
 
-export default CalendarCheckbox
+export default React.memo(CalendarCheckbox)

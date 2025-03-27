@@ -134,4 +134,4 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 	)
 }
 
-export default VerificationCodeModal
+export default React.memo(VerificationCodeModal)

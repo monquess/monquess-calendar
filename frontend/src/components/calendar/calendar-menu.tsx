@@ -19,7 +19,7 @@ interface CalendarMenuProps {
 	calendar: ICalendar
 }
 
-const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
+const CalendarMenu: React.FC<CalendarMenuProps> = ({ calendar }) => {
 	const [openUpdateModal, setUpdateModal] = useState(false)
 	const [openDeleteModal, setDeleteModal] = useState(false)
 	const [openInviteModal, setInviteModal] = useState(false)
@@ -88,6 +88,6 @@ const CalendarMenu: React.FC<CalendarMenuProps> = React.memo(({ calendar }) => {
 			/>
 		</>
 	)
-})
+}
 
-export default CalendarMenu
+export default React.memo(CalendarMenu)

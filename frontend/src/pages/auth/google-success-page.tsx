@@ -38,4 +38,4 @@ const GoogleAuthSuccessPage: React.FC = () => {
 	return <LoadingOverlay visible zIndex={1000} />
 }
 
-export default GoogleAuthSuccessPage
+export default React.memo(GoogleAuthSuccessPage)
