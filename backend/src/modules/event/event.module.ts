@@ -5,6 +5,7 @@ import { PrismaModule } from '@modules/prisma/prisma.module';
 import { CalendarModule } from '@modules/calendar/calendar.module';
 import { NotificationModule } from '@modules/notification/notification.module';
 import { HttpModule } from '@nestjs/axios';
+import { UserModule } from '@modules/user/user.module';
 
 @Module({
 	imports: [
@@ -12,6 +13,7 @@ import { HttpModule } from '@nestjs/axios';
 		forwardRef(() => CalendarModule),
 		NotificationModule,
 		HttpModule,
+		UserModule,
 	],
 	providers: [EventService],
 	controllers: [EventController],

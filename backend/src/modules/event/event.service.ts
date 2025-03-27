@@ -33,6 +33,8 @@ import { CreateReminderDto } from './dto/create-reminder.dto';
 import { NotificationService } from '@modules/notification/notification.service';
 import { ReminderNotification } from '@modules/notification/notifications/reminder.notification';
 import { ReminderEntity } from './entities/reminder.entity';
+import { UserService } from '@modules/user/user.service';
+import { EventInvitationNotification } from '@modules/notification/notifications/event-invitation.notification';
 
 @Injectable()
 export class EventService {
@@ -41,7 +43,8 @@ export class EventService {
 		private readonly calendarService: CalendarService,
 		private readonly notificationService: NotificationService,
 		private readonly configService: ConfigService<EnvironmentVariables, true>,
-		private readonly httpService: HttpService
+		private readonly httpService: HttpService,
+		private readonly userService: UserService
 	) {}
 
 	async findById(id: number, currentUser: CurrentUser): Promise<EventEntity> {
@@ -288,6 +291,7 @@ export class EventService {
 		currentUser: CurrentUser
 	): Promise<EventMemberEntity> {
 		const event = await this.findById(eventId, currentUser);
+		const targetUser = await this.userService.findById(userId);
 
 		const membership = event.members?.find(
 			(user) => user.userId === currentUser.id
@@ -300,7 +304,7 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		return this.prisma.eventMember.create({
+		const newEventMember = await this.prisma.eventMember.create({
 			data: {
 				eventId: event.id,
 				userId: userId,
@@ -308,6 +312,16 @@ export class EventService {
 				status: InvitationStatus.INVITED,
 			},
 		});
+
+		await this.notificationService.send(
+			targetUser,
+			new EventInvitationNotification({
+				username: targetUser.username,
+				eventName: event.name,
+			})
+		);
+
+		return newEventMember;
 	}
 
 	async updateMemberStatus(
