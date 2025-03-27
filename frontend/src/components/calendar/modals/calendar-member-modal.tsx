@@ -9,7 +9,7 @@ import {
 	ScrollArea,
 	Text,
 } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
@@ -45,6 +45,10 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = ({
 	const { isMobile } = useResponsive()
 	const [users, setUsers] = useState<ICalendarMember[]>([])
 	const [role, setRole] = useState<MemberRole>()
+
+	const onDelete = useCallback((userId: number) => {
+		setUsers((prev) => prev.filter((user) => user.userId !== userId))
+	}, [])
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -109,7 +113,7 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = ({
 									<CalendarMemberDelete
 										user={user}
 										calendar={calendar}
-										onClose={onClose}
+										onDelete={onDelete}
 									/>
 								)}
 						</Flex>

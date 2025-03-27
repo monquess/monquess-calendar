@@ -11,25 +11,26 @@ import { showNotification } from '@/shared/helpers/show-notification'
 interface CalendarMemberDeleteProps {
 	user: ICalendarMember
 	calendar: ICalendar
-	onClose: () => void
+	onDelete: (userId: number) => void
 }
 
 const CalendarMemberDelete: React.FC<CalendarMemberDeleteProps> = ({
 	user,
 	calendar,
-	onClose,
+	onDelete,
 }) => {
 	const [opened, setOpened] = useState(false)
 
 	const handleClick = async () => {
 		try {
 			await apiClient.delete(`calendars/${calendar.id}/users/${user.userId}`)
+
 			showNotification(
 				'Member delete',
 				'Members have been successfully delete from the calendar.',
 				'green'
 			)
-			onClose()
+			onDelete(user.userId)
 		} catch (error) {
 			if (error instanceof ApiError && error.response) {
 				showNotification('Member deletion error', error.message, 'red')

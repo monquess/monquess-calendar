@@ -160,6 +160,7 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 			<DeleteEventModal
 				opened={deleteModal}
 				onClose={() => {
+					setOpened(false)
 					setDeleteModal(false)
 				}}
 				event={selectedEvent}

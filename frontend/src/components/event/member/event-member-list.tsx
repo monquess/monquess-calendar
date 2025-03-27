@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
 	Avatar,
 	Box,
@@ -26,7 +26,6 @@ import EditEventRoleSelect from './event-member-role-select'
 
 interface EventMemberListProps {
 	event: EventImpl
-	onClose: () => void
 }
 
 const StatusIcons = {
@@ -35,14 +34,15 @@ const StatusIcons = {
 	[InvitationStatus.DECLINED]: <FcCancel />,
 } as const
 
-const EventMemberList: React.FC<EventMemberListProps> = ({
-	event,
-	onClose,
-}) => {
+const EventMemberList: React.FC<EventMemberListProps> = ({ event }) => {
 	const { user: currentUser } = useUserStore()
 	const { isMobile } = useResponsive()
 	const [users, setUsers] = useState<IEventMember[]>([])
 	const [role, setRole] = useState<MemberRole>()
+
+	const onDelete = useCallback((userId: number) => {
+		setUsers((prev) => prev.filter((user) => user.userId !== userId))
+	}, [])
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -95,7 +95,7 @@ const EventMemberList: React.FC<EventMemberListProps> = ({
 								<EventMemberDelete
 									user={user}
 									event={event}
-									onClose={onClose}
+									onDelete={onDelete}
 								/>
 							)}
 					</Flex>

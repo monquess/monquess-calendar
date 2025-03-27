@@ -13,25 +13,26 @@ import { showNotification } from '@/shared/helpers/show-notification'
 interface EventMemberDeleteProps {
 	user: IEventMember
 	event: EventImpl
-	onClose: () => void
+	onDelete: (userId: number) => void
 }
 
 const EventMemberDelete: React.FC<EventMemberDeleteProps> = ({
 	user,
 	event,
-	onClose,
+	onDelete,
 }) => {
 	const [opened, setOpened] = useState(false)
 
 	const handleClick = async () => {
 		try {
 			await apiClient.delete(`event/${event.id}/members/${user.userId}`)
+
 			showNotification(
 				'Member delete',
 				'Members have been successfully delete from the event.',
 				'green'
 			)
-			onClose()
+			onDelete(user.userId)
 		} catch (error) {
 			if (error instanceof ApiError && error.response) {
 				showNotification('Member deletion error', error.message, 'red')

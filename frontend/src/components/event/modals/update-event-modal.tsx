@@ -13,8 +13,7 @@ import {
 import { DateInput } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
 
-import { FaPaintRoller } from 'react-icons/fa6'
-import { IoMdTime } from 'react-icons/io'
+import { IoMdTime, IoIosColorPalette } from 'react-icons/io'
 import { MdOutlineSubtitles } from 'react-icons/md'
 
 import FullCalendar from '@fullcalendar/react'
@@ -151,7 +150,7 @@ const UpdateEventModal: React.FC<UpdateEventModalProps> = ({
 							/>
 						</Grid.Col>
 						<Grid.Col span={1}>
-							<FaPaintRoller size={20} />
+							<IoIosColorPalette size={20} />
 						</Grid.Col>
 						<Grid.Col span={6}>
 							<ColorInput

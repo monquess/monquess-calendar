@@ -117,15 +117,20 @@ const HomePage: React.FC = () => {
 							if (event.extendedProps.type === EventType.HOLIDAY) {
 								revert()
 							} else {
-								try {
-									await apiClient.patch(`events/${event.id}`, {
-										startDate: event.startStr,
-										endDate: event.end ? event.endStr : undefined,
-									})
-								} catch {
-									showNotification('Event', 'Error changing event time', 'red')
-									revert()
-								}
+								if (event.start)
+									try {
+										await apiClient.patch(`events/${event.id}`, {
+											startDate: event.start.toISOString(),
+											endDate: event.end ? event.end.toISOString() : undefined,
+										})
+									} catch {
+										showNotification(
+											'Event',
+											'Error changing event time',
+											'red'
+										)
+										revert()
+									}
 							}
 						}}
 					/>

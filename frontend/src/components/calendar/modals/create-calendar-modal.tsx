@@ -38,12 +38,12 @@ const CreateCalendarModal: React.FC<CreateCalendarModalProps> = ({
 			closeOnClickOutside={false}
 			zIndex={1000}
 		>
-			<Stack pos="relative">
+			<Stack pos="relative" mih={375}>
 				<Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="unset">
 					Create a calendar for yourself or your team. Choose a name, add a
 					short description, and pick a color to make it uniquely yours!
 				</Text>
-				<Tabs variant="none" value={value} onChange={setValue}>
+				<Tabs variant="none" value={value} onChange={setValue} mih={'100%'}>
 					<Tabs.List
 						ref={setRootRef}
 						className={classes.list}
@@ -72,10 +72,10 @@ const CreateCalendarModal: React.FC<CreateCalendarModalProps> = ({
 							className={classes.indicator}
 						/>
 					</Tabs.List>
-					<Tabs.Panel value="1">
+					<Tabs.Panel value="1" mih={'100%'}>
 						<CreateSharedCalendarForm onClose={onClose} />
 					</Tabs.Panel>
-					<Tabs.Panel value="2">
+					<Tabs.Panel value="2" mih={'100%'}>
 						<CreateHolidaysCalendarForm onClose={onClose} />
 					</Tabs.Panel>
 				</Tabs>

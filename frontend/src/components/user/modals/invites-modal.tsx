@@ -10,7 +10,8 @@ import {
 } from '@mantine/core'
 
 import { InvitationStatus } from '@/shared/enum'
-import { ICalendar } from '@/shared/interface'
+import { ICalendar, IEvent } from '@/shared/interface'
+import { useResponsive } from '@/hooks/use-responsive'
 
 import classes from '@/shared/styles/modal.module.css'
 
@@ -19,6 +20,7 @@ interface InvitesModalProps {
 	onClose: () => void
 	onClick: (calendar: ICalendar, status: InvitationStatus) => void
 	calendars: ICalendar[]
+	events: IEvent[]
 }
 
 const InvitesModal: React.FC<InvitesModalProps> = ({
@@ -26,7 +28,9 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 	onClose,
 	onClick,
 	calendars,
+	events,
 }) => {
+	const { isMobile } = useResponsive()
 	const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
 	const [value, setValue] = useState<string | null>('1')
 	const [controlsRefs, setControlsRefs] = useState<
@@ -42,12 +46,12 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 			opened={opened}
 			onClose={onClose}
 			title="Invites"
-			// size={isMobile ? 'sm' : 'md'}
+			size={isMobile ? 'sm' : 'md'}
 			centered
 			closeOnClickOutside={false}
 			zIndex={1000}
 		>
-			<Stack pos="relative">
+			<Stack pos="relative" mih={200}>
 				<Tabs variant="none" value={value} onChange={setValue}>
 					<Tabs.List
 						ref={setRootRef}
@@ -61,7 +65,7 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 							className={classes.tab}
 							w="50%"
 						>
-							Invites to calendar({calendars.length})
+							Invites to calendar ({calendars.length})
 						</Tabs.Tab>
 						<Tabs.Tab
 							value="2"
@@ -69,7 +73,7 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 							className={classes.tab}
 							w="50%"
 						>
-							Invites to events({calendars.length})
+							Invites to events ({events.length})
 						</Tabs.Tab>
 						<FloatingIndicator
 							target={value ? controlsRefs[value] : null}
@@ -79,68 +83,64 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 					</Tabs.List>
 					<Tabs.Panel value="1">
 						<Stack>
-							<Stack>
-								{calendars.length > 0 ? (
-									calendars.map((calendar) => (
-										<Group key={calendar.id} justify="space-between">
-											<Text>{calendar.name}</Text>
-											<Group>
-												<Button
-													onClick={() =>
-														onClick(calendar, InvitationStatus.ACCEPTED)
-													}
-												>
-													Accept
-												</Button>
-												<Button
-													onClick={() =>
-														onClick(calendar, InvitationStatus.DECLINED)
-													}
-												>
-													Decline
-												</Button>
-											</Group>
+							{calendars.length > 0 ? (
+								calendars.map((calendar) => (
+									<Group key={calendar.id} justify="space-between">
+										<Text>{calendar.name}</Text>
+										<Group>
+											<Button
+												onClick={() =>
+													onClick(calendar, InvitationStatus.ACCEPTED)
+												}
+											>
+												Accept
+											</Button>
+											<Button
+												onClick={() =>
+													onClick(calendar, InvitationStatus.DECLINED)
+												}
+											>
+												Decline
+											</Button>
 										</Group>
-									))
-								) : (
-									<Text>
-										You've not been invited to any calendars or events yet
-									</Text>
-								)}
-							</Stack>
+									</Group>
+								))
+							) : (
+								<Text>
+									You've not been invited to any calendars or events yet
+								</Text>
+							)}
 						</Stack>
 					</Tabs.Panel>
 					<Tabs.Panel value="2">
 						<Stack>
-							<Stack>
-								{calendars.length > 0 ? (
-									calendars.map((calendar) => (
-										<Group key={calendar.id} justify="space-between">
-											<Text>{calendar.name}</Text>
-											<Group>
-												<Button
-													onClick={() =>
-														onClick(calendar, InvitationStatus.ACCEPTED)
-													}
-												>
-													Accept
-												</Button>
-												<Button
-													onClick={() =>
-														onClick(calendar, InvitationStatus.DECLINED)
-													}
-												>
-													Decline
-												</Button>
-											</Group>
+							{events.length > 0 ? (
+								events.map((events) => (
+									<Group key={events.id} justify="space-between">
+										<Text>{events.name}</Text>
+										<Group>
+											<Button
+											// onClick={() =>
+											// 	onClick(calendar, InvitationStatus.ACCEPTED)
+											// }
+											>
+												Accept
+											</Button>
+											<Button
+											// onClick={() =>
+											// 	onClick(calendar, InvitationStatus.DECLINED)
+											// }
+											>
+												Decline
+											</Button>
 										</Group>
-									))
-								) : (
-									<Text>
-										You've not been invited to any calendars or events yet
-									</Text>
-								)}
-							</Stack>
+									</Group>
+								))
+							) : (
+								<Text>
+									You've not been invited to any calendars or events yet
+								</Text>
+							)}
 						</Stack>
 					</Tabs.Panel>
 				</Tabs>

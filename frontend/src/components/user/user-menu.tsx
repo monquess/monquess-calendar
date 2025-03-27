@@ -11,7 +11,7 @@ import { LuImagePlus } from 'react-icons/lu'
 
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
-import { ICalendar } from '@/shared/interface'
+import { ICalendar, IEvent } from '@/shared/interface'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { InvitationStatus } from '@/shared/enum'
 import { showNotification } from '@/shared/helpers/show-notification'
@@ -59,7 +59,8 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 		avatar: false,
 		invites: false,
 	})
-	const [invites, setInvites] = useState<ICalendar[]>([])
+	const [calendarInvites, setCalendarInvites] = useState<ICalendar[]>([])
+	const [eventInvites, setEventInvites] = useState<IEvent[]>([])
 
 	const openModal = (modal: keyof ModalState) => {
 		dispatch({ type: 'OPEN', modal })
@@ -75,15 +76,23 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 	}
 
 	useEffect(() => {
-		const fetchInvites = async () => {
+		const fetchCalendarInvites = async () => {
 			const { data } = await apiClient.get<ICalendar[]>('/calendars', {
 				params: {
 					status: InvitationStatus.INVITED,
 				},
 			})
-			setInvites(data)
+			setCalendarInvites(data)
 		}
-		fetchInvites()
+		fetchCalendarInvites()
+	}, [])
+
+	useEffect(() => {
+		const fetchEventInvites = async () => {
+			const { data } = await apiClient.get<IEvent[]>('/events/invites')
+			setEventInvites(data)
+		}
+		fetchEventInvites()
 	}, [])
 
 	const handleClick = useCallback(
@@ -98,7 +107,9 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 					addCalendar(calendar)
 				}
 
-				setInvites((prev) => prev.filter((invite) => invite.id !== calendar.id))
+				setCalendarInvites((prev) =>
+					prev.filter((invite) => invite.id !== calendar.id)
+				)
 				showNotification(
 					'Invitation accept',
 					`Invitation has been successfully ${status.toLowerCase()}`,
@@ -119,12 +130,12 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 				<Menu.Target>
 					<Indicator
 						inline
-						disabled={invites.length === 0}
+						disabled={calendarInvites.length + eventInvites.length === 0}
 						processing
 						color="red"
 						size={20}
 						offset={7}
-						label={invites.length}
+						label={calendarInvites.length + eventInvites.length}
 					>
 						<Avatar
 							src={user?.avatar}
@@ -185,7 +196,8 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 				opened={modals.invites}
 				onClose={() => closeModal('invites')}
 				onClick={handleClick}
-				calendars={invites}
+				calendars={calendarInvites}
+				events={eventInvites}
 			/>
 		</React.Fragment>
 	)
