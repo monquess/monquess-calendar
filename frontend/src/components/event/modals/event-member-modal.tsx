@@ -68,7 +68,7 @@ const EventMemberModal: React.FC<EventMemberModalProps> = React.memo(
 							/>
 						</Tabs.List>
 						<Tabs.Panel value="1">
-							<EventMemberList event={event} />
+							<EventMemberList event={event} onClose={onClose} />
 						</Tabs.Panel>
 						<Tabs.Panel value="2">
 							<InviteEventMembersForm onClose={onClose} event={event} />

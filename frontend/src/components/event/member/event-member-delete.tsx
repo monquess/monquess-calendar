@@ -10,10 +10,11 @@ import { MdDelete } from 'react-icons/md'
 interface EventMemberDeleteProps {
 	user: IEventMember
 	event: EventImpl
+	onClose: () => void
 }
 
 const EventMemberDelete: React.FC<EventMemberDeleteProps> = React.memo(
-	({ user, event }) => {
+	({ user, event, onClose }) => {
 		const [opened, setOpened] = useState(false)
 
 		const handleClick = async () => {
@@ -24,6 +25,7 @@ const EventMemberDelete: React.FC<EventMemberDeleteProps> = React.memo(
 					'Members have been successfully delete from the event.',
 					'green'
 				)
+				onClose()
 			} catch (error) {
 				if (error instanceof ApiError && error.response) {
 					showNotification('Member deletion error', error.message, 'red')

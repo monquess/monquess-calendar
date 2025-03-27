@@ -9,10 +9,11 @@ import { MdDelete } from 'react-icons/md'
 interface CalendarMemberDeleteProps {
 	user: IUserMember
 	calendar: ICalendar
+	onClose: () => void
 }
 
 const CalendarMemberDelete: React.FC<CalendarMemberDeleteProps> = React.memo(
-	({ user, calendar }) => {
+	({ user, calendar, onClose }) => {
 		const [opened, setOpened] = useState(false)
 
 		const handleClick = async () => {
@@ -23,6 +24,7 @@ const CalendarMemberDelete: React.FC<CalendarMemberDeleteProps> = React.memo(
 					'Members have been successfully delete from the calendar.',
 					'green'
 				)
+				onClose()
 			} catch (error) {
 				if (error instanceof ApiError && error.response) {
 					showNotification('Member deletion error', error.message, 'red')

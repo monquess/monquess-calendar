@@ -103,7 +103,11 @@ const CalendarMemberModal: React.FC<CalendarMemberModalProps> = React.memo(
 								{user.status !== InvitationStatus.INVITED &&
 									role === MemberRole.OWNER &&
 									user.userId !== currentUser?.id && (
-										<CalendarMemberDelete user={user} calendar={calendar} />
+										<CalendarMemberDelete
+											user={user}
+											calendar={calendar}
+											onClose={onClose}
+										/>
 									)}
 							</Flex>
 							<Divider my={'xs'} />

@@ -1,0 +1,128 @@
+.fc-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+}
+
+@media (max-width: 768px) {
+	.fc-toolbar {
+		flex-direction: row;
+		text-align: center;
+	}
+
+	.fc-toolbar .fc-left,
+	.fc-toolbar .fc-right {
+		width: 100%;
+		justify-content: center;
+		margin-bottom: 5px;
+	}
+
+	.fc-toolbar .fc-center {
+		order: -1;
+		margin-bottom: 10px;
+	}
+}
+
+.fc .fc-button {
+	font-size: 1rem;
+	padding: 8px 12px;
+	background-color: #ffffff;
+	color: #000000;
+	border: 1px solid #d1d1d1;
+	border-radius: 8px;
+}
+
+[data-mantine-color-scheme='dark'] .fc .fc-button {
+	background-color: #1a1a1a;
+	color: #f5f5f5;
+	border: 1px solid #333333;
+}
+
+.fc .fc-button.fc-button-active {
+	background-color: #000000;
+	color: #ffffff;
+	border-color: #000000;
+}
+
+[data-mantine-color-scheme='dark'] .fc .fc-button.fc-button-active {
+	background-color: #abaaaa;
+	color: #000000;
+	border-color: #ffffff;
+}
+
+.fc .fc-button-group {
+	border-radius: 8px;
+	border: 1px solid #d1d1d1;
+}
+
+[data-mantine-color-scheme='dark'] .fc .fc-button-group {
+	border: 1px solid #333333;
+}
+
+.fc .fc-button:hover {
+	background-color: #f0f0f0;
+	color: #000000;
+}
+
+[data-mantine-color-scheme='dark'] .fc .fc-button:hover {
+	background-color: #292929;
+	color: #ffffff;
+}
+
+@media (max-width: 768px) {
+	.fc .fc-button {
+		font-size: 0.8rem;
+		padding: 6px 10px;
+	}
+
+	.fc .fc-toolbar-title {
+		font-size: 1rem;
+		margin: 0px;
+	}
+}
+
+@media (max-width: 480px) {
+	.fc .fc-button {
+		font-size: 0.7rem;
+		padding: 4px 6px;
+	}
+
+	.fc .fc-toolbar-title {
+		font-size: 0.7rem;
+		margin: 0px;
+	}
+}
+
+@media (max-width: 420px) {
+	.fc .fc-button {
+		font-size: 0.5rem;
+		padding: 2px 4px;
+	}
+
+	.fc .fc-toolbar-title {
+		font-size: 0.7rem;
+		margin: 0px;
+	}
+}
+
+.fc-scrollgrid {
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.fc-col-header {
+	border-radius: 12px 12px 0 0;
+	overflow: hidden;
+}
+
+.fc-daygrid-day {
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.fc-event {
+	border-radius: 12px !important;
+	padding: 5px;
+	box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+}

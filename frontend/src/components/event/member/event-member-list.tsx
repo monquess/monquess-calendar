@@ -24,6 +24,7 @@ import EditEventRoleSelect from './event-member-role-select'
 
 interface EventMemberListProps {
 	event: EventImpl
+	onClose: () => void
 }
 
 const StatusIcons = {
@@ -33,7 +34,7 @@ const StatusIcons = {
 } as const
 
 const EventMemberList: React.FC<EventMemberListProps> = React.memo(
-	({ event }) => {
+	({ event, onClose }) => {
 		const { user: currentUser } = useUserStore()
 		const { isMobile } = useResponsive()
 		const [users, setUsers] = useState<IEventMember[]>([])
@@ -87,7 +88,11 @@ const EventMemberList: React.FC<EventMemberListProps> = React.memo(
 							{user.status !== InvitationStatus.INVITED &&
 								role === MemberRole.OWNER &&
 								user.userId !== currentUser?.id && (
-									<EventMemberDelete user={user} event={event} />
+									<EventMemberDelete
+										user={user}
+										event={event}
+										onClose={onClose}
+									/>
 								)}
 						</Flex>
 						<Divider my={'xs'} />
