@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
-import { Modal, FloatingIndicator, Stack, Tabs } from '@mantine/core'
+import { Divider, Modal, Stack } from '@mantine/core'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { EventImpl } from '@fullcalendar/core/internal'
 
-import classes from '@/shared/styles/modal.module.css'
 import { useResponsive } from '@/hooks/use-responsive'
 
+import { apiClient } from '@/shared/api/axios'
+import { IEvent } from '@/shared/interface'
+import { IEventMember } from '@/shared/interface/event-member.interface'
 import InviteEventMembersForm from '../forms/invite-member-form'
 import EventMemberList from '../member/event-member-list'
 
@@ -21,16 +23,24 @@ const EventMemberModal: React.FC<EventMemberModalProps> = ({
 	event,
 }) => {
 	const { isMobile } = useResponsive()
-	const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
-	const [value, setValue] = useState<string | null>('1')
-	const [controlsRefs, setControlsRefs] = useState<
-		Record<string, HTMLButtonElement | null>
-	>({})
-	const setControlRef = (val: string) => (node: HTMLButtonElement) => {
-		controlsRefs[val] = node
-		setControlsRefs(controlsRefs)
-	}
+	const [users, setUsers] = useState<IEventMember[]>([])
 
+	const onDelete = useCallback((userId: number) => {
+		setUsers((prev) => prev.filter((user) => user.userId !== userId))
+	}, [])
+
+	const onInvite = useCallback((newUsers: IEventMember[]) => {
+		setUsers((prevUsers) => [...prevUsers, ...newUsers])
+	}, [])
+
+	useEffect(() => {
+		const fetchUsers = async () => {
+			const { data } = await apiClient.get<IEvent>(`events/${event.id}`)
+			setUsers(data.members)
+		}
+
+		fetchUsers()
+	}, [event.id])
 	return (
 		<Modal
 			opened={opened}
@@ -42,42 +52,9 @@ const EventMemberModal: React.FC<EventMemberModalProps> = ({
 			zIndex={1000}
 		>
 			<Stack pos="relative">
-				<Tabs variant="none" value={value} onChange={setValue}>
-					<Tabs.List
-						ref={setRootRef}
-						className={classes.list}
-						pos="relative"
-						justify="space-between"
-					>
-						<Tabs.Tab
-							value="1"
-							ref={setControlRef('1')}
-							className={classes.tab}
-							w="50%"
-						>
-							Members
-						</Tabs.Tab>
-						<Tabs.Tab
-							value="2"
-							ref={setControlRef('2')}
-							className={classes.tab}
-							w="50%"
-						>
-							Invite member
-						</Tabs.Tab>
-						<FloatingIndicator
-							target={value ? controlsRefs[value] : null}
-							parent={rootRef}
-							className={classes.indicator}
-						/>
-					</Tabs.List>
-					<Tabs.Panel value="1">
-						<EventMemberList event={event} />
-					</Tabs.Panel>
-					<Tabs.Panel value="2">
-						<InviteEventMembersForm onClose={onClose} event={event} />
-					</Tabs.Panel>
-				</Tabs>
+				<InviteEventMembersForm event={event} onInvite={onInvite} />
+				<Divider />
+				<EventMemberList event={event} onDelete={onDelete} users={users} />
 			</Stack>
 		</Modal>
 	)

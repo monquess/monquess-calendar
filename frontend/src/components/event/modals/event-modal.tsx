@@ -1,5 +1,5 @@
+import { ActionIcon, Divider, Group, Modal, Stack, Text } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
-import { Modal, ActionIcon, Divider, Group, Stack, Text } from '@mantine/core'
 
 import { FaCircle } from 'react-icons/fa'
 import { FiEdit } from 'react-icons/fi'
@@ -17,10 +17,10 @@ import { IEventMember } from '@/shared/interface'
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
 
-import DeleteEventModal from './delete-event-modal'
-import UpdateEventModal from './update-event-modal'
-import EventMemberModal from './event-member-modal'
 import { useResponsive } from '@/hooks/use-responsive'
+import DeleteEventModal from './delete-event-modal'
+import EventMemberModal from './event-member-modal'
+import UpdateEventModal from './update-event-modal'
 
 interface EventModalProps {
 	calendarRef: React.RefObject<FullCalendar | null>
