@@ -1,24 +1,27 @@
-import React, { useState } from 'react'
 import {
-	Button,
+	Divider,
 	FloatingIndicator,
-	Group,
 	Modal,
+	ScrollArea,
 	Stack,
 	Tabs,
 	Text,
 } from '@mantine/core'
+import React, { useState } from 'react'
 
+import { useResponsive } from '@/hooks/use-responsive'
 import { InvitationStatus } from '@/shared/enum'
 import { ICalendar, IEvent } from '@/shared/interface'
-import { useResponsive } from '@/hooks/use-responsive'
 
 import classes from '@/shared/styles/modal.module.css'
+import InviteCalendarCard from '../card/invite-calendar-card'
+import EventInviteCard from '../card/invite-event-card'
 
 interface InvitesModalProps {
 	opened: boolean
 	onClose: () => void
-	onClick: (calendar: ICalendar, status: InvitationStatus) => void
+	onClickCalendar: (calendar: ICalendar, status: InvitationStatus) => void
+	onClickEvent: (event: IEvent, status: InvitationStatus) => void
 	calendars: ICalendar[]
 	events: IEvent[]
 }
@@ -26,7 +29,8 @@ interface InvitesModalProps {
 const InvitesModal: React.FC<InvitesModalProps> = ({
 	opened,
 	onClose,
-	onClick,
+	onClickCalendar,
+	onClickEvent,
 	calendars,
 	events,
 }) => {
@@ -81,67 +85,35 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 							className={classes.indicator}
 						/>
 					</Tabs.List>
+					<Divider mb="md" />
 					<Tabs.Panel value="1">
-						<Stack>
+						<ScrollArea h={175}>
 							{calendars.length > 0 ? (
 								calendars.map((calendar) => (
-									<Group key={calendar.id} justify="space-between">
-										<Text>{calendar.name}</Text>
-										<Group>
-											<Button
-												onClick={() =>
-													onClick(calendar, InvitationStatus.ACCEPTED)
-												}
-											>
-												Accept
-											</Button>
-											<Button
-												onClick={() =>
-													onClick(calendar, InvitationStatus.DECLINED)
-												}
-											>
-												Decline
-											</Button>
-										</Group>
-									</Group>
+									<InviteCalendarCard
+										calendar={calendar}
+										onClick={onClickCalendar}
+									/>
 								))
 							) : (
 								<Text>
 									You've not been invited to any calendars or events yet
 								</Text>
 							)}
-						</Stack>
+						</ScrollArea>
 					</Tabs.Panel>
 					<Tabs.Panel value="2">
-						<Stack>
+						<ScrollArea h={175}>
 							{events.length > 0 ? (
 								events.map((events) => (
-									<Group key={events.id} justify="space-between">
-										<Text>{events.name}</Text>
-										<Group>
-											<Button
-											// onClick={() =>
-											// 	onClick(calendar, InvitationStatus.ACCEPTED)
-											// }
-											>
-												Accept
-											</Button>
-											<Button
-											// onClick={() =>
-											// 	onClick(calendar, InvitationStatus.DECLINED)
-											// }
-											>
-												Decline
-											</Button>
-										</Group>
-									</Group>
+									<EventInviteCard event={events} onClick={onClickEvent} />
 								))
 							) : (
 								<Text>
 									You've not been invited to any calendars or events yet
 								</Text>
 							)}
-						</Stack>
+						</ScrollArea>
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
