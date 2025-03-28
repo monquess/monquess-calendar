@@ -68,7 +68,6 @@ export class EventEntity {
 	endDate: Date | null;
 
 	members?: EventMemberEntity[];
-	members?: EventMemberEntity[];
 
 	calendar?: {
 		users: CalendarMemberEntity[];
