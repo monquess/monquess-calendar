@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react'
 import {
 	Button,
 	Checkbox,
@@ -15,6 +14,7 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { IoMdTime } from 'react-icons/io'
 import { IoCalendar } from 'react-icons/io5'
@@ -23,17 +23,17 @@ import { MdNotificationsActive, MdOutlineSubtitles } from 'react-icons/md'
 import { DateSelectArg } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 
+import { useResponsive } from '@/hooks/use-responsive'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { CalendarType, EventType, MemberRole } from '@/shared/enum'
-import { ICalendar, IEvent } from '@/shared/interface'
 import { showNotification } from '@/shared/helpers/show-notification'
+import { ICalendar, IEvent } from '@/shared/interface'
 import useCalendarStore from '@/shared/store/calendar-store'
 import { createEventSchema } from '@/shared/validations'
-import { useResponsive } from '@/hooks/use-responsive'
 
-import RemindersBox from '../reminders-box'
-import DatetimeInput from '../datetime-input'
 import { capitalize } from 'lodash'
+import DatetimeInput from '../datetime-input'
+import RemindersBox from '../reminders-box'
 
 const eventTypes = Object.entries(EventType)
 	.filter(([type]) => type != EventType.HOLIDAY)
@@ -139,7 +139,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 			if (reminders.length > 0) {
 				await Promise.all(
 					reminders.map((reminder) =>
-						apiClient.post(`/events/${event.id}/reminders`, {
+						apiClient.post(`/events/${event.id}/reminder`, {
 							time: reminderToDate(reminder, new Date(event.startDate)),
 						})
 					)

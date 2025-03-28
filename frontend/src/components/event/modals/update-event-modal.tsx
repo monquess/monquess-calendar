@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
 import {
 	Button,
 	Checkbox,
@@ -14,21 +13,22 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import React, { useEffect, useState } from 'react'
 
-import { IoMdTime, IoIosColorPalette } from 'react-icons/io'
+import { IoIosColorPalette, IoMdTime } from 'react-icons/io'
 import { MdOutlineSubtitles } from 'react-icons/md'
 
-import FullCalendar from '@fullcalendar/react'
 import { EventImpl } from '@fullcalendar/core/internal'
+import FullCalendar from '@fullcalendar/react'
 
+import { useResponsive } from '@/hooks/use-responsive'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { EventType } from '@/shared/enum'
-import { IEvent } from '@/shared/interface'
 import { showNotification } from '@/shared/helpers/show-notification'
-import { mapEvent } from '@/shared/helpers/map-event'
+import { IEvent } from '@/shared/interface'
 import { createEventSchema } from '@/shared/validations'
-import { useResponsive } from '@/hooks/use-responsive'
 
+import { mapEventToInput } from '@/shared/helpers/map-event'
 import { capitalize } from 'lodash'
 import DatetimeInput from '../datetime-input'
 
@@ -69,7 +69,7 @@ const UpdateEventModal: React.FC<UpdateEventModalProps> = ({
 			)
 
 			calendarRef.current?.getApi().getEventById(event.id)?.remove()
-			calendarRef.current?.getApi().addEvent(mapEvent(data))
+			calendarRef.current?.getApi().addEvent(mapEventToInput(data))
 			form.reset()
 			showNotification(
 				'Event update',
