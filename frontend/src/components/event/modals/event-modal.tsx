@@ -1,4 +1,12 @@
-import { ActionIcon, Divider, Group, Modal, Stack, Text } from '@mantine/core'
+import {
+	ActionIcon,
+	Divider,
+	Group,
+	Modal,
+	Pill,
+	Stack,
+	Text,
+} from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 
 import { FaCircle } from 'react-icons/fa'
@@ -12,17 +20,17 @@ import { EventClickArg } from '@fullcalendar/core'
 import { EventImpl } from '@fullcalendar/core/internal'
 import FullCalendar from '@fullcalendar/react'
 
+import { useResponsive } from '@/hooks/use-responsive'
 import { EventType, MemberRole } from '@/shared/enum'
+import { formatEventDate } from '@/shared/helpers/format-event-date'
 import { ICalendar, ICalendarMember, IEventMember } from '@/shared/interface'
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
-import { formatEventDate } from '@/shared/helpers/format-event-date'
-import { useResponsive } from '@/hooks/use-responsive'
 
+import { apiClient } from '@/shared/api/axios'
 import DeleteEventModal from './delete-event-modal'
 import EventMemberModal from './event-member-modal'
 import UpdateEventModal from './update-event-modal'
-import { apiClient } from '@/shared/api/axios'
 
 interface EventModalProps {
 	calendarRef: React.RefObject<FullCalendar | null>
@@ -136,6 +144,10 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 						<Text size="lg" fw={600}>
 							{selectedEvent.title}
 						</Text>
+						<Pill>
+							{selectedEvent.extendedProps.type.charAt(0).toUpperCase() +
+								selectedEvent.extendedProps.type.toLowerCase().slice(1)}
+						</Pill>
 					</Group>
 					<Group align="start">
 						<Stack gap={2}>
