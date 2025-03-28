@@ -1,6 +1,6 @@
+import { Box, Paper, Text, Title } from '@mantine/core'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Paper, Text, Title } from '@mantine/core'
 
 import { FaArrowLeft } from 'react-icons/fa'
 
@@ -16,7 +16,7 @@ const VerifyPage: React.FC = () => {
 
 	return (
 		<Box h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',

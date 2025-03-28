@@ -1,8 +1,8 @@
-import React from 'react'
 import { Box, Paper, Text, Title } from '@mantine/core'
+import React from 'react'
 
-import { useNavigate } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 import PasswordResetForm from '@/components/auth/reset-password-form'
 import Footer from '@/components/general/footer'
@@ -16,7 +16,7 @@ const ResetPasswordPage: React.FC = () => {
 
 	return (
 		<Box h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',
