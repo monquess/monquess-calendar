@@ -198,7 +198,7 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 					<Menu.Item
 						color="red"
 						leftSection={<GoTrash size={14} />}
-						onClick={() => openModal('invites')}
+						onClick={() => openModal('delete')}
 					>
 						Delete account
 					</Menu.Item>
