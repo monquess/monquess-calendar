@@ -1,8 +1,9 @@
+import React from 'react'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
 import { Button, Container, Group, Stack, Text, Title } from '@mantine/core'
 import { motion } from 'framer-motion'
-import React from 'react'
+
 import { FaCalendarAlt, FaCheckCircle, FaRocket } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 

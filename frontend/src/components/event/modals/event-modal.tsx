@@ -171,7 +171,10 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 			/>
 			<UpdateEventModal
 				opened={updateModal}
-				onClose={() => setUpdateModal(false)}
+				onClose={() => {
+					setOpened(false)
+					setUpdateModal(false)
+				}}
 				event={selectedEvent}
 				calendarRef={calendarRef}
 			/>

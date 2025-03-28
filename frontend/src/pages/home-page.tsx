@@ -14,7 +14,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { apiClient } from '@/shared/api/axios'
 import { EventType } from '@/shared/enum'
 import { IEvent } from '@/shared/interface'
-import { mapEvent } from '@/shared/helpers/map-event'
+import { mapEventToInput } from '@/shared/helpers/map-event'
 import { showNotification } from '@/shared/helpers/show-notification'
 import useCalendarStore from '@/shared/store/calendar-store'
 import { useResponsive } from '@/hooks/use-responsive'
@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
 					})
 				)
 			)
-			successCallback(responses.flatMap((r) => r.data).map(mapEvent))
+			successCallback(responses.flatMap((r) => r.data).map(mapEventToInput))
 		} catch (error) {
 			failureCallback(error as Error)
 		}

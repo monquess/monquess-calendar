@@ -1,8 +1,11 @@
+import React from 'react'
 import { useResponsive } from '@/hooks/use-responsive'
 import { InvitationStatus } from '@/shared/enum/invitation-status.enum'
+// import { formatEventDate } from '@/shared/helpers/format-event-date'
+// import { mapEventToInput } from '@/shared/helpers/map-event'
 import { IEvent } from '@/shared/interface'
 import { ActionIcon, Card, Flex, Group, HoverCard, Text } from '@mantine/core'
-import React from 'react'
+
 import { FaCalendarAlt, FaCheck, FaTimes } from 'react-icons/fa'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 
@@ -51,9 +54,7 @@ const EventInviteCard: React.FC<EventInviteCardProps> = ({
 								<Text size="xs" c="dimmed">
 									{event.description}
 								</Text>
-								<Text>
-									{event.startDate} - {event.endDate}
-								</Text>
+								{/* <Text>{formatEventDate(mapEventToInput(event))}</Text> */}
 							</HoverCard.Dropdown>
 						</HoverCard>
 					</Flex>
