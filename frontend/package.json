@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@firebase/messaging": "^0.12.17",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -21,8 +22,10 @@
     "@mantine/hooks": "^7.17.1",
     "@mantine/notifications": "^7.17.1",
     "@tabler/icons-react": "^3.31.0",
+    "@types/firebase": "^2.4.32",
     "axios": "^1.8.2",
     "dayjs": "^1.11.13",
+    "firebase": "^11.5.0",
     "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

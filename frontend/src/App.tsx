@@ -9,8 +9,30 @@ import ResetPasswordPage from './pages/auth/reset-password-page'
 import VerifyPage from './pages/auth/verify-account-page'
 import HomePage from './pages/home-page'
 import { theme } from './theme'
+import { useEffect } from 'react'
+import { getToken } from '@firebase/messaging'
+import { messaging } from './helpers/firebase'
+import apiClient from './helpers/axios'
+import { config } from './config/config'
 
 function App() {
+	async function requestPermission() {
+		const permission = await Notification.requestPermission()
+		if (permission === 'granted') {
+			const token = await getToken(messaging, {
+				vapidKey: config.FIREBASE_VAPID_KEY,
+			})
+
+			await apiClient.post('/push/subscribe', { token })
+		} else if (permission === 'denied') {
+			alert('You denied for the notification')
+		}
+	}
+
+	useEffect(() => {
+		requestPermission()
+	}, [])
+
 	return (
 		<MantineProvider defaultColorScheme="auto" theme={theme}>
 			<Notifications />
@@ -26,5 +48,3 @@ function App() {
 }
 
 export default App
-
-//switcha236@gmail.com
