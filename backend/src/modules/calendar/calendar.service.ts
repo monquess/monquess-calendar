@@ -1,6 +1,8 @@
 import { PrismaService } from '@modules/prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
+
 import { CalendarType, InvitationStatus, Role, User } from '@prisma/client';
+
 import {
 	CreateCalendarDto,
 	UpdateCalendarDto,
@@ -10,6 +12,7 @@ import {
 } from './dto';
 import { CalendarEntity } from './entities/calendar.entity';
 import { CalendarMemberEntity } from './entities/calendar-member.entity';
+
 import {
 	CountryCode,
 	COUNTRIES,
@@ -17,6 +20,7 @@ import {
 import { NotificationService } from '@modules/notification/notification.service';
 import { CalendarInvitationNotification } from '@modules/notification/notifications/calendar-invitation.notification';
 import { UserService } from '@modules/user/user.service';
+import { FilteringOptionsDto } from './dto/filtering-option.dto';
 
 @Injectable()
 export class CalendarService {
@@ -26,19 +30,16 @@ export class CalendarService {
 		private readonly userService: UserService
 	) {}
 
-	async findAll(user: User): Promise<CalendarEntity[]> {
+	async findAll(
+		{ status }: FilteringOptionsDto,
+		user: User
+	): Promise<CalendarEntity[]> {
 		return this.prisma.calendar.findMany({
 			where: {
 				users: {
 					some: {
 						userId: user.id,
-					},
-				},
-			},
-			include: {
-				users: {
-					omit: {
-						calendarId: true,
+						status,
 					},
 				},
 			},
@@ -56,29 +57,21 @@ export class CalendarService {
 					},
 				},
 			},
-			include: {
-				users: {
-					omit: {
-						calendarId: true,
-					},
-				},
-			},
 		});
 	}
 
 	async create(
 		currentUser: User,
-		createCalendarDto: CreateCalendarDto
+		dto: CreateCalendarDto
 	): Promise<CalendarEntity> {
-		if (createCalendarDto.type === CalendarType.HOLIDAYS) {
-			createCalendarDto.name =
-				COUNTRIES[createCalendarDto.region as CountryCode].name;
-			createCalendarDto.description = undefined;
+		if (dto.type === CalendarType.HOLIDAYS) {
+			dto.name = `Holidays of ${COUNTRIES[dto.region as CountryCode].name}`;
+			dto.description = undefined;
 		}
 
 		return this.prisma.calendar.create({
 			data: {
-				...createCalendarDto,
+				...dto,
 				users: {
 					create: {
 						userId: currentUser.id,

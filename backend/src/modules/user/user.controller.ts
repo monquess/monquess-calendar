@@ -17,27 +17,35 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { UserService } from './user.service';
-import { FilteringOptionsDto } from './dto/filtering-options.dto';
 import { UserEntity } from './entities/user.entity';
 import {
 	ApiUserFindAll,
 	ApiUserFindById,
 	ApiUserRemove,
+	ApiUserSelf,
 	ApiUserUpdate,
 	ApiUserUpdateAvatar,
 	ApiUserUpdatePassword,
 } from './decorators/api-user.decorator';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilteringOptionsDto, UpdateUserDto, UpdatePasswordDto } from './dto';
+
 import { ImageTransformPipe } from '@modules/s3/pipes/image-transform.pipe';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
 @Controller('users')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
+
+	@ApiUserSelf()
+	@Get('self')
+	self(@CurrentUser() user: CurrentUser): UserEntity {
+		return user;
+	}
 
 	@ApiUserFindAll()
 	@Get()
@@ -73,7 +81,7 @@ export class UserController {
 
 	@ApiUserUpdateAvatar()
 	@Patch(':id/avatar')
-	@UseInterceptors(FileInterceptor('avatar'))
+	@UseInterceptors(FileInterceptor('file'))
 	updateAvatar(
 		@Param('id', ParseIntPipe) id: number,
 		@UploadedFile(
@@ -88,9 +96,9 @@ export class UserController {
 			}),
 			new ImageTransformPipe()
 		)
-		avatar: Express.Multer.File
+		file: Express.Multer.File
 	): Promise<UserEntity> {
-		return this.userService.updateAvatar(id, avatar);
+		return this.userService.updateAvatar(id, file);
 	}
 
 	@ApiUserRemove()

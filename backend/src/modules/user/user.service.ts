@@ -1,20 +1,25 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '@modules/prisma/prisma.service';
-import { FilteringOptionsDto } from './dto/filtering-options.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcryptjs';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { S3Service } from '@modules/s3/s3.service';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from '@config/env/environment-variables.config';
+
+import * as bcrypt from 'bcryptjs';
 import { CalendarType, InvitationStatus, Role } from '@prisma/client';
-import { DEFAULT_CALENDAR_COLOR } from '@modules/calendar/constants/calendar.constants';
+
 import {
-	CountryCode,
+	FilteringOptionsDto,
+	CreateUserDto,
+	UpdateUserDto,
+	UpdatePasswordDto,
+} from './dto';
+import { UserEntity } from './entities/user.entity';
+
+import { S3Service } from '@modules/s3/s3.service';
+import { PrismaService } from '@modules/prisma/prisma.service';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
+import {
 	COUNTRIES,
+	CountryCode,
 } from '@common/constants/country-codes.constant';
+import { generateColor } from '@common/helpers/generate-color';
 
 @Injectable()
 export class UserService {
@@ -38,6 +43,7 @@ export class UserService {
 					contains: email,
 					mode: 'insensitive',
 				},
+				verified: true,
 			},
 		});
 	}
@@ -57,20 +63,23 @@ export class UserService {
 		});
 	}
 
-	async create(createUserDto: CreateUserDto, country: CountryCode) {
+	async create(dto: CreateUserDto, country: CountryCode) {
 		const salt = await bcrypt.genSalt();
+		const hash = dto.password ? await bcrypt.hash(dto.password, salt) : null;
+		const avatar = this.configService.get<string>('DEFAULT_AVATAR_PATH');
+
 		return this.prisma.user.create({
 			data: {
-				...createUserDto,
-				avatar: this.configService.get<string>('DEFAULT_AVATAR_PATH'),
-				password: await bcrypt.hash(createUserDto.password, salt),
+				...dto,
+				avatar,
+				password: hash,
 				calendarMemberships: {
 					create: {
 						calendar: {
 							create: {
 								name: `Holidays of ${COUNTRIES[country].name}`,
 								type: CalendarType.HOLIDAYS,
-								color: DEFAULT_CALENDAR_COLOR,
+								color: generateColor(COUNTRIES[country].name),
 								region: country,
 							},
 						},

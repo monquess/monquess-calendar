@@ -1,5 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { UserEntity } from '@modules/user/entities/user.entity';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { InvitationStatus, Role } from '@prisma/client';
+
+class CalendarMemberUserEntity extends PickType(UserEntity, [
+	'username',
+	'email',
+	'avatar',
+] as const) {}
 
 export class CalendarMemberEntity {
 	@ApiProperty({
@@ -7,6 +14,9 @@ export class CalendarMemberEntity {
 		example: 1,
 	})
 	userId: number;
+
+	@ApiProperty({ type: () => CalendarMemberUserEntity })
+	user?: CalendarMemberUserEntity;
 
 	@ApiProperty({
 		type: String,

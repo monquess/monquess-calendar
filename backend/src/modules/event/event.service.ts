@@ -51,22 +51,37 @@ export class EventService {
 		const event = await this.prisma.event.findUniqueOrThrow({
 			where: {
 				id,
-				members: {
-					some: {
-						userId: currentUser.id,
+				OR: [
+					{
+						calendar: {
+							users: {
+								some: {
+									userId: currentUser.id,
+								},
+							},
+						},
 					},
-				},
+					{
+						members: {
+							some: {
+								userId: currentUser.id,
+							},
+						},
+					},
+				],
 			},
 			include: {
-				members: {
-					omit: {
-						eventId: true,
+				calendar: {
+					select: {
+						users: true,
 					},
 				},
 			},
 		});
 
-		return this.convertEventDatesToTimezone(event, currentUser.timezone);
+		console.log(event);
+
+		return event;
 	}
 
 	async findByCalendarId(
@@ -83,40 +98,61 @@ export class EventService {
 			return this.getGoogleEvents(calendar, startDate, endDate);
 		}
 
-		const events = await this.prisma.event.findMany({
+		return await this.prisma.event.findMany({
 			where: {
 				calendarId,
-				type: type,
+				type,
 				startDate: {
-					gte: this.convertToUTC(startDate, currentUser.timezone),
+					gte: startDate,
 				},
-				OR: [
+				AND: [
 					{
-						endDate: {
-							lte: this.convertToUTC(endDate, currentUser.timezone),
-						},
+						OR: [
+							{
+								endDate: {
+									lte: endDate,
+								},
+							},
+							{
+								endDate: null,
+							},
+						],
 					},
 					{
-						endDate: null,
+						OR: [
+							{
+								calendar: {
+									users: {
+										some: {
+											userId: currentUser.id,
+										},
+									},
+								},
+							},
+							{
+								members: {
+									some: {
+										userId: currentUser.id,
+									},
+								},
+							},
+						],
 					},
 				],
-				members: {
-					some: {
-						userId: currentUser.id,
-					},
-				},
-			},
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
 			},
 		});
+	}
 
-		return events.map((event) => {
-			return this.convertEventDatesToTimezone(event, currentUser.timezone);
+	async findInvites(user: CurrentUser): Promise<EventEntity[]> {
+		return this.prisma.event.findMany({
+			where: {
+				members: {
+					some: {
+						userId: user.id,
+						status: InvitationStatus.INVITED,
+					},
+				},
+			},
 		});
 	}
 
@@ -145,15 +181,10 @@ export class EventService {
 			throw new ForbiddenException('Access denied');
 		}
 
-		dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
-
-		if (dto.endDate) {
-			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
-		}
-
-		const result = await this.prisma.event.create({
+		return await this.prisma.event.create({
 			data: {
 				...dto,
+				startDate: dto.startDate,
 				calendarId,
 				members: {
 					create: {
@@ -163,16 +194,7 @@ export class EventService {
 					},
 				},
 			},
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
-
-		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async update(
@@ -186,39 +208,34 @@ export class EventService {
 			throw new ForbiddenException('Holidays calendar is not editable');
 		}
 
-		const membership = event.members?.find(
+		const eventMembership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
 		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
+			eventMembership?.role === Role.VIEWER ||
+			eventMembership?.status !== InvitationStatus.ACCEPTED
 		) {
-			throw new ForbiddenException('Access denied');
+			const calendarMembership = event.calendar?.users?.find(
+				(user) => user.userId === currentUser.id
+			);
+
+			console.log(event.calendar);
+
+			if (
+				calendarMembership?.role === Role.VIEWER ||
+				calendarMembership?.status !== InvitationStatus.ACCEPTED
+			) {
+				throw new ForbiddenException('Access denied');
+			}
 		}
 
-		if (dto.startDate) {
-			dto.startDate = this.convertToUTC(dto.startDate, currentUser.timezone);
-		}
-		if (dto.endDate) {
-			dto.endDate = this.convertToUTC(dto.endDate, currentUser.timezone);
-		}
-
-		const result = await this.prisma.event.update({
+		return await this.prisma.event.update({
 			where: {
 				id,
 			},
 			data: dto,
-			include: {
-				members: {
-					omit: {
-						eventId: true,
-					},
-				},
-			},
 		});
-
-		return this.convertEventDatesToTimezone(result, currentUser.timezone);
 	}
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
@@ -293,15 +310,24 @@ export class EventService {
 		const event = await this.findById(eventId, currentUser);
 		const targetUser = await this.userService.findById(userId);
 
-		const membership = event.members?.find(
-			(user) => user.userId === currentUser.id
+		const eventMembership = event.members?.find(
+			(member) => member.userId === currentUser.id
 		);
 
 		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
+			eventMembership?.role === Role.VIEWER ||
+			eventMembership?.status !== InvitationStatus.ACCEPTED
 		) {
-			throw new ForbiddenException('Access denied');
+			const calendarMembership = event.calendar?.users?.find(
+				(member) => member.userId === currentUser.id
+			);
+
+			if (
+				calendarMembership?.role === Role.VIEWER ||
+				calendarMembership?.status !== InvitationStatus.ACCEPTED
+			) {
+				throw new ForbiddenException('Access denied');
+			}
 		}
 
 		const newEventMember = await this.prisma.eventMember.create({
@@ -425,12 +451,13 @@ export class EventService {
 			COUNTRIES[calendar.region as CountryCode].region
 		);
 		const url = `https://www.googleapis.com/calendar/v3/calendars/${region}/events`;
+		const key = this.configService.get<string>('GOOGLE_CALENDAR_API_KEY');
 
 		return firstValueFrom(
 			this.httpService
 				.get<GoogleHolidayResponse>(url, {
 					params: {
-						key: this.configService.get<string>('GOOGLE_CALENDAR_API_KEY'),
+						key,
 						timeMin,
 						timeMax,
 					},
@@ -439,10 +466,12 @@ export class EventService {
 					map(({ data }) => {
 						return data.items.map((item) => ({
 							id: 1,
+							calendarId: calendar.id,
 							name: item.summary,
 							description: null,
 							color: calendar.color,
 							type: EventType.HOLIDAY,
+							allDay: true,
 							startDate: new Date(item.start.date),
 							endDate: new Date(item.end.date),
 						}));

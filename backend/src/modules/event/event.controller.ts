@@ -12,10 +12,12 @@ import {
 	Post,
 	SerializeOptions,
 	UseInterceptors,
+	Post,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
 	ApiEventFindById,
+	ApiEventMemberCreate,
 	ApiEventMemberRemove,
 	ApiEventMemberUpdateRole,
 	ApiEventMemberUpdateStatus,
@@ -30,6 +32,7 @@ import {
 	UpdateEventMemberRoleDto,
 	UpdateEventMemberStatusDto,
 	UpdateEventDto,
+	CreateEventMemberDto,
 } from './dto/';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { UserLocationInterceptor } from '@common/interceptors/user-location.interceptor';
@@ -41,12 +44,20 @@ import { ReminderEntity } from './entities/reminder.entity';
 export class EventController {
 	constructor(private readonly eventService: EventService) {}
 
+	@ApiEventFindById()
+	@UseInterceptors(UserLocationInterceptor)
+	@HttpCode(HttpStatus.OK)
+	@Get('invites')
+	findInvites(@CurrentUser() user: CurrentUser): Promise<EventEntity[]> {
+		return this.eventService.findInvites(user);
+	}
+
 	@SerializeOptions({ type: EventEntity })
 	@ApiEventFindById()
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Get(':id')
-	async findById(
+	findById(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser
 	): Promise<EventEntity> {
@@ -58,7 +69,7 @@ export class EventController {
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id')
-	async update(
+	update(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateEventDto: UpdateEventDto,
 		@CurrentUser() user: CurrentUser
@@ -70,11 +81,35 @@ export class EventController {
 	@ApiEventRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete(':id')
-	async delete(
+	delete(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser
 	): Promise<void> {
 		return this.eventService.remove(id, user);
+	}
+
+	@ApiEventMemberCreate()
+	@HttpCode(HttpStatus.OK)
+	@Post(':id/members/:userId')
+	createMemberStatus(
+		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
+		@Body() dto: CreateEventMemberDto,
+		@CurrentUser() user: CurrentUser
+	): Promise<EventMemberEntity> {
+		return this.eventService.createMember(id, userId, dto, user);
+	}
+
+	@ApiEventMemberCreate()
+	@HttpCode(HttpStatus.OK)
+	@Post(':id/members/:userId')
+	createMemberStatus(
+		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
+		@Body() dto: CreateEventMemberDto,
+		@CurrentUser() user: CurrentUser
+	): Promise<EventMemberEntity> {
+		return this.eventService.createMember(id, userId, dto, user);
 	}
 
 	@SerializeOptions({ type: ReminderEntity })
@@ -104,7 +139,7 @@ export class EventController {
 	@ApiEventMemberUpdateStatus()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/status')
-	async updateMemberStatus(
+	updateMemberStatus(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() dto: UpdateEventMemberStatusDto,
@@ -117,7 +152,7 @@ export class EventController {
 	@ApiEventMemberUpdateRole()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/role')
-	async updateMemberRole(
+	updateMemberRole(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() dto: UpdateEventMemberRoleDto,
@@ -129,8 +164,8 @@ export class EventController {
 	@SerializeOptions({ type: EventEntity })
 	@ApiEventMemberRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch(':id/members/:userId')
-	async removeMember(
+	@Delete(':id/members/:userId')
+	removeMember(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@CurrentUser() user: CurrentUser

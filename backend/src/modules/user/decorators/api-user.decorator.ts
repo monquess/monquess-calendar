@@ -10,11 +10,21 @@ import {
 	ApiParam,
 	ApiQuery,
 } from '@nestjs/swagger';
+
 import { FileUploadDto } from '@modules/user/dto/file-upload.dto';
 import { UpdatePasswordDto } from '@modules/user/dto/update-password.dto';
 import { UpdateUserDto } from '@modules/user/dto/update-user.dto';
 import { UserEntity } from '@modules/user/entities/user.entity';
 import { ApiAuth } from '@common/decorators/swagger/api-auth.decorator';
+
+export const ApiUserSelf = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Get information about current user' }),
+		ApiOkResponse({
+			type: UserEntity,
+		})
+	);
 
 export const ApiUserFindAll = () =>
 	applyDecorators(

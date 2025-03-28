@@ -9,7 +9,9 @@ import {
 	ApiOperation,
 	ApiParam,
 } from '@nestjs/swagger';
+
 import {
+	CreateEventMemberDto,
 	UpdateEventDto,
 	UpdateEventMemberRoleDto,
 	UpdateEventMemberStatusDto,
@@ -98,6 +100,33 @@ export const ApiReminderRemove = () =>
 		ApiNoContentResponse(),
 		ApiNotFoundResponse({
 			description: 'Event not found',
+		})
+	);
+
+export const ApiEventMemberCreate = () =>
+	applyDecorators(
+		ApiAuth(),
+		ApiOperation({ summary: 'Create event member' }),
+		ApiParam({
+			name: 'id',
+			description: 'event id',
+		}),
+		ApiParam({
+			name: 'userId',
+			description: 'user id',
+		}),
+		ApiBody({
+			type: CreateEventMemberDto,
+		}),
+		ApiOkResponse({ type: EventMemberEntity }),
+		ApiForbiddenResponse({
+			description: 'Access denied',
+		}),
+		ApiNotFoundResponse({
+			description: 'Event not found',
+		}),
+		ApiNotFoundResponse({
+			description: 'User not found',
 		})
 	);
 
