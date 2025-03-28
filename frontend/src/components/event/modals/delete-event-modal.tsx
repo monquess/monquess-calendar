@@ -45,7 +45,7 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = ({
 			)
 		} catch (error) {
 			if (error instanceof ApiError && error.response) {
-				showNotification('Event deletion error', error.message, 'red')
+				showNotification('Event deletion error', error.response.data, 'red')
 			}
 		} finally {
 			onClose()
