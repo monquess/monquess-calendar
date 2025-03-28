@@ -1,25 +1,25 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Avatar, Indicator, Menu } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import React, { useCallback, useEffect, useReducer, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { CiLogout } from 'react-icons/ci'
+import { FaUserPlus } from 'react-icons/fa'
 import { GoTrash } from 'react-icons/go'
 import { GrUpdate } from 'react-icons/gr'
-import { FaUserPlus } from 'react-icons/fa'
 import { LuImagePlus } from 'react-icons/lu'
 
-import useCalendarStore from '@/shared/store/calendar-store'
-import useUserStore from '@/shared/store/user-store'
-import { ICalendar, IEvent } from '@/shared/interface'
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { InvitationStatus } from '@/shared/enum'
 import { showNotification } from '@/shared/helpers/show-notification'
+import { ICalendar, IEvent } from '@/shared/interface'
+import useCalendarStore from '@/shared/store/calendar-store'
+import useUserStore from '@/shared/store/user-store'
 
 import DeleteAccountModal from './modals/delete-account-modal'
+import InvitesModal from './modals/invites-modal'
 import UpdateUserModal from './modals/update-user-modal'
 import UploadAvatarModal from './modals/upload-avatar-modal'
-import InvitesModal from './modals/invites-modal'
 
 interface ModalState {
 	delete: boolean
@@ -95,7 +95,7 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 		fetchEventInvites()
 	}, [])
 
-	const handleClick = useCallback(
+	const handleClickCalendar = useCallback(
 		async (calendar: ICalendar, status: InvitationStatus) => {
 			try {
 				await apiClient.patch(
@@ -122,6 +122,30 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 			}
 		},
 		[addCalendar, user?.id]
+	)
+
+	const handleClickEvent = useCallback(
+		async (event: IEvent, status: InvitationStatus) => {
+			try {
+				await apiClient.patch(`events/${event.id}/members/${user?.id}/status`, {
+					status,
+				})
+
+				setEventInvites((prev) =>
+					prev.filter((invite) => invite.id !== event.id)
+				)
+				showNotification(
+					'Invitation accept',
+					`Invitation has been successfully ${status.toLowerCase()}`,
+					'green'
+				)
+			} catch (error) {
+				if (error instanceof ApiError && error.response) {
+					showNotification('Error', error.message, 'red')
+				}
+			}
+		},
+		[user?.id]
 	)
 
 	return (
@@ -195,7 +219,8 @@ const UserMenu: React.FC<UserMenuProps> = React.memo(({ size }) => {
 			<InvitesModal
 				opened={modals.invites}
 				onClose={() => closeModal('invites')}
-				onClick={handleClick}
+				onClickCalendar={handleClickCalendar}
+				onClickEvent={handleClickEvent}
 				calendars={calendarInvites}
 				events={eventInvites}
 			/>

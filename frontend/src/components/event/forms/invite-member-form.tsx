@@ -1,21 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react'
 import { Button, MultiSelect, Stack } from '@mantine/core'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { EventImpl } from '@fullcalendar/core/internal'
 import { debounce } from 'lodash'
 
 import { apiClient, ApiError } from '@/shared/api/axios'
 import { showNotification } from '@/shared/helpers/show-notification'
+import { IEventMember } from '@/shared/interface'
 import { User } from '@/shared/store/user-store'
 
 interface InviteEventMembersFormProps {
-	onClose: () => void
 	event: EventImpl
+	onInvite: (newUsers: IEventMember[]) => void
 }
 
 const InviteEventMembersForm: React.FC<InviteEventMembersFormProps> = ({
-	onClose,
 	event,
+	onInvite,
 }) => {
 	const [data, setData] = useState<User[]>([])
 	const [search, setSearch] = useState('')
@@ -52,18 +53,20 @@ const InviteEventMembersForm: React.FC<InviteEventMembersFormProps> = ({
 			)
 			const users = response.flatMap((res) => res.data)
 
-			await Promise.all(
+			const responseMember = await Promise.all(
 				users.map(({ id }) =>
 					apiClient.post(`/events/${event.id}/members/${id}`)
 				)
 			)
+			const newMembers = responseMember.flatMap((res) => res.data)
+			onInvite(newMembers)
 
 			showNotification(
 				'Member invitation',
 				'Members have been successfully invited to the event.',
 				'green'
 			)
-			onClose()
+			setSelectedUser([])
 		} catch (error) {
 			if (error instanceof ApiError && error.response) {
 				showNotification('Member invitation error', error.message, 'red')

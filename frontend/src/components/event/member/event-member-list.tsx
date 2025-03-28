@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useState } from 'react'
 import {
 	Avatar,
 	Box,
@@ -9,23 +8,25 @@ import {
 	ScrollArea,
 	Text,
 } from '@mantine/core'
+import React, { useEffect, useState } from 'react'
 
 import { FcCancel, FcClock, FcOk } from 'react-icons/fc'
 
 import { EventImpl } from '@fullcalendar/core/internal'
 import { capitalize } from 'lodash'
 
-import { apiClient } from '@/shared/api/axios'
-import { MemberRole, InvitationStatus } from '@/shared/enum'
-import { IEvent, IEventMember } from '@/shared/interface'
-import useUserStore from '@/shared/store/user-store'
 import { useResponsive } from '@/hooks/use-responsive'
+import { InvitationStatus, MemberRole } from '@/shared/enum'
+import { IEventMember } from '@/shared/interface'
+import useUserStore from '@/shared/store/user-store'
 
 import EventMemberDelete from './event-member-delete'
 import EditEventRoleSelect from './event-member-role-select'
 
 interface EventMemberListProps {
 	event: EventImpl
+	users: IEventMember[]
+	onDelete: (userId: number) => void
 }
 
 const StatusIcons = {
@@ -34,24 +35,14 @@ const StatusIcons = {
 	[InvitationStatus.DECLINED]: <FcCancel />,
 } as const
 
-const EventMemberList: React.FC<EventMemberListProps> = ({ event }) => {
+const EventMemberList: React.FC<EventMemberListProps> = ({
+	event,
+	users,
+	onDelete,
+}) => {
 	const { user: currentUser } = useUserStore()
 	const { isMobile } = useResponsive()
-	const [users, setUsers] = useState<IEventMember[]>([])
 	const [role, setRole] = useState<MemberRole>()
-
-	const onDelete = useCallback((userId: number) => {
-		setUsers((prev) => prev.filter((user) => user.userId !== userId))
-	}, [])
-
-	useEffect(() => {
-		const fetchUsers = async () => {
-			const { data } = await apiClient.get<IEvent>(`events/${event.id}`)
-			setUsers(data.members)
-		}
-
-		fetchUsers()
-	}, [event.id])
 
 	useEffect(() => {
 		if (event) {
