@@ -40,17 +40,42 @@ export class EventService {
 	) {}
 
 	async findById(id: number, currentUser: CurrentUser): Promise<EventEntity> {
-		return await this.prisma.event.findUniqueOrThrow({
+		const event = await this.prisma.event.findUniqueOrThrow({
 			where: {
 				id,
-				members: {
-					some: {
-						userId: currentUser.id,
+				OR: [
+					{
+						calendar: {
+							users: {
+								some: {
+									userId: currentUser.id,
+								},
+							},
+						},
+					},
+					{
+						members: {
+							some: {
+								userId: currentUser.id,
+							},
+						},
+					},
+				],
+			},
+			include: {
+				calendar: {
+					select: {
+						users: true,
 					},
 				},
 			},
 		});
+
+		console.log(event);
+
+		return event;
 	}
+
 	async findByCalendarId(
 		calendarId: number,
 		{ startDate, endDate, type }: FilteringOptionsDto,
@@ -110,6 +135,19 @@ export class EventService {
 		});
 	}
 
+	async findInvites(user: CurrentUser): Promise<EventEntity[]> {
+		return this.prisma.event.findMany({
+			where: {
+				members: {
+					some: {
+						userId: user.id,
+						status: InvitationStatus.INVITED,
+					},
+				},
+			},
+		});
+	}
+
 	async create(
 		calendarId: number,
 		dto: CreateEventDto,
@@ -162,15 +200,26 @@ export class EventService {
 			throw new ForbiddenException('Holidays calendar is not editable');
 		}
 
-		const membership = event.members?.find(
+		const eventMembership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
 		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
+			eventMembership?.role === Role.VIEWER ||
+			eventMembership?.status !== InvitationStatus.ACCEPTED
 		) {
-			throw new ForbiddenException('Access denied');
+			const calendarMembership = event.calendar?.users?.find(
+				(user) => user.userId === currentUser.id
+			);
+
+			console.log(event.calendar);
+
+			if (
+				calendarMembership?.role === Role.VIEWER ||
+				calendarMembership?.status !== InvitationStatus.ACCEPTED
+			) {
+				throw new ForbiddenException('Access denied');
+			}
 		}
 
 		return await this.prisma.event.update({
@@ -206,15 +255,24 @@ export class EventService {
 	): Promise<EventMemberEntity> {
 		const event = await this.findById(eventId, currentUser);
 
-		const membership = event.members?.find(
-			(user) => user.userId === currentUser.id
+		const eventMembership = event.members?.find(
+			(member) => member.userId === currentUser.id
 		);
 
 		if (
-			membership?.role === Role.VIEWER ||
-			membership?.status !== InvitationStatus.ACCEPTED
+			eventMembership?.role === Role.VIEWER ||
+			eventMembership?.status !== InvitationStatus.ACCEPTED
 		) {
-			throw new ForbiddenException('Access denied');
+			const calendarMembership = event.calendar?.users?.find(
+				(member) => member.userId === currentUser.id
+			);
+
+			if (
+				calendarMembership?.role === Role.VIEWER ||
+				calendarMembership?.status !== InvitationStatus.ACCEPTED
+			) {
+				throw new ForbiddenException('Access denied');
+			}
 		}
 
 		return this.prisma.eventMember.create({
@@ -348,6 +406,7 @@ export class EventService {
 							description: null,
 							color: calendar.color,
 							type: EventType.HOLIDAY,
+							allDay: true,
 							startDate: new Date(item.start.date),
 							endDate: new Date(item.end.date),
 						}));

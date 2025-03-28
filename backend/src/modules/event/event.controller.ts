@@ -43,8 +43,16 @@ export class EventController {
 	@ApiEventFindById()
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
+	@Get('invites')
+	findInvites(@CurrentUser() user: CurrentUser): Promise<EventEntity[]> {
+		return this.eventService.findInvites(user);
+	}
+
+	@ApiEventFindById()
+	@UseInterceptors(UserLocationInterceptor)
+	@HttpCode(HttpStatus.OK)
 	@Get(':id')
-	async findById(
+	findById(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser
 	): Promise<EventEntity> {
@@ -55,7 +63,7 @@ export class EventController {
 	@UseInterceptors(UserLocationInterceptor)
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id')
-	async update(
+	update(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateEventDto: UpdateEventDto,
 		@CurrentUser() user: CurrentUser
@@ -66,7 +74,7 @@ export class EventController {
 	@ApiEventRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete(':id')
-	async delete(
+	delete(
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser() user: CurrentUser
 	): Promise<void> {
@@ -76,7 +84,7 @@ export class EventController {
 	@ApiEventMemberCreate()
 	@HttpCode(HttpStatus.OK)
 	@Post(':id/members/:userId')
-	async createMemberStatus(
+	createMemberStatus(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() dto: CreateEventMemberDto,
@@ -88,7 +96,7 @@ export class EventController {
 	@ApiEventMemberUpdateStatus()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/status')
-	async updateMemberStatus(
+	updateMemberStatus(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() dto: UpdateEventMemberStatusDto,
@@ -100,7 +108,7 @@ export class EventController {
 	@ApiEventMemberUpdateRole()
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/members/:userId/role')
-	async updateMemberRole(
+	updateMemberRole(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() dto: UpdateEventMemberRoleDto,
@@ -112,7 +120,7 @@ export class EventController {
 	@ApiEventMemberRemove()
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete(':id/members/:userId')
-	async removeMember(
+	removeMember(
 		@Param('id', ParseIntPipe) id: number,
 		@Param('userId', ParseIntPipe) userId: number,
 		@CurrentUser() user: CurrentUser

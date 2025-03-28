@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EventType } from '@prisma/client';
 import { EventMemberEntity } from './event-member.entity';
+import { CalendarMemberEntity } from '@modules/calendar/entities/calendar-member.entity';
 
 export class EventEntity {
 	@ApiProperty({
@@ -62,10 +63,14 @@ export class EventEntity {
 
 	members?: EventMemberEntity[];
 
+	calendar?: {
+		users: CalendarMemberEntity[];
+	};
+
 	constructor(partial: Partial<EventEntity>) {
 		Object.assign(this, partial);
 
-		if (partial.members?.length) {
+		if (partial?.members?.length) {
 			this.members = partial.members.map((user) => new EventMemberEntity(user));
 		}
 	}

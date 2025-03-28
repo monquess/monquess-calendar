@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import {
@@ -60,6 +62,7 @@ export class PrismaMiddleware {
 			const include: Prisma.CalendarInclude = {
 				users: {
 					include: {
+						...params.args.include,
 						user: {
 							select: {
 								username: true,
@@ -96,6 +99,7 @@ export class PrismaMiddleware {
 			params.args = {
 				...params.args,
 				include: {
+					...params.args.include,
 					user: {
 						select: {
 							username: true,
@@ -117,7 +121,13 @@ export class PrismaMiddleware {
 		params: Prisma.MiddlewareParams,
 		next: (params: Prisma.MiddlewareParams) => Promise<Calendar>
 	): Promise<Calendar> {
-		const actions = ['create', 'update', 'findMany', 'findFirstOrThrow'];
+		const actions = [
+			'create',
+			'update',
+			'findMany',
+			'findFirstOrThrow',
+			'findUniqueOrThrow',
+		];
 
 		if (
 			params.model === Prisma.ModelName.Event &&
@@ -126,6 +136,7 @@ export class PrismaMiddleware {
 			params.args = {
 				...params.args,
 				include: {
+					...params.args.include,
 					members: {
 						include: {
 							user: {
@@ -160,6 +171,7 @@ export class PrismaMiddleware {
 			params.args = {
 				...params.args,
 				include: {
+					...params.args.include,
 					members: {
 						select: {
 							username: true,
