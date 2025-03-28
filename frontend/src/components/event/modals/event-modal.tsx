@@ -16,8 +16,9 @@ import { EventType, MemberRole } from '@/shared/enum'
 import { IEventMember } from '@/shared/interface'
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
-
+import { formatEventDate } from '@/shared/helpers/format-event-date'
 import { useResponsive } from '@/hooks/use-responsive'
+
 import DeleteEventModal from './delete-event-modal'
 import EventMemberModal from './event-member-modal'
 import UpdateEventModal from './update-event-modal'
@@ -37,13 +38,6 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 	const [deleteModal, setDeleteModal] = useState(false)
 	const [updateModal, setUpdateModal] = useState(false)
 	const [memberModal, setMemberModal] = useState(false)
-
-	const formatDate = (date: Date | null): string =>
-		new Intl.DateTimeFormat('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: true,
-		}).format(date ?? new Date())
 
 	useEffect(() => {
 		if (selectedEvent) {
@@ -94,19 +88,21 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 						<Group>
 							{selectedEvent.extendedProps.type !== EventType.HOLIDAY && (
 								<>
-									<ActionIcon
-										variant="subtle"
-										onClick={() => setMemberModal(true)}
-									>
-										<LuUsers />
-									</ActionIcon>
 									{role !== MemberRole.VIEWER && (
-										<ActionIcon
-											variant="subtle"
-											onClick={() => setUpdateModal(true)}
-										>
-											<FiEdit />
-										</ActionIcon>
+										<>
+											<ActionIcon
+												variant="subtle"
+												onClick={() => setMemberModal(true)}
+											>
+												<LuUsers />
+											</ActionIcon>
+											<ActionIcon
+												variant="subtle"
+												onClick={() => setUpdateModal(true)}
+											>
+												<FiEdit />
+											</ActionIcon>
+										</>
 									)}
 									<ActionIcon
 										variant="subtle"
@@ -130,25 +126,18 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 					</Group>
 					<Group align="start">
 						<Stack gap={2}>
-							<Text size="md">
-								{formatDate(selectedEvent.start)}
-								{' - '}
-								{formatDate(selectedEvent.end)}
-							</Text>
+							<Text size="md">{formatEventDate(selectedEvent)}</Text>
 						</Stack>
 					</Group>
-					{selectedEvent.extendedProps.description && (
-						<>
-							<Divider />
-							<Group>
-								<MdOutlineSubtitles size={16} />
-								<Text size="md" c="dimmed">
-									{selectedEvent.extendedProps.description}
-								</Text>
-							</Group>
-						</>
-					)}
 					<Divider />
+					{selectedEvent.extendedProps.description && (
+						<Group>
+							<MdOutlineSubtitles size={16} />
+							<Text size="md" c="dimmed">
+								{selectedEvent.extendedProps.description}
+							</Text>
+						</Group>
+					)}
 					<Group>
 						<IoCalendar size={16} />
 						<Text fw={500} size="md" c="dimmed">

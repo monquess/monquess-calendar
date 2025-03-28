@@ -2,16 +2,18 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {
 	Button,
+	Checkbox,
 	ColorInput,
 	Divider,
 	Grid,
+	GridCol,
+	Group,
 	Modal,
 	Select,
 	Stack,
 	Text,
 	TextInput,
 } from '@mantine/core'
-import { DateInput } from '@mantine/dates'
 import { useForm, zodResolver } from '@mantine/form'
 
 import { IoMdTime } from 'react-icons/io'
@@ -30,6 +32,15 @@ import { createEventSchema } from '@/shared/validations'
 import { useResponsive } from '@/hooks/use-responsive'
 
 import RemindersBox from '../reminders-box'
+import DatetimeInput from '../datetime-input'
+import { capitalize } from 'lodash'
+
+const eventTypes = Object.entries(EventType)
+	.filter(([type]) => type != EventType.HOLIDAY)
+	.map(([value, label]) => ({
+		value,
+		label: capitalize(label),
+	}))
 
 const reminderToDate = (
 	reminder: { value: number; mult: number },
@@ -57,6 +68,8 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 		[]
 	)
 	const [calendarId, setCalendarId] = useState<string | null>(null)
+
+	const [allDay, setAllDay] = useState(true)
 
 	const form = useForm({
 		mode: 'uncontrolled',
@@ -118,9 +131,10 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
 			setLoading(true)
+			console.log(values)
 			const { data: event } = await apiClient.post<IEvent>(
 				`/calendars/${calendarId}/events`,
-				values
+				{ ...values, allDay }
 			)
 
 			if (reminders.length > 0) {
@@ -196,26 +210,28 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 							<IoMdTime size={20} />
 						</Grid.Col>
 						<Grid.Col span={6}>
-							<DateInput
-								key={form.key('startDate')}
-								{...form.getInputProps('startDate')}
-								popoverProps={{
-									zIndex: 1100,
-									position: 'bottom',
-								}}
-								w="100%"
+							<DatetimeInput
+								value={form.getValues().startDate}
+								onChange={(value) => form.setFieldValue('startDate', value)}
+								withTime={!allDay}
 							/>
 						</Grid.Col>
 						<Grid.Col span={6}>
-							<DateInput
-								key={form.key('endDate')}
-								{...form.getInputProps('endDate')}
-								popoverProps={{
-									zIndex: 1100,
-									position: 'bottom',
-								}}
-								w="100%"
+							<DatetimeInput
+								value={form.getValues().endDate}
+								onChange={(value) => form.setFieldValue('endDate', value)}
+								withTime={!allDay}
 							/>
+						</Grid.Col>
+						<GridCol span={1} />
+						<Grid.Col span={12}>
+							<Group align="center" mb="xs">
+								<Checkbox
+									label="All day"
+									checked={allDay}
+									onChange={(event) => setAllDay(event.currentTarget.checked)}
+								/>
+							</Group>
 						</Grid.Col>
 						<Grid.Col span={1}>
 							<MdNotificationsActive size={20} />
@@ -299,10 +315,7 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 						<Grid.Col span={12}>
 							<Select
 								label="Event type"
-								data={Object.entries(EventType).map(([value, label]) => ({
-									value,
-									label: label.charAt(0) + label.slice(1).toLowerCase(),
-								}))}
+								data={eventTypes}
 								key={form.key('type')}
 								{...form.getInputProps('type')}
 								checkIconPosition="right"
