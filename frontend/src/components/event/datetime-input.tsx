@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
 import { ActionIcon } from '@mantine/core'
 import { DateInput, TimeInput } from '@mantine/dates'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { GoClock } from 'react-icons/go'
 
@@ -19,9 +19,17 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({
 	const [date, setDate] = useState<Date | null>(value)
 	const [time, setTime] = useState<string>(() => {
 		if (value) {
-			return value.toTimeString().slice(0, 5)
+			return value.toLocaleTimeString('en-GB', {
+				hour: '2-digit',
+				minute: '2-digit',
+				hourCycle: 'h23',
+			})
 		}
-		return new Date().toTimeString().slice(0, 5)
+		return new Date().toLocaleTimeString('en-GB', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hourCycle: 'h23',
+		})
 	})
 
 	useEffect(() => {
