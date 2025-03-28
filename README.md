@@ -1,12 +1,3 @@
-<p align="center">
-	<img src="https://img.shields.io/github/license/monquess/monquess-calendar?color=FFBB94" alt="license">
-	<img src="https://img.shields.io/github/last-commit/monquess/monquess-calendar?color=A33757" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/monquess/monquess-calendar?color=A33757" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/monquess/monquess-calendar?color=A33757" alt="repo-language-count">
-<p>
-
-<h1 align="center">monquess-calendar</h1>
-
 <div align="center">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff" />
   <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=%2361DAFB" />
@@ -22,6 +13,10 @@
   <img src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=fff" />
   <img src="https://img.shields.io/badge/Redis-DD0031?logo=redis&logoColor=fff" />
   <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff" />
+</div>
+
+<div align="center">
+  <img src="./frontend/public/logo.svg" width="350"/>
 </div>
 
 ## Overview
