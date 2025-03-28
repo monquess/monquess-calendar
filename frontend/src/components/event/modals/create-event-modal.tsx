@@ -131,7 +131,6 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
 	const handleSubmit = async (values: typeof form.values) => {
 		try {
 			setLoading(true)
-			console.log(values)
 			const { data: event } = await apiClient.post<IEvent>(
 				`/calendars/${calendarId}/events`,
 				{ ...values, allDay }

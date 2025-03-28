@@ -25,7 +25,7 @@ const EventMemberDelete: React.FC<EventMemberDeleteProps> = ({
 
 	const handleClick = async () => {
 		try {
-			await apiClient.delete(`event/${event.id}/members/${user.userId}`)
+			await apiClient.delete(`events/${event.id}/members/${user.userId}`)
 
 			showNotification(
 				'Member delete',

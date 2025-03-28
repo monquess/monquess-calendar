@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ActionIcon, Menu } from '@mantine/core'
 
 import { FcInvite } from 'react-icons/fc'
@@ -7,23 +7,40 @@ import { GrUpdate } from 'react-icons/gr'
 import { HiOutlineDotsHorizontal } from 'react-icons/hi'
 import { IoMdPeople } from 'react-icons/io'
 
-import { CalendarType } from '@/shared/enum'
-import { ICalendar } from '@/shared/interface'
+import { CalendarType, MemberRole } from '@/shared/enum'
+import { ICalendar, ICalendarMember } from '@/shared/interface'
 
 import CalendarMemberModal from './modals/calendar-member-modal'
 import DeleteCalendarModal from './modals/delete-calendar.modal'
 import InviteMemberModal from './modals/invite-member-modal'
 import UpdateCalendarModal from './modals/update-calendar-modal'
+import useUserStore from '@/shared/store/user-store'
 
 interface CalendarMenuProps {
 	calendar: ICalendar
 }
 
 const CalendarMenu: React.FC<CalendarMenuProps> = ({ calendar }) => {
+	const { user } = useUserStore()
 	const [openUpdateModal, setUpdateModal] = useState(false)
 	const [openDeleteModal, setDeleteModal] = useState(false)
 	const [openInviteModal, setInviteModal] = useState(false)
 	const [openMembersModal, setMembersModal] = useState(false)
+
+	const [role, setRole] = useState<MemberRole>()
+
+	useEffect(() => {
+		if (calendar) {
+			const member = calendar.users?.find(
+				(member: ICalendarMember) => member.userId === user?.id
+			)
+
+			console.log(member)
+			if (member) {
+				setRole(member.role)
+			}
+		}
+	}, [calendar, user])
 
 	return (
 		<>
@@ -36,18 +53,22 @@ const CalendarMenu: React.FC<CalendarMenuProps> = ({ calendar }) => {
 				<Menu.Dropdown>
 					{calendar.type !== CalendarType.HOLIDAYS && (
 						<>
-							<Menu.Item
-								leftSection={<GrUpdate size={14} />}
-								onClick={() => setUpdateModal(true)}
-							>
-								Update info
-							</Menu.Item>
-							<Menu.Item
-								leftSection={<FcInvite size={14} />}
-								onClick={() => setInviteModal(true)}
-							>
-								Invite member
-							</Menu.Item>
+							{role !== MemberRole.VIEWER && (
+								<>
+									<Menu.Item
+										leftSection={<GrUpdate size={14} />}
+										onClick={() => setUpdateModal(true)}
+									>
+										Update info
+									</Menu.Item>
+									<Menu.Item
+										leftSection={<FcInvite size={14} />}
+										onClick={() => setInviteModal(true)}
+									>
+										Invite member
+									</Menu.Item>
+								</>
+							)}
 							<Menu.Item
 								leftSection={<IoMdPeople size={14} />}
 								onClick={() => setMembersModal(true)}
@@ -62,7 +83,7 @@ const CalendarMenu: React.FC<CalendarMenuProps> = ({ calendar }) => {
 						leftSection={<GoTrash size={14} />}
 						onClick={() => setDeleteModal(true)}
 					>
-						Delete calendar
+						{role == MemberRole.OWNER ? 'Delete' : 'Leave'}
 					</Menu.Item>
 				</Menu.Dropdown>
 			</Menu>

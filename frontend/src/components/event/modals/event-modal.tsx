@@ -13,7 +13,7 @@ import { EventImpl } from '@fullcalendar/core/internal'
 import FullCalendar from '@fullcalendar/react'
 
 import { EventType, MemberRole } from '@/shared/enum'
-import { IEventMember } from '@/shared/interface'
+import { ICalendar, ICalendarMember, IEventMember } from '@/shared/interface'
 import useCalendarStore from '@/shared/store/calendar-store'
 import useUserStore from '@/shared/store/user-store'
 import { formatEventDate } from '@/shared/helpers/format-event-date'
@@ -22,6 +22,7 @@ import { useResponsive } from '@/hooks/use-responsive'
 import DeleteEventModal from './delete-event-modal'
 import EventMemberModal from './event-member-modal'
 import UpdateEventModal from './update-event-modal'
+import { apiClient } from '@/shared/api/axios'
 
 interface EventModalProps {
 	calendarRef: React.RefObject<FullCalendar | null>
@@ -40,11 +41,23 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 	const [memberModal, setMemberModal] = useState(false)
 
 	useEffect(() => {
+		const fetchCalendar = async (id: number | string) => {
+			const { data } = await apiClient.get<ICalendar>(`/calendars/${id}`)
+			const member = data.users?.find(
+				(member: ICalendarMember) => member.userId === user?.id
+			)
+			if (member) {
+				setRole(member.role)
+			}
+		}
+
 		if (selectedEvent) {
 			const member = selectedEvent.extendedProps.members?.find(
 				(member: IEventMember) => member.userId === user?.id
 			)
-			if (member) {
+			if (!member) {
+				fetchCalendar(selectedEvent.extendedProps.calendarId)
+			} else {
 				setRole(member.role)
 			}
 		}
@@ -88,28 +101,28 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 						<Group>
 							{selectedEvent.extendedProps.type !== EventType.HOLIDAY && (
 								<>
-									{role !== MemberRole.VIEWER && (
-										<>
-											<ActionIcon
-												variant="subtle"
-												onClick={() => setMemberModal(true)}
-											>
-												<LuUsers />
-											</ActionIcon>
-											<ActionIcon
-												variant="subtle"
-												onClick={() => setUpdateModal(true)}
-											>
-												<FiEdit />
-											</ActionIcon>
-										</>
-									)}
 									<ActionIcon
 										variant="subtle"
-										onClick={() => setDeleteModal(true)}
+										onClick={() => setMemberModal(true)}
 									>
-										<MdDelete />
+										<LuUsers />
 									</ActionIcon>
+									{role !== MemberRole.VIEWER && (
+										<ActionIcon
+											variant="subtle"
+											onClick={() => setUpdateModal(true)}
+										>
+											<FiEdit />
+										</ActionIcon>
+									)}
+									{role === MemberRole.OWNER && (
+										<ActionIcon
+											variant="subtle"
+											onClick={() => setDeleteModal(true)}
+										>
+											<MdDelete />
+										</ActionIcon>
+									)}
 								</>
 							)}
 						</Group>
@@ -166,6 +179,7 @@ const EventModal: React.FC<EventModalProps> = ({ calendarRef }) => {
 				opened={memberModal}
 				onClose={() => setMemberModal(false)}
 				event={selectedEvent}
+				role={role}
 			/>
 		</React.Fragment>
 	)

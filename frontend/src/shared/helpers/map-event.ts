@@ -2,6 +2,7 @@ import { EventInput } from '@fullcalendar/core'
 import { IEvent } from '../interface/event.interface'
 
 export const mapEvent = (event: IEvent): EventInput => {
+	console.log(event)
 	return {
 		id: event.id.toString(),
 		title: event.name,

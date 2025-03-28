@@ -91,6 +91,7 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 							{calendars.length > 0 ? (
 								calendars.map((calendar) => (
 									<InviteCalendarCard
+										key={calendar.id}
 										calendar={calendar}
 										onClick={onClickCalendar}
 									/>
@@ -105,8 +106,12 @@ const InvitesModal: React.FC<InvitesModalProps> = ({
 					<Tabs.Panel value="2">
 						<ScrollArea h={175}>
 							{events.length > 0 ? (
-								events.map((events) => (
-									<EventInviteCard event={events} onClick={onClickEvent} />
+								events.map((event) => (
+									<EventInviteCard
+										key={event.id}
+										event={event}
+										onClick={onClickEvent}
+									/>
 								))
 							) : (
 								<Text>

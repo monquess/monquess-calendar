@@ -10,17 +10,20 @@ import { IEvent } from '@/shared/interface'
 import { IEventMember } from '@/shared/interface/event-member.interface'
 import InviteEventMembersForm from '../forms/invite-member-form'
 import EventMemberList from '../member/event-member-list'
+import { MemberRole } from '@/shared/enum'
 
 interface EventMemberModalProps {
 	opened: boolean
 	onClose: () => void
 	event: EventImpl
+	role: MemberRole | undefined
 }
 
 const EventMemberModal: React.FC<EventMemberModalProps> = ({
 	opened,
 	onClose,
 	event,
+	role,
 }) => {
 	const { isMobile } = useResponsive()
 	const [users, setUsers] = useState<IEventMember[]>([])
@@ -52,7 +55,9 @@ const EventMemberModal: React.FC<EventMemberModalProps> = ({
 			zIndex={1000}
 		>
 			<Stack pos="relative">
-				<InviteEventMembersForm event={event} onInvite={onInvite} />
+				{role !== MemberRole.VIEWER && (
+					<InviteEventMembersForm event={event} onInvite={onInvite} />
+				)}
 				<Divider />
 				<EventMemberList event={event} onDelete={onDelete} users={users} />
 			</Stack>
