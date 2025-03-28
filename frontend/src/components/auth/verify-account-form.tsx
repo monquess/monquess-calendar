@@ -1,15 +1,18 @@
-import { config } from '@/config/config'
-import { emailSchema } from '@/helpers/validations/reset-password-schema'
-import { useResponsive } from '@/hooks/use-responsive'
-import { Button, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+
+import axios, { AxiosError } from 'axios'
+
+import { config } from '@/config/config'
+import { emailSchema } from '@/shared/validations'
+import { showNotification } from '@/shared/helpers/show-notification'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import VerificationCodeModal from './modals/verify-code-modal'
 
-const VerifyAccountForm: React.FC = React.memo(() => {
+const VerifyAccountForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -34,22 +37,18 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 			setRegisteredEmail(values.email)
 			setVerificationModalOpened(true)
 			form.reset()
-			notifications.show({
-				title: 'Verify email',
-				message: 'Verify email send successfully',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'green',
-			})
+			showNotification(
+				'Verify email',
+				'Verify email send successfully',
+				'green'
+			)
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
-				notifications.show({
-					title: 'Verify email',
-					message: error.response.data.message,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'red',
-				})
+				showNotification(
+					'Verification error',
+					error.response.data.message,
+					'red'
+				)
 			}
 		} finally {
 			setLoading(false)
@@ -63,23 +62,18 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 				email: registeredEmail,
 			})
 			navigate('/login')
-			notifications.show({
-				title: 'Verification',
-				message:
-					'You have successfully verified your account. You can now log in.',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'green',
-			})
+			showNotification(
+				'Verification',
+				'You have successfully verified your account. You can now log in.',
+				'green'
+			)
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
-				notifications.show({
-					title: 'Verification',
-					message: error.response.data.message,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'red',
-				})
+				showNotification(
+					'Verification error',
+					error.response.data.message,
+					'red'
+				)
 			}
 		}
 	}
@@ -112,6 +106,6 @@ const VerifyAccountForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default VerifyAccountForm
+export default React.memo(VerifyAccountForm)

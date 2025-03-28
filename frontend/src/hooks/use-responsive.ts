@@ -1,5 +1,5 @@
-import { useMediaQuery } from '@mantine/hooks'
 import { useMemo } from 'react'
+import { useMediaQuery } from '@mantine/hooks'
 
 export const useResponsive = () => {
 	const isMobile = useMediaQuery('(max-width: 36em)')

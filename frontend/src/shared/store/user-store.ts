@@ -20,7 +20,7 @@ interface UserState {
 	updateUser: (user: User) => void
 }
 
-const useStore = create<UserState>()(
+const useUserStore = create<UserState>()(
 	persist(
 		(set) => ({
 			user: null,
@@ -31,10 +31,10 @@ const useStore = create<UserState>()(
 			updateUser: (user: User) => set({ user }),
 		}),
 		{
-			name: 'zustand-storage',
+			name: 'zustand-user-storage',
 			storage: createJSONStorage(() => localStorage),
 		}
 	)
 )
 
-export default useStore
+export default useUserStore

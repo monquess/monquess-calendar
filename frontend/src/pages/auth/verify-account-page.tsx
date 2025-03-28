@@ -1,19 +1,22 @@
+import { Box, Paper, Text, Title } from '@mantine/core'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { FaArrowLeft } from 'react-icons/fa'
+
 import VerifyAccountForm from '@/components/auth/verify-account-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
-import { useResponsive } from '@/hooks/use-responsive'
-import { Box, Paper, Text, Title } from '@mantine/core'
-import React from 'react'
-import { FaArrowLeft } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
 
-const VerifyPage: React.FC = React.memo(() => {
+import { useResponsive } from '@/hooks/use-responsive'
+
+const VerifyPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 
 	return (
 		<Box h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',
@@ -51,6 +54,6 @@ const VerifyPage: React.FC = React.memo(() => {
 			<Footer />
 		</Box>
 	)
-})
+}
 
-export default VerifyPage
+export default React.memo(VerifyPage)

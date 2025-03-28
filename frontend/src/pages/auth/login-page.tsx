@@ -1,16 +1,26 @@
-import React from 'react'
 import { Box, Paper, Title } from '@mantine/core'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { useResponsive } from '@/hooks/use-responsive'
+import useUserStore from '@/shared/store/user-store'
+
 import LoginForm from '@/components/auth/login-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
-import { useResponsive } from '@/hooks/use-responsive'
 
-const LoginPage: React.FC = React.memo(() => {
+const LoginPage: React.FC = () => {
 	const { isMobile } = useResponsive()
+	const navigate = useNavigate()
+	const { user } = useUserStore()
+
+	useEffect(() => {
+		if (user) navigate('/home')
+	})
 
 	return (
 		<Box h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',
@@ -41,6 +51,6 @@ const LoginPage: React.FC = React.memo(() => {
 			<Footer />
 		</Box>
 	)
-})
+}
 
-export default LoginPage
+export default React.memo(LoginPage)

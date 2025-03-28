@@ -1,7 +1,8 @@
-import { config } from '@/config/config'
-import { Modal, Stack, useMantineColorScheme } from '@mantine/core'
 import React from 'react'
+import { Modal, Stack, useMantineColorScheme } from '@mantine/core'
 import ReCAPTCHA from 'react-google-recaptcha'
+
+import { config } from '@/config/config'
 
 interface GoogleRecaptchaModalProps {
 	opened: boolean
@@ -38,4 +39,4 @@ const GoogleRecaptchaModal: React.FC<GoogleRecaptchaModalProps> = ({
 	)
 }
 
-export default GoogleRecaptchaModal
+export default React.memo(GoogleRecaptchaModal)

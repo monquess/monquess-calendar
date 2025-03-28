@@ -1,101 +1,124 @@
-import apiClient from '@/helpers/axios'
-import { countryConst } from '@/helpers/country-code-const'
-import { CalendarCreateSchema } from '@/helpers/validations/calendar-create-schema'
-import { Button, ColorInput, Select, Stack, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import { AxiosError } from 'axios'
 import React, { useState } from 'react'
+import {
+	Button,
+	ColorInput,
+	Group,
+	Select,
+	SelectProps,
+	Stack,
+} from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
 
-interface createCalendarFormProps {
+import { Twemoji } from 'react-emoji-render'
+
+import { apiClient, ApiError } from '@/shared/api/axios'
+import { CountryCodes } from '@/shared/constant/country-codes'
+import { CalendarType } from '@/shared/enum'
+import { ICalendar } from '@/shared/interface'
+import { showNotification } from '@/shared/helpers/show-notification'
+import useCalendarStore from '@/shared/store/calendar-store'
+import { HolidayCalendarCreateSchema } from '@/shared/validations'
+
+interface CreateHolidaysCalendarFormProps {
 	onClose: () => void
 }
 
-const CreateCalendarHolidaysForm: React.FC<createCalendarFormProps> =
-	React.memo(({ onClose }) => {
-		const [value, setValue] = useState<string | null>('')
-		const [loading, setLoading] = useState(false)
+const getFlagEmoji = (countryCode: string) => {
+	return countryCode
+		.toUpperCase()
+		.split('')
+		.map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+		.join('')
+}
 
-		const form = useForm({
-			mode: 'uncontrolled',
-			initialValues: {
-				name: '',
-				description: '',
-				color: '',
-			},
-			validate: zodResolver(CalendarCreateSchema),
-		})
+const renderSelectOption: SelectProps['renderOption'] = ({ option }) => (
+	<Group flex="1" gap="xs">
+		<Twemoji svg text={getFlagEmoji(option.value)} />
+		{option.label}
+	</Group>
+)
 
-		const handleSubmit = async (values: typeof form.values) => {
-			try {
-				setLoading(true)
-				await apiClient.post('/calendars', values)
-				notifications.show({
-					title: 'Holidays Calendar Created',
-					message: `Calendar "${values.name}" has been successfully created.`,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
-				onClose()
-			} catch (error) {
-				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Holidays Calendar Created',
-						message: error.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
-				}
-			} finally {
-				setLoading(false)
-			}
-		}
+const CreateHolidaysCalendarForm: React.FC<CreateHolidaysCalendarFormProps> = ({
+	onClose,
+}) => {
+	const { addCalendar } = useCalendarStore()
+	const [region, setRegion] = useState<string | null>('')
+	const [loading, setLoading] = useState(false)
 
-		const getFlagEmoji = (countryCode: string) => {
-			return countryCode
-				.toUpperCase()
-				.split('')
-				.map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
-				.join('')
-		}
-
-		return (
-			<form onSubmit={form.onSubmit(handleSubmit)}>
-				<Stack pos="relative">
-					<TextInput
-						label="Name"
-						key={form.key('name')}
-						{...form.getInputProps('name')}
-					></TextInput>
-					<Select
-						label="Select country"
-						value={value}
-						onChange={setValue}
-						data={Object.entries(countryConst).map(([code, name]) => ({
-							value: code,
-							label: `${getFlagEmoji(code)} ${name}`,
-						}))}
-						styles={{ dropdown: { zIndex: 1100 } }}
-						placeholder="Start writing name..."
-						searchable
-						clearable
-					/>
-					<ColorInput
-						label="Pick color"
-						key={form.key('color')}
-						{...form.getInputProps('color')}
-						styles={{
-							dropdown: { zIndex: 1100 },
-						}}
-					/>
-					<Button type="submit" variant="outline" loading={loading}>
-						Create
-					</Button>
-				</Stack>
-			</form>
-		)
+	const form = useForm({
+		mode: 'uncontrolled',
+		initialValues: {
+			description: '',
+			color: '',
+			region: '',
+			type: CalendarType.HOLIDAYS,
+		},
+		validate: zodResolver(HolidayCalendarCreateSchema),
 	})
 
-export default CreateCalendarHolidaysForm
+	const handleSubmit = async (values: typeof form.values) => {
+		try {
+			setLoading(true)
+
+			const { data } = await apiClient.post<ICalendar>('/calendars', {
+				...values,
+				region,
+			})
+
+			addCalendar(data)
+			showNotification(
+				'Holidays calendar created',
+				`Holiday calendar has been successfully created.`,
+				'green'
+			)
+			onClose()
+		} catch (error) {
+			if (error instanceof ApiError && error.response) {
+				showNotification(
+					'Holidays calendar creation error',
+					error.response.data.message,
+					'red'
+				)
+			}
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	return (
+		<form onSubmit={form.onSubmit(handleSubmit)}>
+			<Stack pos="relative">
+				<Select
+					label="Select country"
+					value={region}
+					onChange={setRegion}
+					data={Object.entries(CountryCodes).map(([code, name]) => ({
+						value: code,
+						label: name,
+					}))}
+					leftSection={
+						region ? <Twemoji svg text={getFlagEmoji(region)} /> : null
+					}
+					renderOption={renderSelectOption}
+					styles={{ dropdown: { zIndex: 1100 } }}
+					placeholder="Start writing name..."
+					searchable
+					clearable
+				/>
+				<ColorInput
+					label="Pick color"
+					key={form.key('color')}
+					{...form.getInputProps('color')}
+					styles={{
+						dropdown: { zIndex: 1100 },
+					}}
+				/>
+				<Button type="submit" variant="outline" loading={loading}>
+					Create
+				</Button>
+			</Stack>
+		</form>
+	)
+}
+
+export default React.memo(CreateHolidaysCalendarForm)

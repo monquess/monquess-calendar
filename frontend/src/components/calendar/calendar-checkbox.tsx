@@ -1,64 +1,63 @@
-import apiClient from '@/helpers/axios'
-import { ICalendar } from '@/helpers/interface/calendar-interface'
-import useCalendarStore from '@/helpers/store/calendar-store'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useEffect } from 'react'
 import {
 	Box,
 	Checkbox,
 	Divider,
 	Flex,
 	HoverCard,
+	ScrollArea,
 	Stack,
 	Text,
 } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
+
 import { IoInformationCircleOutline } from 'react-icons/io5'
+
+import { apiClient } from '@/shared/api/axios'
+import { ICalendar } from '@/shared/interface'
+import { CalendarType, InvitationStatus } from '@/shared/enum'
+import useCalendarStore from '@/shared/store/calendar-store'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import CalendarMenu from './calendar-menu'
 
-const CalendarCheckbox: React.FC = React.memo(() => {
-	const { calendarVisibility, toggleCalendar, setCalendars } =
-		useCalendarStore()
-
-	const [calendars, setCalendarsArray] = useState<ICalendar[]>([])
-
+const CalendarCheckbox: React.FC = () => {
 	const { isMobile } = useResponsive()
+	const { calendars, toggleCalendar, setCalendars } = useCalendarStore()
 
 	useEffect(() => {
 		const fetchCalendars = async () => {
-			try {
-				const response = await apiClient.get<ICalendar[]>('/calendars')
-				const fetchedCalendars = response.data
-				const existingCalendarIds = Object.keys(calendarVisibility).map(Number)
+			const { data } = await apiClient.get<ICalendar[]>('/calendars', {
+				params: {
+					status: InvitationStatus.ACCEPTED,
+				},
+			})
 
-				const newCalendarIds = fetchedCalendars
-					.map((calendar) => calendar.id)
-					.filter((id) => !existingCalendarIds.includes(id))
+			const newCalendars = data.filter(
+				({ id }) => !Object.keys(calendars).includes(id.toString())
+			)
 
-				if (newCalendarIds.length > 0) {
-					setCalendars([...existingCalendarIds, ...newCalendarIds])
-				}
-
-				setCalendarsArray(fetchedCalendars)
-			} catch {}
+			if (newCalendars.length > 0) {
+				setCalendars([
+					...Object.entries(calendars).map(([_, value]) => value),
+					...newCalendars,
+				])
+			}
 		}
 
-		if (!calendars || calendars.length === 0) {
-			fetchCalendars()
-		}
-	}, [setCalendars, calendars, calendarVisibility])
+		fetchCalendars()
+	}, [setCalendars, calendars])
 
 	return (
 		<Stack>
 			<Divider />
 			<Text fw={500}>My calendars</Text>
 			{Object.values(calendars)
-				.filter((calendar) => calendar.isPersonal)
+				.filter((calendar) => calendar.type === CalendarType.PERSONAL)
 				.map((calendar) => (
-					<Flex justify="space-between">
+					<Flex key={calendar.id} justify="space-between">
 						<Checkbox
-							key={calendar.id}
 							label={calendar.name}
-							checked={calendarVisibility[calendar.id] ?? true}
+							checked={calendars[calendar.id].visible ?? true}
 							onChange={() => toggleCalendar(calendar.id)}
 							color={calendar.color}
 						/>
@@ -84,38 +83,40 @@ const CalendarCheckbox: React.FC = React.memo(() => {
 
 			<Divider />
 			<Text fw={500}>Other calendars</Text>
-			{Object.values(calendars)
-				.filter((calendar) => !calendar.isPersonal)
-				.map((calendar) => (
-					<Flex justify="space-between">
-						<Checkbox
-							key={calendar.id}
-							label={calendar.name}
-							checked={calendarVisibility[calendar.id] ?? true}
-							onChange={() => toggleCalendar(calendar.id)}
-							color={calendar.color}
-						/>
-						<Flex justify="center">
-							{(calendar.description?.length ?? 0) > 0 && (
-								<HoverCard>
-									<HoverCard.Target>
-										<IoInformationCircleOutline size={20} />
-									</HoverCard.Target>
-									<HoverCard.Dropdown>
-										<Text size={isMobile ? 'xs' : 'md'}>
-											{calendar.description}
-										</Text>
-									</HoverCard.Dropdown>
-								</HoverCard>
-							)}
-							<Box ml="xs">
-								<CalendarMenu calendar={calendar} />
-							</Box>
+			<ScrollArea mah="300px" scrollbarSize={8} type="auto" offsetScrollbars>
+				{Object.values(calendars)
+					.filter((calendar) => calendar.type !== CalendarType.PERSONAL)
+					.map((calendar) => (
+						<Flex key={calendar.id} justify="space-between" pb="xs">
+							<Checkbox
+								label={calendar.name}
+								checked={calendars[calendar.id].visible}
+								onChange={() => toggleCalendar(calendar.id)}
+								color={calendar.color}
+							/>
+
+							<Flex justify="center">
+								{(calendar.description?.length ?? 0) > 0 && (
+									<HoverCard>
+										<HoverCard.Target>
+											<IoInformationCircleOutline size={20} />
+										</HoverCard.Target>
+										<HoverCard.Dropdown>
+											<Text size={isMobile ? 'xs' : 'md'}>
+												{calendar.description}
+											</Text>
+										</HoverCard.Dropdown>
+									</HoverCard>
+								)}
+								<Box ml="xs">
+									<CalendarMenu calendar={calendar} />
+								</Box>
+							</Flex>
 						</Flex>
-					</Flex>
-				))}
+					))}
+			</ScrollArea>
 		</Stack>
 	)
-})
+}
 
-export default CalendarCheckbox
+export default React.memo(CalendarCheckbox)

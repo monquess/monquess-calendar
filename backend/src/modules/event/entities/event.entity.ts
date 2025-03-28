@@ -29,6 +29,12 @@ export class EventEntity {
 	description: string | null;
 
 	@ApiProperty({
+		type: Number,
+		example: 'Identifier of calendar',
+	})
+	calendarId: number;
+
+	@ApiProperty({
 		type: String,
 		example: '#FFDE59',
 	})
@@ -61,6 +67,7 @@ export class EventEntity {
 	})
 	endDate: Date | null;
 
+	members?: EventMemberEntity[];
 	members?: EventMemberEntity[];
 
 	calendar?: {

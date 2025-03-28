@@ -12,3 +12,13 @@ export const CalendarCreateSchema = z.object({
 			message: 'Invalid hex color',
 		}),
 })
+
+export const HolidayCalendarCreateSchema = z.object({
+	description: z.string(),
+	color: z
+		.string()
+		.nonempty()
+		.refine((value) => hexColorPattern.test(value), {
+			message: 'Invalid hex color',
+		}),
+})

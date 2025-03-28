@@ -1,6 +1,5 @@
-import { config } from '@/config/config'
-import { registerSchema } from '@/helpers/validations/register-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
 	Button,
 	Divider,
@@ -10,17 +9,21 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
+
+import { FcGoogle } from 'react-icons/fc'
+
 import axios, { AxiosError } from 'axios'
-import React, { useState } from 'react'
-import { FaGoogle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import ReCAPTCHA from 'react-google-recaptcha'
+
+import { config } from '@/config/config'
+import { showNotification } from '@/shared/helpers/show-notification'
+import { registerSchema } from '@/shared/validations'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 import VerificationCodeModal from './modals/verify-code-modal'
 
-import ReCAPTCHA from 'react-google-recaptcha'
-
-const RegisterForm: React.FC = React.memo(() => {
+const RegisterForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -51,13 +54,7 @@ const RegisterForm: React.FC = React.memo(() => {
 
 	const handleSubmit = async (values: typeof form.values) => {
 		if (!recaptcha.current?.getValue()) {
-			notifications.show({
-				title: 'Register',
-				message: 'Please submit Captcha',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'red',
-			})
+			showNotification('Register', 'Please submit Captcha', 'red')
 		} else {
 			try {
 				setLoading(true)
@@ -77,23 +74,18 @@ const RegisterForm: React.FC = React.memo(() => {
 				setRegisteredEmail(values.email)
 				setVerificationModalOpened(true)
 				form.reset()
-				notifications.show({
-					title: 'Registration',
-					message:
-						'You have registered successfully. Please verify your account.',
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-				})
+				showNotification(
+					'Registration',
+					'You have registered successfully. Please verify your account.',
+					'green'
+				)
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Registration',
-						message: error.response.data.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification(
+						'Registration error',
+						error.response.data.message,
+						'red'
+					)
 				}
 			} finally {
 				setLoading(false)
@@ -108,22 +100,14 @@ const RegisterForm: React.FC = React.memo(() => {
 				email: registeredEmail,
 			})
 			navigate('/login')
-			notifications.show({
-				title: 'Verify',
-				message: 'Verify successfully',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'green',
-			})
+			showNotification('Verification', 'Account verified successfully', 'green')
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
-				notifications.show({
-					title: 'Verify',
-					message: error.response.data.message,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'red',
-				})
+				showNotification(
+					'Verification error',
+					error.response.data.message,
+					'red'
+				)
 			}
 		}
 	}
@@ -181,7 +165,7 @@ const RegisterForm: React.FC = React.memo(() => {
 						w="100%"
 					>
 						<Group gap={6} justify="center">
-							<FaGoogle />
+							<FcGoogle />
 							Google
 						</Group>
 					</Button>
@@ -222,6 +206,6 @@ const RegisterForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default RegisterForm
+export default React.memo(RegisterForm)

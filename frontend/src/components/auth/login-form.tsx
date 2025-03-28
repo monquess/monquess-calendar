@@ -1,7 +1,3 @@
-import { config } from '@/config/config'
-import useStore from '@/helpers/store/user-store'
-import { schemaLogin } from '@/helpers/validations/login-schema'
-import { useResponsive } from '@/hooks/use-responsive'
 import {
 	Button,
 	Divider,
@@ -12,15 +8,23 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
-import ReCAPTCHA from 'react-google-recaptcha'
-import { FaGoogle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+
+import { FcGoogle } from 'react-icons/fc'
+
+import axios, { AxiosError } from 'axios'
+import ReCAPTCHA from 'react-google-recaptcha'
+
+import { config } from '@/config/config'
+import { useResponsive } from '@/hooks/use-responsive'
+import { showNotification } from '@/shared/helpers/show-notification'
+import useUserStore from '@/shared/store/user-store'
+import { schemaLogin } from '@/shared/validations'
+
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
-const LoginForm: React.FC = React.memo(() => {
+const LoginForm: React.FC = () => {
 	const { isMobile } = useResponsive()
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState<boolean>(false)
@@ -46,13 +50,7 @@ const LoginForm: React.FC = React.memo(() => {
 
 	const handleSubmit = async (values: typeof form.values) => {
 		if (!recaptcha.current?.getValue()) {
-			notifications.show({
-				title: 'Login',
-				message: 'Please submit Captcha',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'red',
-			})
+			showNotification('Login', 'Please submit Captcha', 'red')
 		} else {
 			try {
 				setLoading(true)
@@ -63,31 +61,25 @@ const LoginForm: React.FC = React.memo(() => {
 						password: values.password,
 					},
 					{
+						withCredentials: true,
 						headers: {
 							'x-recaptcha-token': recaptcha.current.getValue(),
 						},
 					}
 				)
-				useStore.getState().login(response.data.user, response.data.accessToken)
+				useUserStore
+					.getState()
+					.login(response.data.user, response.data.accessToken)
 				form.reset()
-				navigate('/')
-				notifications.show({
-					title: 'Login',
-					message: `Welcome, ${response.data.user.username}!`,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'green',
-					position: 'top-center',
-				})
+				navigate('/home')
+				showNotification(
+					'Login',
+					`Welcome, ${response.data.user.username}!`,
+					'green'
+				)
 			} catch (error) {
 				if (error instanceof AxiosError && error.response) {
-					notifications.show({
-						title: 'Login',
-						message: error.response.data.message,
-						withCloseButton: true,
-						autoClose: 5000,
-						color: 'red',
-					})
+					showNotification('Login error', error.response.data.message, 'red')
 				}
 			} finally {
 				setLoading(false)
@@ -125,14 +117,15 @@ const LoginForm: React.FC = React.memo(() => {
 				></Divider>
 				<Group mt={isMobile ? 'sm' : 'md'} justify="center" grow={isMobile}>
 					<Button
-						type="button"
 						variant="light"
 						color="gray"
 						size={isMobile ? 'xs' : 'sm'}
 						w="100%"
+						href={`${config.API_BASE_URL}/auth/google`}
+						component="a"
 					>
 						<Group gap={6} justify="center">
-							<FaGoogle />
+							<FcGoogle />
 							Google
 						</Group>
 					</Button>
@@ -178,6 +171,6 @@ const LoginForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default LoginForm
+export default React.memo(LoginForm)

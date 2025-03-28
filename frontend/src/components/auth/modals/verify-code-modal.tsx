@@ -1,6 +1,4 @@
-import { config } from '@/config/config'
-import { verifyCodeSchema } from '@/helpers/validations/verify-code-schema'
-import { useResponsive } from '@/hooks/use-responsive'
+import React from 'react'
 import {
 	Button,
 	Group,
@@ -12,8 +10,12 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
+
 import axios, { AxiosError } from 'axios'
-import React from 'react'
+
+import { config } from '@/config/config'
+import { verifyCodeSchema } from '@/shared/validations'
+import { useResponsive } from '@/hooks/use-responsive'
 
 interface VerificationCodeModalProps {
 	opened: boolean
@@ -132,4 +134,4 @@ const VerificationCodeModal: React.FC<VerificationCodeModalProps> = ({
 	)
 }
 
-export default VerificationCodeModal
+export default React.memo(VerificationCodeModal)

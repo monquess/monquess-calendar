@@ -1,12 +1,14 @@
 import React from 'react'
 import { ActionIcon, Anchor, Group, Stack, Text } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+
 import {
 	FaCalendarAlt,
 	FaInstagram,
 	FaTwitter,
 	FaYoutube,
 } from 'react-icons/fa'
+
 import { useResponsive } from '@/hooks/use-responsive'
 
 const links = [

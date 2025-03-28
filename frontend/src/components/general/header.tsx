@@ -1,4 +1,3 @@
-import { useResponsive } from '@/hooks/use-responsive'
 import {
 	ActionIcon,
 	Box,
@@ -10,11 +9,18 @@ import {
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import React from 'react'
-import { FaBars, FaCalendarAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+
+import { FaBars, FaCalendarAlt } from 'react-icons/fa'
+
+import { useResponsive } from '@/hooks/use-responsive'
 import ThemeSwitch from '../buttons/theme-switch'
 
-const Header: React.FC = React.memo(() => {
+interface Props {
+	isLandingPage: boolean
+}
+
+const Header: React.FC<Props> = React.memo(({ isLandingPage }) => {
 	const { isMobile } = useResponsive()
 	const isMobileSmall = useMediaQuery('(max-width: 320px)')
 	const mobileHeight = useMediaQuery('(max-height: 720px)')
@@ -40,42 +46,52 @@ const Header: React.FC = React.memo(() => {
 								Calendar
 							</Text>
 						) : (
-							<Text fw={500}>Monquees Calendar</Text>
+							<Text fw={500} onClick={() => navigate('/')}>
+								Monquees Calendar
+							</Text>
 						)}
 					</Group>
 
 					{isMobile ? (
 						<Group justify="space-between">
 							<ThemeSwitch />
-							<Menu shadow="md" width={200} position="bottom-end">
-								<Menu.Target>
-									<ActionIcon variant="subtle" aria-label="Open menu" c="white">
-										<FaBars size={20} />
-									</ActionIcon>
-								</Menu.Target>
-								<Menu.Dropdown>
-									<Menu.Item>
-										<Button
-											fullWidth
-											variant="filled"
-											color={colorScheme === 'dark' ? 'dark.4' : '#222831'}
-											onClick={() => navigate('/verify')}
+							{!isLandingPage && (
+								<Menu shadow="md" width={200} position="bottom-end">
+									<Menu.Target>
+										<ActionIcon
+											variant="subtle"
+											aria-label="Open menu"
+											c="white"
 										>
-											Verify account
-										</Button>
-									</Menu.Item>
-								</Menu.Dropdown>
-							</Menu>
+											<FaBars size={20} />
+										</ActionIcon>
+									</Menu.Target>
+									<Menu.Dropdown>
+										<Menu.Item>
+											<Button
+												fullWidth
+												variant="filled"
+												color={colorScheme === 'dark' ? 'dark.4' : '#222831'}
+												onClick={() => navigate('/verify')}
+											>
+												Verify account
+											</Button>
+										</Menu.Item>
+									</Menu.Dropdown>
+								</Menu>
+							)}
 						</Group>
 					) : (
 						<Group gap="sm">
-							<Button
-								variant="filled"
-								color={colorScheme === 'dark' ? '#222831' : 'light'}
-								onClick={() => navigate('/verify')}
-							>
-								Verify account
-							</Button>
+							{!isLandingPage && (
+								<Button
+									variant="filled"
+									color={colorScheme === 'dark' ? '#222831' : 'light'}
+									onClick={() => navigate('/verify')}
+								>
+									Verify account
+								</Button>
+							)}
 							<ThemeSwitch />
 						</Group>
 					)}
@@ -86,9 +102,3 @@ const Header: React.FC = React.memo(() => {
 })
 
 export default Header
-
-{
-	/* <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"/>
-</svg> */
-}

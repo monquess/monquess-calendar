@@ -1,15 +1,18 @@
-import { config } from '@/config/config'
-import { emailSchema } from '@/helpers/validations/reset-password-schema'
-import { useResponsive } from '@/hooks/use-responsive'
-import { Button, TextInput } from '@mantine/core'
-import { useForm, zodResolver } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
-import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextInput } from '@mantine/core'
+import { useForm, zodResolver } from '@mantine/form'
+
+import axios, { AxiosError } from 'axios'
+
+import { config } from '@/config/config'
+import { emailSchema } from '@/shared/validations'
+import { showNotification } from '@/shared/helpers/show-notification'
+import { useResponsive } from '@/hooks/use-responsive'
+
 import ResetPasswordModal from './modals/reset-password-modal'
 
-const PasswordResetForm: React.FC = React.memo(() => {
+const PasswordResetForm: React.FC = () => {
 	const navigate = useNavigate()
 	const { isMobile } = useResponsive()
 	const [verificationModalOpened, setVerificationModalOpened] =
@@ -34,22 +37,18 @@ const PasswordResetForm: React.FC = React.memo(() => {
 			setRegisteredEmail(values.email)
 			setVerificationModalOpened(true)
 			form.reset()
-			notifications.show({
-				title: 'Password Reset Email Sent',
-				message: `A password reset email has been successfully sent to ${values.email}.`,
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'green',
-			})
+			showNotification(
+				'Password Reset Email Sent',
+				`A password reset email has been successfully sent to ${values.email}.`,
+				'green'
+			)
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
-				notifications.show({
-					title: 'Password Reset Email Sent',
-					message: error.response.data.message,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'red',
-				})
+				showNotification(
+					'Password reset error',
+					error.response.data.message,
+					'red'
+				)
 			}
 		} finally {
 			setLoading(false)
@@ -64,23 +63,18 @@ const PasswordResetForm: React.FC = React.memo(() => {
 				password,
 			})
 			navigate('/login')
-			notifications.show({
-				title: 'Reset password',
-				message:
-					'Password reset successfully, you can now login to your account',
-				withCloseButton: true,
-				autoClose: 5000,
-				color: 'green',
-			})
+			showNotification(
+				'Reset password',
+				'Password reset successfully, you can now login to your account',
+				'green'
+			)
 		} catch (error) {
 			if (error instanceof AxiosError && error.response) {
-				notifications.show({
-					title: 'Reset password',
-					message: error.response.data.message,
-					withCloseButton: true,
-					autoClose: 5000,
-					color: 'red',
-				})
+				showNotification(
+					'Password reset error',
+					error.response.data.message,
+					'red'
+				)
 			}
 		}
 	}
@@ -113,6 +107,6 @@ const PasswordResetForm: React.FC = React.memo(() => {
 			/>
 		</>
 	)
-})
+}
 
-export default PasswordResetForm
+export default React.memo(PasswordResetForm)

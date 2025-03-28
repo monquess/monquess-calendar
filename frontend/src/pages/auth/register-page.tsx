@@ -1,16 +1,18 @@
-import React from 'react'
 import { Box, Container, Paper, Title } from '@mantine/core'
+import React from 'react'
+
 import RegisterForm from '@/components/auth/register-form'
 import Footer from '@/components/general/footer'
 import Header from '@/components/general/header'
+
 import { useResponsive } from '@/hooks/use-responsive'
 
-const RegisterPage: React.FC = React.memo(() => {
+const RegisterPage: React.FC = () => {
 	const { isMobile } = useResponsive()
 
 	return (
 		<Paper h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',
@@ -44,6 +46,6 @@ const RegisterPage: React.FC = React.memo(() => {
 			<Footer />
 		</Paper>
 	)
-})
+}
 
-export default RegisterPage
+export default React.memo(RegisterPage)
