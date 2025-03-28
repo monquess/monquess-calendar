@@ -11,12 +11,6 @@ export class EventEntity {
 	id: number;
 
 	@ApiProperty({
-		type: Number,
-		example: 1,
-	})
-	calendarId: number;
-
-	@ApiProperty({
 		type: String,
 		example: 'Onboarding meeting',
 	})
