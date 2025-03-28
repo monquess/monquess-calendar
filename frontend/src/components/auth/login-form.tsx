@@ -1,5 +1,3 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
 	Button,
 	Divider,
@@ -10,6 +8,8 @@ import {
 	TextInput,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { FcGoogle } from 'react-icons/fc'
 
@@ -17,10 +17,10 @@ import axios, { AxiosError } from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 import { config } from '@/config/config'
+import { useResponsive } from '@/hooks/use-responsive'
 import { showNotification } from '@/shared/helpers/show-notification'
 import useUserStore from '@/shared/store/user-store'
 import { schemaLogin } from '@/shared/validations'
-import { useResponsive } from '@/hooks/use-responsive'
 
 import GoogleRecaptchaModal from './modals/google-recaptcha-modal'
 
@@ -71,7 +71,7 @@ const LoginForm: React.FC = () => {
 					.getState()
 					.login(response.data.user, response.data.accessToken)
 				form.reset()
-				navigate('/')
+				navigate('/home')
 				showNotification(
 					'Login',
 					`Welcome, ${response.data.user.username}!`,

@@ -1,6 +1,6 @@
+import { LoadingOverlay } from '@mantine/core'
 import React, { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { LoadingOverlay } from '@mantine/core'
 
 import { apiClient } from '@/shared/api/axios'
 import { showNotification } from '@/shared/helpers/show-notification'
@@ -31,7 +31,7 @@ const GoogleAuthSuccessPage: React.FC = () => {
 
 	useEffect(() => {
 		if (user) {
-			navigate('/')
+			navigate('/home')
 		}
 	}, [user, navigate])
 

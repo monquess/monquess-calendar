@@ -1,5 +1,5 @@
-import React from 'react'
 import { Box, Container, Paper, Title } from '@mantine/core'
+import React from 'react'
 
 import RegisterForm from '@/components/auth/register-form'
 import Footer from '@/components/general/footer'
@@ -12,7 +12,7 @@ const RegisterPage: React.FC = () => {
 
 	return (
 		<Paper h="100vh">
-			<Header />
+			<Header isLandingPage={false} />
 			<Box
 				style={{
 					justifyContent: 'center',
