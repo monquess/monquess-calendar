@@ -1,40 +1,40 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { EnvironmentVariables } from '@config/env/environment-variables.config';
+import { CalendarService } from '@modules/calendar/calendar.service';
+import { CalendarEntity } from '@modules/calendar/entities/calendar.entity';
+import { NotificationService } from '@modules/notification/notification.service';
+import { EventInvitationNotification } from '@modules/notification/notifications/event-invitation.notification';
+import { ReminderNotification } from '@modules/notification/notifications/reminder.notification';
+import { PrismaService } from '@modules/prisma/prisma.service';
+import { UserService } from '@modules/user/user.service';
+import { HttpService } from '@nestjs/axios';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
 	CalendarType,
 	EventType,
 	InvitationStatus,
 	Role,
 } from '@prisma/client';
-import { PrismaService } from '@modules/prisma/prisma.service';
-import { CalendarService } from '@modules/calendar/calendar.service';
-import { EventEntity } from './entities/event.entity';
-import { EventMemberEntity } from './entities/event-member.entity';
-import {
-	CreateEventDto,
-	UpdateEventDto,
-	FilteringOptionsDto,
-	CreateEventMemberDto,
-	UpdateEventMemberStatusDto,
-	UpdateEventMemberRoleDto,
-} from './dto/';
-import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import { firstValueFrom, map } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
-import { CalendarEntity } from '@modules/calendar/entities/calendar.entity';
-import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from '@config/env/environment-variables.config';
 import {
-	CountryCode,
 	COUNTRIES,
+	CountryCode,
 } from '../../common/constants/country-codes.constant';
-import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
+import {
+	CreateEventDto,
+	CreateEventMemberDto,
+	FilteringOptionsDto,
+	UpdateEventDto,
+	UpdateEventMemberRoleDto,
+	UpdateEventMemberStatusDto,
+} from './dto/';
 import { CreateReminderDto } from './dto/create-reminder.dto';
-import { NotificationService } from '@modules/notification/notification.service';
-import { ReminderNotification } from '@modules/notification/notifications/reminder.notification';
+import { EventMemberEntity } from './entities/event-member.entity';
+import { EventEntity } from './entities/event.entity';
 import { ReminderEntity } from './entities/reminder.entity';
-import { UserService } from '@modules/user/user.service';
-import { EventInvitationNotification } from '@modules/notification/notifications/event-invitation.notification';
+import { GoogleHolidayResponse } from './interfaces/google-holiday-response.interface';
 
 @Injectable()
 export class EventService {
@@ -78,8 +78,6 @@ export class EventService {
 				},
 			},
 		});
-
-		console.log(event);
 
 		return event;
 	}
@@ -220,8 +218,6 @@ export class EventService {
 				(user) => user.userId === currentUser.id
 			);
 
-			console.log(event.calendar);
-
 			if (
 				calendarMembership?.role === Role.VIEWER ||
 				calendarMembership?.status !== InvitationStatus.ACCEPTED
@@ -240,12 +236,18 @@ export class EventService {
 
 	async remove(id: number, currentUser: CurrentUser): Promise<void> {
 		const event = await this.findById(id, currentUser);
-		const membership = event.members?.find(
+		const eventMembership = event.members?.find(
 			(member) => member.userId === currentUser.id
 		);
 
-		if (membership?.role !== Role.OWNER) {
-			throw new ForbiddenException('Access denied');
+		if (eventMembership?.role !== Role.OWNER) {
+			const calendarMembership = event.calendar?.users?.find(
+				(user) => user.userId === currentUser.id
+			);
+
+			if (calendarMembership?.role !== Role.OWNER) {
+				throw new ForbiddenException('Access denied');
+			}
 		}
 
 		await this.prisma.event.delete({
