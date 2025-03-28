@@ -21,6 +21,7 @@ import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
 import { CacheInterceptor } from '@common/interceptors/cache.interceptor.ts.interceptor';
 import { NotificationModule } from './notification/notification.module';
 import { BullModule } from '@nestjs/bullmq';
+import { PushModule } from './push/push.module';
 
 @Module({
 	imports: [
@@ -99,6 +100,7 @@ import { BullModule } from '@nestjs/bullmq';
 			}),
 			inject: [ConfigService],
 		}),
+		PushModule,
 	],
 	providers: [
 		{

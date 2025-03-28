@@ -137,6 +137,12 @@ export class EnvironmentVariables {
 
 	@IsString()
 	readonly GOOGLE_CALENDAR_API_KEY: string;
+
+	@IsString()
+	readonly VAPID_PUBLIC_KEY: string;
+
+	@IsString()
+	readonly VAPID_PRIVATE_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
