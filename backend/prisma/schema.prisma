@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int              @id @default(autoincrement())
+  username            String           @unique @db.VarChar(255)
+  email               String           @unique @db.VarChar(255)
+  password            String?          @db.VarChar(60)
+  verified            Boolean          @default(false)
+  avatar              String
+  provider            Provider         @default(LOCAL)
+  calendarMemberships CalendarMember[]
+  reminders           Reminder[]
+  EventMember         EventMember[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Calendar {
+  id          Int              @id @default(autoincrement())
+  name        String           @db.VarChar(255)
+  description String?
+  color       String           @db.VarChar(7)
+  type        CalendarType     @default(SHARED)
+  region      String?
+  users       CalendarMember[]
+  events      Event[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("calendars")
+}
+
+model CalendarMember {
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int              @map("user_id")
+  calendar   Calendar         @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  calendarId Int              @map("calendar_id")
+  role       Role             @default(VIEWER)
+  status     InvitationStatus
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([userId, calendarId])
+  @@map("calendar_members")
+}
+
+model Event {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(30)
+  description String?       @db.VarChar(255)
+  color       String        @db.VarChar(7)
+  allDay      Boolean?      @map("all_day")
+  calendarId  Int           @map("calendar_id")
+  calendar    Calendar      @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  type        EventType
+  startDate   DateTime      @map("start_date") @db.Timestamptz()
+  endDate     DateTime?     @map("end_date") @db.Timestamptz()
+  members     EventMember[]
+  reminders   Reminder[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([calendarId])
+  @@index([startDate, endDate])
+  @@map("events")
+}
+
+model EventMember {
+  eventId Int              @map("event_id")
+  event   Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  Int              @map("user_id")
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status  InvitationStatus
+  role    Role             @default(VIEWER)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([eventId, userId])
+  @@map("event_members")
+}
+
+model Reminder {
+  id      Int      @id @default(autoincrement())
+  eventId Int      @map("event_id")
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  Int      @map("user_id")
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  time    DateTime
+
+  @@unique([eventId, userId, time])
+  @@map("reminders")
+}
+
+enum Role {
+  VIEWER
+  EDITOR
+  OWNER
+}
+
+enum Provider {
+  LOCAL
+  GOOGLE
+}
+
+enum InvitationStatus {
+  INVITED
+  ACCEPTED
+  DECLINED
+}
+
+enum CalendarType {
+  PERSONAL
+  SHARED
+  HOLIDAYS
+}
+
+enum EventType {
+  MEETING
+  REMINDER
+  TASK
+  HOLIDAY
+}
