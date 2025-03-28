@@ -12,7 +12,6 @@ import {
 	Post,
 	SerializeOptions,
 	UseInterceptors,
-	Post,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
@@ -86,18 +85,6 @@ export class EventController {
 		@CurrentUser() user: CurrentUser
 	): Promise<void> {
 		return this.eventService.remove(id, user);
-	}
-
-	@ApiEventMemberCreate()
-	@HttpCode(HttpStatus.OK)
-	@Post(':id/members/:userId')
-	createMemberStatus(
-		@Param('id', ParseIntPipe) id: number,
-		@Param('userId', ParseIntPipe) userId: number,
-		@Body() dto: CreateEventMemberDto,
-		@CurrentUser() user: CurrentUser
-	): Promise<EventMemberEntity> {
-		return this.eventService.createMember(id, userId, dto, user);
 	}
 
 	@ApiEventMemberCreate()
